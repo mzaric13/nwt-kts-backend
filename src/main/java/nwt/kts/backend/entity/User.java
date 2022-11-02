@@ -9,29 +9,29 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false)
-    private Integer id;
+    protected Integer id;
 
     @Column(name = "email", unique = true, nullable = false)
-    private String email;
+    protected String email;
 
     @Column(name = "phoneNumber", unique = true, nullable = false)
-    private String phoneNumber;
+    protected String phoneNumber;
 
     @Column(name = "password", nullable = false)
-    private String password;
+    protected String password;
 
     @Column(name = "name", nullable = false)
-    private String name;
+    protected String name;
 
     @Column(name = "surname", nullable = false)
-    private String surname;
+    protected String surname;
 
     @Column(name = "city", nullable = false)
-    private String city;
+    protected String city;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id")
-    private Role role;
+    protected Role role;
 
     public User() {
 
@@ -48,4 +48,67 @@ public class User {
         this.role = role;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
 }
