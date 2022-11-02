@@ -1,5 +1,7 @@
 package nwt.kts.backend.entity;
 
+import nwt.kts.backend.dto.creation.DriverCreationDTO;
+
 import javax.persistence.*;
 
 @Entity
@@ -12,7 +14,7 @@ public class Driver extends User {
     @Column(name = "isAvailable", nullable = false)
     private boolean isAvailable;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "vehicle_id")
     private Vehicle vehicle;
 
@@ -25,6 +27,44 @@ public class Driver extends User {
         super(id, email, phoneNumber, password, name, surname, city, role);
         this.isBlocked = isBlocked;
         this.isAvailable = isAvailable;
+        this.vehicle = vehicle;
+    }
+
+    /**
+     * Constructor used when registering a new Driver into the system.
+     *
+     * @param driverCreationDTO DriverDTO
+     * @param role      Role
+     */
+    public Driver(DriverCreationDTO driverCreationDTO, Role role, Type type){
+        super(driverCreationDTO.getEmail(), driverCreationDTO.getPhoneNumber(), driverCreationDTO.getPassword(), driverCreationDTO.getName(),
+                driverCreationDTO.getSurname(), driverCreationDTO.getCity(), role);
+        this.isBlocked = false;
+        this.isAvailable = false;
+        this.vehicle = new Vehicle(driverCreationDTO.getVehicleCreationDTO().getRegistrationNumber(), driverCreationDTO.getVehicleCreationDTO().getName(), type);
+    }
+
+    public boolean isBlocked() {
+        return isBlocked;
+    }
+
+    public void setBlocked(boolean blocked) {
+        isBlocked = blocked;
+    }
+
+    public boolean isAvailable() {
+        return isAvailable;
+    }
+
+    public void setAvailable(boolean available) {
+        isAvailable = available;
+    }
+
+    public Vehicle getVehicle() {
+        return vehicle;
+    }
+
+    public void setVehicle(Vehicle vehicle) {
         this.vehicle = vehicle;
     }
 }

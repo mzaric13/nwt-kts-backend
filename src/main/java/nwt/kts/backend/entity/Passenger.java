@@ -12,7 +12,7 @@ public class Passenger extends User {
     private boolean isBlocked;
 
     //TODO
-    //paymentData - vrv tabela zasebna
+    //paymentData - vrv tabela zasebn   a
     //@Column(name="paymentData", nullable=false)
     //private PaymentData paymentData
 

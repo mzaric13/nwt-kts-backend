@@ -1,0 +1,1 @@
+insert into vehicle_types (name) values ('big black boy');
