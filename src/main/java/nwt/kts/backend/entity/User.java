@@ -9,29 +9,29 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false)
-    private Integer id;
+    protected Integer id;
 
     @Column(name = "email", unique = true, nullable = false)
-    private String email;
+    protected String email;
 
     @Column(name = "phoneNumber", unique = true, nullable = false)
-    private String phoneNumber;
+    protected String phoneNumber;
 
     @Column(name = "password", nullable = false)
-    private String password;
+    protected String password;
 
     @Column(name = "name", nullable = false)
-    private String name;
+    protected String name;
 
     @Column(name = "surname", nullable = false)
-    private String surname;
+    protected String surname;
 
     @Column(name = "city", nullable = false)
-    private String city;
+    protected String city;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id")
-    private Role role;
+    protected Role role;
 
     public User() {
 
