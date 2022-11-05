@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional
 public class DriverService {
@@ -56,5 +58,9 @@ public class DriverService {
         Role role = roleService.findRoleByName(DRIVER_NAME);
         Type type = typeService.findTypeByName(driverCreationDTO.getVehicleCreationDTO().getType());
         return driverRepository.save(new Driver(driverCreationDTO, role, type));
+    }
+
+    public List<Driver> getAllDrivers() {
+        return driverRepository.findAll();
     }
 }
