@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TypeRepository extends JpaRepository<Type, Integer> {
 
-    public Type findTypeByName(String name);
+    Type findTypeByName(String name);
 }

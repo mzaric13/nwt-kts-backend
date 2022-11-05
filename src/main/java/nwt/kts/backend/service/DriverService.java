@@ -1,9 +1,12 @@
 package nwt.kts.backend.service;
 
 import nwt.kts.backend.dto.creation.DriverCreationDTO;
+import nwt.kts.backend.dto.creation.UpdatedUserDataCreationDTO;
 import nwt.kts.backend.entity.Driver;
+import nwt.kts.backend.entity.DriverData;
 import nwt.kts.backend.entity.Role;
 import nwt.kts.backend.entity.Type;
+import nwt.kts.backend.repository.DriverDataRepository;
 import nwt.kts.backend.repository.DriverRepository;
 import nwt.kts.backend.repository.UserRepository;
 import nwt.kts.backend.validation.UserValidator;
@@ -37,6 +40,8 @@ public class DriverService {
     @Autowired
     private DriverRepository driverRepository;
 
+    @Autowired
+    private DriverDataRepository driverDataRepository;
 
     /**
      * Constants
@@ -56,5 +61,10 @@ public class DriverService {
         Role role = roleService.findRoleByName(DRIVER_NAME);
         Type type = typeService.findTypeByName(driverCreationDTO.getVehicleCreationDTO().getType());
         return driverRepository.save(new Driver(driverCreationDTO, role, type));
+    }
+
+    public DriverData sendUpdateRequest(UpdatedUserDataCreationDTO updatedUserDataCreationDTO) {
+        userValidator.validateUpdatedUserData(updatedUserDataCreationDTO);
+        return driverDataRepository.save(new DriverData(updatedUserDataCreationDTO));
     }
 }
