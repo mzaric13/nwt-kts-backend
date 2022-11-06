@@ -1,8 +1,13 @@
 package nwt.kts.backend.controller;
 
 import nwt.kts.backend.dto.creation.PassengerCreationDTO;
+import nwt.kts.backend.dto.creation.PasswordChangeCreationDTO;
+import nwt.kts.backend.dto.creation.ProfilePictureCreationDTO;
+import nwt.kts.backend.dto.returnDTO.DriverReturnDTO;
 import nwt.kts.backend.dto.returnDTO.PassengerDTO;
+import nwt.kts.backend.entity.Driver;
 import nwt.kts.backend.entity.Passenger;
+import nwt.kts.backend.entity.User;
 import nwt.kts.backend.service.PassengerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,6 +32,24 @@ public class PassengerController {
     @GetMapping(value = "/activate-account/{id}")
     public ResponseEntity<PassengerDTO> activateAccount(@PathVariable Integer id) {
         Passenger passenger = passengerService.activateAccount(id);
+        return new ResponseEntity<>(new PassengerDTO(passenger), HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/change-password")
+    public ResponseEntity<PassengerDTO> changePassword(@RequestBody PasswordChangeCreationDTO passwordChangeCreationDTO){
+        Passenger passenger = passengerService.changePassword(passwordChangeCreationDTO);
+        return new ResponseEntity<>(new PassengerDTO(passenger), HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/change-profile-picture")
+    public ResponseEntity<PassengerDTO> changeProfilePicture(@RequestBody ProfilePictureCreationDTO profilePictureCreationDTO){
+        Passenger passenger = passengerService.changeProfilePicture(profilePictureCreationDTO);
+        return new ResponseEntity<>(new PassengerDTO(passenger), HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/update-personal-info")
+    public ResponseEntity<PassengerDTO> changePersonalInfo(@RequestBody PassengerDTO passengerDTO){
+        Passenger passenger = passengerService.changePersonalInfo(passengerDTO);
         return new ResponseEntity<>(new PassengerDTO(passenger), HttpStatus.OK);
     }
 }

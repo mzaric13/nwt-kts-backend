@@ -20,6 +20,8 @@ public class PassengerDTO {
 
     private String city;
 
+    private String profilePicture;
+
     private boolean activated;
 
     public PassengerDTO() {
@@ -33,6 +35,7 @@ public class PassengerDTO {
         this.name = passenger.getName();
         this.surname = passenger.getSurname();
         this.city = passenger.getCity();
+        this.profilePicture = passenger.getProfilePicture();
         this.activated = passenger.isActivated();
     }
 
@@ -63,6 +66,8 @@ public class PassengerDTO {
     public String getCity() {
         return city;
     }
+
+    public String getProfilePicture() { return profilePicture; }
 
     public boolean isActivated() {
         return activated;
