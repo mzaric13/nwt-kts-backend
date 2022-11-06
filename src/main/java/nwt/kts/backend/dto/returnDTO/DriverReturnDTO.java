@@ -10,6 +10,7 @@ public class DriverReturnDTO {
     private String name;
     private String surname;
     private String city;
+    private String profilePicture;
     private VehicleReturnDTO vehicleReturnDTO;
     private boolean isBlocked;
     private boolean isAvailable;
@@ -19,7 +20,7 @@ public class DriverReturnDTO {
     }
 
     public DriverReturnDTO(Integer id, String email, String phoneNumber, String password, String name,
-                           String surname, String city, VehicleReturnDTO vehicleReturnDTO) {
+                           String surname, String city, String profilePicture, VehicleReturnDTO vehicleReturnDTO) {
         this.id = id;
         this.email = email;
         this.phoneNumber = phoneNumber;
@@ -27,6 +28,7 @@ public class DriverReturnDTO {
         this.name = name;
         this.surname = surname;
         this.city = city;
+        this.profilePicture = profilePicture;
         this.vehicleReturnDTO = vehicleReturnDTO;
         this.isBlocked = false;
         this.isAvailable = false;
@@ -40,6 +42,7 @@ public class DriverReturnDTO {
         this.name = driver.getName();
         this.surname = driver.getSurname();
         this.city = driver.getCity();
+        this.profilePicture = driver.getProfilePicture();
         this.vehicleReturnDTO = new VehicleReturnDTO(driver.getVehicle());
     }
 
@@ -97,6 +100,14 @@ public class DriverReturnDTO {
 
     public void setCity(String city) {
         this.city = city;
+    }
+
+    public String getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(String profilePicture) {
+        this.profilePicture = profilePicture;
     }
 
     public VehicleReturnDTO getVehicleReturnDTO() {

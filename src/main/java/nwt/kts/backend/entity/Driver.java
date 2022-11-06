@@ -41,6 +41,7 @@ public class Driver extends User {
                 driverCreationDTO.getSurname(), driverCreationDTO.getCity(), role);
         this.isBlocked = false;
         this.isAvailable = false;
+        this.profilePicture = "default.jpg";
         this.vehicle = new Vehicle(driverCreationDTO.getVehicleCreationDTO().getRegistrationNumber(), driverCreationDTO.getVehicleCreationDTO().getName(), type);
     }
 

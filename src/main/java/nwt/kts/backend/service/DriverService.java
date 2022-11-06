@@ -1,11 +1,10 @@
 package nwt.kts.backend.service;
 
 import nwt.kts.backend.dto.creation.DriverCreationDTO;
+import nwt.kts.backend.dto.creation.PasswordChangeCreationDTO;
+import nwt.kts.backend.dto.creation.ProfilePictureCreationDTO;
 import nwt.kts.backend.dto.creation.UpdatedUserDataCreationDTO;
-import nwt.kts.backend.entity.Driver;
-import nwt.kts.backend.entity.DriverData;
-import nwt.kts.backend.entity.Role;
-import nwt.kts.backend.entity.Type;
+import nwt.kts.backend.entity.*;
 import nwt.kts.backend.repository.DriverDataRepository;
 import nwt.kts.backend.repository.DriverRepository;
 import nwt.kts.backend.repository.UserRepository;
@@ -30,12 +29,12 @@ public class DriverService {
     @Autowired
     private VehicleService vehicleService;
 
+    @Autowired
+    private UserService userService;
 
     /**
      * Repositories
      */
-    @Autowired
-    private UserRepository userRepository;
 
     @Autowired
     private DriverRepository driverRepository;
@@ -66,5 +65,15 @@ public class DriverService {
     public DriverData sendUpdateRequest(UpdatedUserDataCreationDTO updatedUserDataCreationDTO) {
         userValidator.validateUpdatedUserData(updatedUserDataCreationDTO);
         return driverDataRepository.save(new DriverData(updatedUserDataCreationDTO));
+    }
+
+    public Driver changePassword(PasswordChangeCreationDTO passwordChangeCreationDTO) {
+        User user = userService.changePassword(passwordChangeCreationDTO);
+        return driverRepository.findDriverByEmail(user.getEmail());
+    }
+
+    public Driver changeProfilePicture(ProfilePictureCreationDTO profilePictureCreationDTO) {
+        User user = userService.changeProfilePicture(profilePictureCreationDTO);
+        return driverRepository.findDriverByEmail(user.getEmail());
     }
 }
