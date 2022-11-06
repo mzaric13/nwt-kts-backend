@@ -10,7 +10,7 @@ public class DriverReturnDTO {
     private String name;
     private String surname;
     private String city;
-    private VehicleReturnDTO vehicleReturnDTO;
+    private VehicleReturnDTO vehicle;
     private boolean isBlocked;
     private boolean isAvailable;
 
@@ -19,7 +19,7 @@ public class DriverReturnDTO {
     }
 
     public DriverReturnDTO(Integer id, String email, String phoneNumber, String password, String name,
-                           String surname, String city, VehicleReturnDTO vehicleReturnDTO) {
+                           String surname, String city, VehicleReturnDTO vehicle) {
         this.id = id;
         this.email = email;
         this.phoneNumber = phoneNumber;
@@ -27,7 +27,7 @@ public class DriverReturnDTO {
         this.name = name;
         this.surname = surname;
         this.city = city;
-        this.vehicleReturnDTO = vehicleReturnDTO;
+        this.vehicle = vehicle;
         this.isBlocked = false;
         this.isAvailable = false;
     }
@@ -40,7 +40,7 @@ public class DriverReturnDTO {
         this.name = driver.getName();
         this.surname = driver.getSurname();
         this.city = driver.getCity();
-        this.vehicleReturnDTO = new VehicleReturnDTO(driver.getVehicle());
+        this.vehicle = new VehicleReturnDTO(driver.getVehicle());
     }
 
     public Integer getId() {
@@ -99,12 +99,12 @@ public class DriverReturnDTO {
         this.city = city;
     }
 
-    public VehicleReturnDTO getVehicleReturnDTO() {
-        return vehicleReturnDTO;
+    public VehicleReturnDTO getVehicle() {
+        return vehicle;
     }
 
-    public void setVehicleReturnDTO(VehicleReturnDTO vehicleReturnDTO) {
-        this.vehicleReturnDTO = vehicleReturnDTO;
+    public void setVehicle(VehicleReturnDTO vehicle) {
+        this.vehicle = vehicle;
     }
 
     public boolean isBlocked() {
