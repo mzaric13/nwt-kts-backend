@@ -14,10 +14,10 @@ public class Drive {
     @Column(name = "id", unique = true, nullable = false)
     private Integer id;
 
-    @Column(name = "startDate")
+    @Column(name = "start_date")
     private Timestamp startDate;
 
-    @Column(name = "endDate")
+    @Column(name = "end_date")
     private Timestamp endDate;
 
     @Column(name = "price", nullable = false)
@@ -26,7 +26,7 @@ public class Drive {
     @Column(name = "length", nullable = false)
     private double length;
 
-    @Column(name = "inconsistentDriveReasoning")
+    @Column(name = "inconsistent_drive_reasoning")
     private String inconsistentDriveReasoning;
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -65,5 +65,45 @@ public class Drive {
         this.status = status;
         this.driver = driver;
         this.passengers = passengers;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public Timestamp getStartDate() {
+        return startDate;
+    }
+
+    public Timestamp getEndDate() {
+        return endDate;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public double getLength() {
+        return length;
+    }
+
+    public String getInconsistentDriveReasoning() {
+        return inconsistentDriveReasoning;
+    }
+
+    public Set<Tag> getTags() {
+        return tags;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public Driver getDriver() {
+        return driver;
+    }
+
+    public Set<Passenger> getPassengers() {
+        return passengers;
     }
 }
