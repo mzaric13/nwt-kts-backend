@@ -37,7 +37,7 @@ public class Passenger extends User {
     }
 
     public Passenger(String email, String phoneNumber, String password, String name, String surname,
-                     String city, Role role, boolean isBlocked, boolean activated) {
+                     String city, Role role, boolean isBlocked, boolean activated, String profilePicture) {
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.password = password;
@@ -47,6 +47,7 @@ public class Passenger extends User {
         this.role = role;
         this.isBlocked = isBlocked;
         this.activated = activated;
+        this.profilePicture = profilePicture;
     }
 
     public boolean isBlocked() {

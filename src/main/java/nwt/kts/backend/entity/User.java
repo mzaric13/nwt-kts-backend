@@ -29,6 +29,9 @@ public class User {
     @Column(name = "city", nullable = false)
     protected String city;
 
+    @Column(name = "profilePicture")
+    protected String profilePicture;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id")
     protected Role role;
@@ -112,6 +115,14 @@ public class User {
 
     public void setCity(String city) {
         this.city = city;
+    }
+
+    public String getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(String profilePicture) {
+        this.profilePicture = profilePicture;
     }
 
     public Role getRole() {

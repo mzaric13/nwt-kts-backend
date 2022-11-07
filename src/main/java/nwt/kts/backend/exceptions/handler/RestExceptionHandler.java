@@ -2,6 +2,8 @@ package nwt.kts.backend.exceptions.handler;
 
 import lombok.extern.slf4j.Slf4j;
 import nwt.kts.backend.apierror.ApiError;
+import nwt.kts.backend.exceptions.InvalidUserDataException;
+import nwt.kts.backend.exceptions.InvalidVehicleDataException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -203,6 +205,20 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(MessagingException.class)
     protected ResponseEntity<Object> handleMessagingException(MessagingException ex) {
+        ApiError apiError = new ApiError(INTERNAL_SERVER_ERROR);
+        apiError.setMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
+
+    @ExceptionHandler(InvalidUserDataException.class)
+    protected  ResponseEntity<Object> handleInvalidUserDataException(InvalidUserDataException ex) {
+        ApiError apiError = new ApiError(INTERNAL_SERVER_ERROR);
+        apiError.setMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
+
+    @ExceptionHandler(InvalidVehicleDataException.class)
+    protected  ResponseEntity<Object> handleInvalidVehicleDataException(InvalidVehicleDataException ex) {
         ApiError apiError = new ApiError(INTERNAL_SERVER_ERROR);
         apiError.setMessage(ex.getMessage());
         return buildResponseEntity(apiError);

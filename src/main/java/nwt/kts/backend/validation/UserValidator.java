@@ -1,6 +1,7 @@
 package nwt.kts.backend.validation;
 
 import nwt.kts.backend.dto.creation.DriverCreationDTO;
+import nwt.kts.backend.dto.creation.UpdatedUserDataCreationDTO;
 import nwt.kts.backend.exceptions.InvalidUserDataException;
 
 import java.util.HashMap;
@@ -44,6 +45,13 @@ public class UserValidator {
         validateName(driverCreationDTO.getName());
         validateSurname(driverCreationDTO.getSurname());
         validateCity(driverCreationDTO.getCity());
+    }
+
+    public void validateUpdatedUserData(UpdatedUserDataCreationDTO updatedUserDataCreationDTO) {
+        validateName(updatedUserDataCreationDTO.getName());
+        validateSurname(updatedUserDataCreationDTO.getSurname());
+        validateCity(updatedUserDataCreationDTO.getCity());
+        validatePhoneNumber(updatedUserDataCreationDTO.getPhoneNumber());
     }
 
     public void validateEmail(String email) {
