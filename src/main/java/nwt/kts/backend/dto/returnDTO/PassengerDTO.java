@@ -22,6 +22,8 @@ public class PassengerDTO {
 
     private String profilePicture;
 
+    private boolean isBlocked;
+
     private boolean activated;
 
     public PassengerDTO() {
@@ -37,6 +39,7 @@ public class PassengerDTO {
         this.city = passenger.getCity();
         this.profilePicture = passenger.getProfilePicture();
         this.activated = passenger.isActivated();
+        this.isBlocked = passenger.isBlocked();
     }
 
     public int getId() {
@@ -72,4 +75,6 @@ public class PassengerDTO {
     public boolean isActivated() {
         return activated;
     }
+
+    public boolean isBlocked() {return isBlocked; }
 }
