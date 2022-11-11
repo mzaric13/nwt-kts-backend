@@ -1,6 +1,7 @@
 package nwt.kts.backend.validation;
 
 import nwt.kts.backend.dto.creation.DriverCreationDTO;
+import nwt.kts.backend.dto.creation.PassengerCreationDTO;
 import nwt.kts.backend.dto.creation.UpdatedUserDataCreationDTO;
 import nwt.kts.backend.exceptions.InvalidUserDataException;
 
@@ -47,6 +48,15 @@ public class UserValidator {
         validateCity(driverCreationDTO.getCity());
     }
 
+    public void validateNewPassenger(PassengerCreationDTO passengerCreationDTO) {
+        validateEmail(passengerCreationDTO.getEmail());
+        validatePhoneNumber(passengerCreationDTO.getPhoneNumber());
+        validatePasswords(passengerCreationDTO.getPassword(), passengerCreationDTO.getPasswordConfirm());
+        validateName(passengerCreationDTO.getName());
+        validateSurname(passengerCreationDTO.getSurname());
+        validateCity(passengerCreationDTO.getCity());
+    }
+
     public void validateUpdatedUserData(UpdatedUserDataCreationDTO updatedUserDataCreationDTO) {
         validateName(updatedUserDataCreationDTO.getName());
         validateSurname(updatedUserDataCreationDTO.getSurname());
@@ -73,19 +83,19 @@ public class UserValidator {
     }
 
     public void validateName(String name) {
-        if (!name.matches(FIRST_LETTER_UPPER_CASE_REGEX)){
+        if (name.equals("") || !name.matches(FIRST_LETTER_UPPER_CASE_REGEX)){
             throw new InvalidUserDataException(exceptions.get(NAME_EXCEPTION));
         }
     }
 
     public void validateSurname(String surname) {
-        if (!surname.matches(FIRST_LETTER_UPPER_CASE_REGEX)){
+        if (surname.equals("") || !surname.matches(FIRST_LETTER_UPPER_CASE_REGEX)){
             throw new InvalidUserDataException(exceptions.get(SURNAME_EXCEPTION));
         }
     }
 
     public void validateCity(String city) {
-        if (!city.matches(CITY_REGEX)){
+        if (city.equals("") || !city.matches(CITY_REGEX)){
             throw new InvalidUserDataException(exceptions.get(CITY_EXCEPTION));
         }
     }

@@ -7,10 +7,12 @@ import nwt.kts.backend.dto.returnDTO.PassengerDTO;
 import nwt.kts.backend.entity.Passenger;
 import nwt.kts.backend.entity.Role;
 import nwt.kts.backend.entity.User;
+import nwt.kts.backend.exceptions.InvalidUserDataException;
 import nwt.kts.backend.exceptions.NonExistingEntityException;
 import nwt.kts.backend.repository.PassengerRepository;
 import nwt.kts.backend.repository.RoleRepository;
 import nwt.kts.backend.repository.UserRepository;
+import nwt.kts.backend.validation.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,10 +37,12 @@ public class PassengerService {
     @Autowired
     private UserService userService;
 
+    private final UserValidator userValidator = new UserValidator();
+
     public Passenger createPassenger(PassengerCreationDTO passengerCreationDTO) throws MessagingException {
-        // TODO: add validation
+        userValidator.validateNewPassenger(passengerCreationDTO);
         Role role = roleRepository.findRoleByName("passenger");
-        //if (role == null) throw new NonValidDataException("Passenger role doesn't exist.");
+        if (role == null) throw new InvalidUserDataException("Passenger role doesn't exist.");
         Passenger passenger = new Passenger(passengerCreationDTO.getEmail(), passengerCreationDTO.getPhoneNumber(), passengerCreationDTO.getPassword(), passengerCreationDTO.getName(), passengerCreationDTO.getSurname(), passengerCreationDTO.getCity(), role, false, false, "default.jpg");
         passenger = passengerRepository.save(passenger);
         emailService.sendActivationEmail(passenger);
