@@ -20,6 +20,9 @@ public class Rating {
     @Column(name = "vehicleRating", nullable = false)
     private Integer vehicleRating;
 
+    @Column(name = "comment")
+    private String comment;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "drive_id")
     private Drive drive;
@@ -32,10 +35,11 @@ public class Rating {
 
     }
 
-    public Rating(Integer id, Integer driverRating, Integer vehicleRating, Drive drive, Passenger passenger) {
+    public Rating(Integer id, Integer driverRating, Integer vehicleRating, String comment, Drive drive, Passenger passenger) {
         this.id = id;
         this.driverRating = driverRating;
         this.vehicleRating = vehicleRating;
+        this.comment = comment;
         this.drive = drive;
         this.passenger = passenger;
     }
@@ -43,6 +47,7 @@ public class Rating {
     public Rating(RatingCreationDTO ratingCreationDTO, Drive drive, Passenger passenger) {
         this.driverRating = ratingCreationDTO.getDriverRating();
         this.vehicleRating = ratingCreationDTO.getVehicleRating();
+        this.comment = ratingCreationDTO.getComment();
         this.drive = drive;
         this.passenger = passenger;
     }
@@ -85,5 +90,13 @@ public class Rating {
 
     public void setPassenger(Passenger passenger) {
         this.passenger = passenger;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 }

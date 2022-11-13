@@ -4,6 +4,7 @@ public class RatingCreationDTO {
 
     private Integer driverRating;
     private Integer vehicleRating;
+    private String comment;
     private Integer driveId;
     private Integer passengerId;
 
@@ -11,9 +12,10 @@ public class RatingCreationDTO {
 
     }
 
-    public RatingCreationDTO(Integer driverRating, Integer vehicleRating, Integer driveId, Integer passengerId) {
+    public RatingCreationDTO(Integer driverRating, Integer vehicleRating, String comment, Integer driveId, Integer passengerId) {
         this.driverRating = driverRating;
         this.vehicleRating = vehicleRating;
+        this.comment = comment;
         this.driveId = driveId;
         this.passengerId = passengerId;
     }
@@ -48,5 +50,13 @@ public class RatingCreationDTO {
 
     public void setPassengerId(Integer passengerId) {
         this.passengerId = passengerId;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 }
