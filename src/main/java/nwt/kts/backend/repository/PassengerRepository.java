@@ -10,4 +10,6 @@ public interface PassengerRepository extends JpaRepository<Passenger, Integer> {
     Passenger findPassengerByEmail(String email);
 
     List<Passenger> findPassengersByIsBlocked(boolean blocked);
+
+    Passenger findPassengersById(Integer id);
 }

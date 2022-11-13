@@ -16,4 +16,6 @@ public interface DriveRepository extends JpaRepository<Drive, Integer> {
     Page<Drive> findAllByDriverAndStatus(Driver driver, Status status, Pageable pageable);
 
     Page<Drive> findAllByPassengersContainsAndStatus(Passenger passenger, Status status, Pageable pageable);
+
+    Drive findDriveById(Integer id);
 }

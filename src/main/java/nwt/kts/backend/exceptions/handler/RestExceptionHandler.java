@@ -2,6 +2,7 @@ package nwt.kts.backend.exceptions.handler;
 
 import lombok.extern.slf4j.Slf4j;
 import nwt.kts.backend.apierror.ApiError;
+import nwt.kts.backend.exceptions.InvalidRatingCreationException;
 import nwt.kts.backend.exceptions.InvalidUserDataException;
 import nwt.kts.backend.exceptions.InvalidVehicleDataException;
 import org.hibernate.exception.ConstraintViolationException;
@@ -219,6 +220,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(InvalidVehicleDataException.class)
     protected  ResponseEntity<Object> handleInvalidVehicleDataException(InvalidVehicleDataException ex) {
+        ApiError apiError = new ApiError(INTERNAL_SERVER_ERROR);
+        apiError.setMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
+
+    @ExceptionHandler(InvalidRatingCreationException.class)
+    protected  ResponseEntity<Object> handleInvalidRatingCreationException(InvalidRatingCreationException ex) {
         ApiError apiError = new ApiError(INTERNAL_SERVER_ERROR);
         apiError.setMessage(ex.getMessage());
         return buildResponseEntity(apiError);

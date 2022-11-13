@@ -12,7 +12,25 @@ values ('Novi Sad', 'mirko.ivanic@gmail.com', 'Mirko', 'Ivanic.Mirko0', '+(381)-
        ('Novi Sad', 'vujadin.savic@gmail.com', 'Vujadin', 'Savic.Vujadin0', '+(381)-64-3918507', 'Savic', 3),
        ('Novi Sad', 'branko.lazic@gmail.com', 'Branko', 'Lazic.Branko0', '+(381)-64-8301397', 'Lazic', 3),
        ('Novi Sad', 'marko.simonovic@gmail.com', 'Marko', 'Simonovic.Marko0', '+(381)-64-0048629', 'Simonovic', 3),
-       ('Novi Sad', 'marko.gobeljic@gmail.com', 'Marko', 'Gobeljic.Marko0', '+(381)-64-8475291', 'Gobeljic', 3);
+       ('Novi Sad', 'marko.gobeljic@gmail.com', 'Marko', 'Gobeljic.Marko0', '+(381)-64-8475291', 'Gobeljic', 3),
+       ('Novi Sad', 'darko.darkovic@gmail.com', 'Darko', 'Darkovic.Darko0', '+(381)-64-8475222', 'Darkovic', 2);
 
 insert into drivers (is_available, is_blocked, id, vehicle_id)
 values (false, false, 1, 1), (false, false, 2, 3), (false, false, 3, 2), (false, false, 4, 4), (false, false, 5, 5);
+
+insert into passengers (activated, is_blocked, id)
+values (true, false, 6);
+
+insert into tags (id, name)
+values (1, 'Pet friendly'),
+       (2, 'Baby friendly');
+
+insert into drives (start_date, end_date, price, length, inconsistent_drive_reasoning, status, driver)
+values ('2022-11-10 14:00:00', '2022-11-10 14:30:00', 300, 50, 'aaaaaa', 0, 1);
+
+insert into drive_passengers (drive_id, passenger_id)
+values (1, 6);
+
+insert into drive_tags (drive_id, tag_id)
+values (1, 1),
+       (1, 2);
