@@ -8,10 +8,10 @@ import javax.persistence.*;
 @Table(name = "drivers")
 public class Driver extends User {
 
-    @Column(name = "isBlocked", nullable = false)
+    @Column(name = "is_blocked", nullable = false)
     private boolean isBlocked;
 
-    @Column(name = "isAvailable", nullable = false)
+    @Column(name = "is_available", nullable = false)
     private boolean isAvailable;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

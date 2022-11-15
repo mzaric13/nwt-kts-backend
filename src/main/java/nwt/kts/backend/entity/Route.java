@@ -16,10 +16,12 @@ public class Route {
     @Column(name="route_name")
     private String routeName;
 
-    @Column(name="start_point")
-    private Point start;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="start_point")
+    private Point startPoint;
 
-    @Column(name="end_point")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="end_point")
     private Point endPoint;
 
     @Column(name = "expected_time", nullable = false)
@@ -28,9 +30,9 @@ public class Route {
     @Column(name = "length", nullable = false)
     private double length;
 
-    @ElementCollection
-    @CollectionTable(name = "route_points", joinColumns = @JoinColumn(name = "id"))
-    @Column(name = "route_path", nullable = false)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "route_points", joinColumns = @JoinColumn(name = "route_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "point_id", referencedColumnName = "id"))
     private Set<Point> routePath;
 
     public Route() {

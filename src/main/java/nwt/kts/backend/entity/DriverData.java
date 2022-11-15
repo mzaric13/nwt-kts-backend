@@ -25,10 +25,10 @@ public class DriverData {
     @Column(name = "city", nullable = false)
     private String city;
 
-    @Column(name = "phoneNumber", nullable = false)
+    @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
 
-    @Column(name = "isAnswered", nullable = false)
+    @Column(name = "is_answered", nullable = false)
     private boolean isAnswered;
 
     public DriverData() {

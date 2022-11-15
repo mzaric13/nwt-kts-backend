@@ -11,7 +11,7 @@ public class Vehicle {
     @Column(name = "id", unique = true, nullable = false)
     private Integer id;
 
-    @Column(name = "registrationNumber", unique = true, nullable = false)
+    @Column(name = "registration_number", unique = true, nullable = false)
     private String registrationNumber;
 
     @Column(name = "name", nullable = false)

@@ -1,14 +1,14 @@
 package nwt.kts.backend.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name="passengers")
 public class Passenger extends User {
 
-    @Column(name="isBlocked", nullable=false)
+    @Column(name="is_blocked", nullable=false)
     private boolean isBlocked;
 
     //TODO
@@ -16,14 +16,17 @@ public class Passenger extends User {
     //@Column(name="paymentData", nullable=false)
     //private PaymentData paymentData
 
-    //TODO
-    //Lista omiljenih ruta fali
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "favourite_routes", joinColumns = @JoinColumn(name = "passenger_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "route_id", referencedColumnName = "id"))
+    private Set<Route> favouriteRoutes;
 
     @Column(name = "activated", nullable = false)
     private boolean activated;
 
     public Passenger(){
         this.isBlocked = false;
+        this.favouriteRoutes = new HashSet<>();
     }
 
     public Passenger(Integer id, String email, String phoneNumber, String password, String name, String surname,

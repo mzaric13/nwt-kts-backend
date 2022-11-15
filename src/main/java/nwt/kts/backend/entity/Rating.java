@@ -14,10 +14,10 @@ public class Rating {
     @Column(name = "id", unique = true, nullable = false)
     private Integer id;
 
-    @Column(name = "driverRating", nullable = false)
+    @Column(name = "driver_rating", nullable = false)
     private Integer driverRating;
 
-    @Column(name = "vehicleRating", nullable = false)
+    @Column(name = "vehicle_rating", nullable = false)
     private Integer vehicleRating;
 
     @Column(name = "comment")
