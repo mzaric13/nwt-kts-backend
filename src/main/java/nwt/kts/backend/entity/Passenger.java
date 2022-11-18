@@ -68,4 +68,16 @@ public class Passenger extends User {
     public void setActivated(boolean activated) {
         this.activated = activated;
     }
+
+    public Set<Route> getFavouriteRoutes() {
+        return favouriteRoutes;
+    }
+
+    public void setFavouriteRoutes(Set<Route> favouriteRoutes) {
+        this.favouriteRoutes = favouriteRoutes;
+    }
+
+    public void addFavouriteRoute(Route route) {
+        this.favouriteRoutes.add(route);
+    }
 }

@@ -1,8 +1,10 @@
 package nwt.kts.backend.entity;
 
+import nwt.kts.backend.dto.returnDTO.RouteDTO;
+
 import javax.persistence.*;
-import java.awt.*;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "routes")
@@ -16,11 +18,11 @@ public class Route {
     @Column(name="route_name")
     private String routeName;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name="start_point")
     private Point startPoint;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name="end_point")
     private Point endPoint;
 
@@ -39,4 +41,68 @@ public class Route {
 
     }
 
+    public Route(RouteDTO routeDTO) {
+        this.routeName = routeDTO.getRouteName();
+        this.startPoint = new Point(routeDTO.getStartPoint());
+        this.endPoint = new Point(routeDTO.getEndPoint());
+        this.expectedTime = routeDTO.getExpectedTime();
+        this.length = routeDTO.getLength();
+        this.routePath = routeDTO.getRoutePath().stream().map(Point::new).collect(Collectors.toSet());
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getRouteName() {
+        return routeName;
+    }
+
+    public void setRouteName(String routeName) {
+        this.routeName = routeName;
+    }
+
+    public Point getStartPoint() {
+        return startPoint;
+    }
+
+    public void setStartPoint(Point startPoint) {
+        this.startPoint = startPoint;
+    }
+
+    public Point getEndPoint() {
+        return endPoint;
+    }
+
+    public void setEndPoint(Point endPoint) {
+        this.endPoint = endPoint;
+    }
+
+    public double getExpectedTime() {
+        return expectedTime;
+    }
+
+    public void setExpectedTime(double expectedTime) {
+        this.expectedTime = expectedTime;
+    }
+
+    public double getLength() {
+        return length;
+    }
+
+    public void setLength(double length) {
+        this.length = length;
+    }
+
+    public Set<Point> getRoutePath() {
+        return routePath;
+    }
+
+    public void setRoutePath(Set<Point> routePath) {
+        this.routePath = routePath;
+    }
 }
