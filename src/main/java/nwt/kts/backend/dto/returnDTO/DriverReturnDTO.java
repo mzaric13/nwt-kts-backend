@@ -42,7 +42,7 @@ public class DriverReturnDTO {
         this.name = driver.getName();
         this.surname = driver.getSurname();
         this.city = driver.getCity();
-        this.profilePicture = driver.getProfilePicture();
+        this.profilePicture = driver.getPicture();
         this.isBlocked = driver.isBlocked();
         this.isAvailable = driver.isAvailable();
         this.vehicle = new VehicleReturnDTO(driver.getVehicle());

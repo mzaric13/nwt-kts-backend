@@ -10,6 +10,7 @@ import nwt.kts.backend.repository.DriverRepository;
 import nwt.kts.backend.repository.UserRepository;
 import nwt.kts.backend.validation.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +35,9 @@ public class DriverService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     /**
      * Repositories
      */
@@ -47,7 +51,7 @@ public class DriverService {
     /**
      * Constants
      */
-    private final String DRIVER_NAME = "driver";
+    private final String DRIVER_NAME = "ROLE_DRIVER";
 
 
     /**
