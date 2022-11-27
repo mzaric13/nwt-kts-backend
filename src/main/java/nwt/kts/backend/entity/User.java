@@ -1,11 +1,16 @@
 package nwt.kts.backend.entity;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import javax.persistence.*;
+import java.util.Arrays;
+import java.util.Collection;
 
 @Entity
 @Table(name = "users")
 @Inheritance(strategy=InheritanceType.JOINED)
-public class User {
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false)
@@ -14,10 +19,10 @@ public class User {
     @Column(name = "email", unique = true, nullable = false)
     protected String email;
 
-    @Column(name = "phone_number", nullable = false)
+    @Column(name = "phone_number")
     protected String phoneNumber;
 
-    @Column(name = "password", nullable = false)
+    @Column(name = "password")
     protected String password;
 
     @Column(name = "name", nullable = false)
@@ -26,15 +31,18 @@ public class User {
     @Column(name = "surname", nullable = false)
     protected String surname;
 
-    @Column(name = "city", nullable = false)
+    @Column(name = "city")
     protected String city;
 
-    @Column(name = "profile_picture")
-    protected String profilePicture;
+    @Column(name = "picture")
+    protected String picture;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id")
     protected Role role;
+
+    @Column(name = "provider", nullable = false)
+    protected Provider provider;
 
     public User() {
 
@@ -85,8 +93,40 @@ public class User {
         this.phoneNumber = phoneNumber;
     }
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        Collection<Role> collection = Arrays.asList(this.role);
+        return collection;
+    }
+
     public String getPassword() {
         return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    // TODO: proveriti ovo
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 
     public void setPassword(String password) {
@@ -117,12 +157,12 @@ public class User {
         this.city = city;
     }
 
-    public String getProfilePicture() {
-        return profilePicture;
+    public String getPicture() {
+        return picture;
     }
 
-    public void setProfilePicture(String profilePicture) {
-        this.profilePicture = profilePicture;
+    public void setPicture(String profilePicture) {
+        this.picture = profilePicture;
     }
 
     public Role getRole() {
@@ -131,5 +171,13 @@ public class User {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public Provider getProvider() {
+        return provider;
+    }
+
+    public void setProvider(Provider provider) {
+        this.provider = provider;
     }
 }

@@ -6,6 +6,7 @@ import nwt.kts.backend.entity.User;
 import nwt.kts.backend.repository.UserRepository;
 import nwt.kts.backend.validation.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,9 @@ public class UserService {
      */
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     /**
      * Validators
@@ -33,13 +37,13 @@ public class UserService {
     public User changePassword(PasswordChangeCreationDTO passwordChangeCreationDTO){
         userValidator.validatePasswords(passwordChangeCreationDTO.getNewPassword(), passwordChangeCreationDTO.getNewPasswordConfirmation());
         User user = userRepository.findUserByEmail(passwordChangeCreationDTO.getEmail());
-        user.setPassword(passwordChangeCreationDTO.getNewPassword());
+        user.setPassword(passwordEncoder.encode(passwordChangeCreationDTO.getNewPassword()));
         return userRepository.save(user);
     }
 
     public User changeProfilePicture(ProfilePictureCreationDTO profilePictureCreationDTO){
         User user = userRepository.findUserByEmail(profilePictureCreationDTO.getEmail());
-        user.setProfilePicture(profilePictureCreationDTO.getProfilePicturePath());
+        user.setPicture(profilePictureCreationDTO.getProfilePicturePath());
         return userRepository.save(user);
     }
 
