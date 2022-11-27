@@ -14,7 +14,7 @@ public class User {
     @Column(name = "email", unique = true, nullable = false)
     protected String email;
 
-    @Column(name = "phone_number", unique = true, nullable = false)
+    @Column(name = "phone_number", nullable = false)
     protected String phoneNumber;
 
     @Column(name = "password", nullable = false)
