@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
+import java.security.Principal;
 
 @RestController
 @RequestMapping(value = "/passengers")
@@ -50,6 +51,12 @@ public class PassengerController {
     @PutMapping(value = "/update-personal-info")
     public ResponseEntity<PassengerDTO> changePersonalInfo(@RequestBody PassengerDTO passengerDTO){
         Passenger passenger = passengerService.changePersonalInfo(passengerDTO);
+        return new ResponseEntity<>(new PassengerDTO(passenger), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/get-logged")
+    public ResponseEntity<PassengerDTO> getLoggedPassenger(Principal principal) {
+        Passenger passenger = passengerService.findPassengerByEmail(principal.getName());
         return new ResponseEntity<>(new PassengerDTO(passenger), HttpStatus.OK);
     }
 }

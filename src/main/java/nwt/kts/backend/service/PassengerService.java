@@ -105,4 +105,8 @@ public class PassengerService {
         }
         return passenger;
     }
+
+    public Passenger findPassengerByEmail(String email) {
+        return passengerRepository.findPassengerByEmail(email);
+    }
 }
