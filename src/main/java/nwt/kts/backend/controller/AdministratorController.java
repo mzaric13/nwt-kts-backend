@@ -4,7 +4,7 @@ import nwt.kts.backend.dto.creation.AnsweredDriverDataCreationDTO;
 import nwt.kts.backend.dto.creation.PasswordChangeCreationDTO;
 import nwt.kts.backend.dto.creation.ProfilePictureCreationDTO;
 import nwt.kts.backend.dto.returnDTO.DriverDataReturnDTO;
-import nwt.kts.backend.dto.returnDTO.DriverReturnDTO;
+import nwt.kts.backend.dto.returnDTO.DriverDTO;
 import nwt.kts.backend.dto.returnDTO.PassengerDTO;
 import nwt.kts.backend.dto.returnDTO.AdminDTO;
 import nwt.kts.backend.entity.Driver;
@@ -77,11 +77,11 @@ public class AdministratorController {
     }
 
     @GetMapping(value = "/get-all-not-blocked-drivers")
-    public ResponseEntity<List<DriverReturnDTO>> getAllNotBlockedDrivers() {
+    public ResponseEntity<List<DriverDTO>> getAllNotBlockedDrivers() {
         List<Driver> drivers = administratorService.getAllNotBlockedDrivers();
-        List<DriverReturnDTO> driverReturnDTOs = new ArrayList<>();
+        List<DriverDTO> driverReturnDTOs = new ArrayList<>();
         for (Driver driver : drivers) {
-            driverReturnDTOs.add(new DriverReturnDTO(driver));
+            driverReturnDTOs.add(new DriverDTO(driver));
         }
         return new ResponseEntity<>(driverReturnDTOs, HttpStatus.FOUND);
     }
@@ -93,9 +93,9 @@ public class AdministratorController {
     }
 
     @PutMapping(value = "/block-driver/{email}")
-    public ResponseEntity<DriverReturnDTO> blockDriver(@PathVariable String email) {
+    public ResponseEntity<DriverDTO> blockDriver(@PathVariable String email) {
         Driver driver = administratorService.blockDriver(email);
-        return new ResponseEntity<>(new DriverReturnDTO(driver), HttpStatus.OK);
+        return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.OK);
     }
 
     @GetMapping(value = "/get-logged")

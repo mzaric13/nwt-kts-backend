@@ -86,4 +86,8 @@ public class DriverService {
         User user = userService.changeProfilePicture(profilePictureCreationDTO);
         return driverRepository.findDriverByEmail(user.getEmail());
     }
+
+    public Driver findDriverByEmail(String email) {
+        return driverRepository.findDriverByEmail(email);
+    }
 }

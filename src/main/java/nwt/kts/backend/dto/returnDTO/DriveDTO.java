@@ -37,7 +37,7 @@ public class DriveDTO {
     private Status status;
 
     @JsonProperty("driver")
-    private DriverReturnDTO driver;
+    private DriverDTO driver;
 
     @JsonProperty("passengers")
     private List<PassengerDTO> passengers;
@@ -57,7 +57,7 @@ public class DriveDTO {
             tags.add(new TagDTO(tag));
         }
         this.status = drive.getStatus();
-        this.driver = new DriverReturnDTO(drive.getDriver());
+        this.driver = new DriverDTO(drive.getDriver());
         this.passengers = new ArrayList<>();
         for (Passenger passenger: drive.getPassengers()) this.passengers.add(new PassengerDTO(passenger));
     }
