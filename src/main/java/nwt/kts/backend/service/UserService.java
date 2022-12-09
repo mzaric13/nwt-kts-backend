@@ -47,6 +47,10 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public User findUserByEmail(String email) {
+        return userRepository.findUserByEmail(email);
+    }
+
     private void setPersonalInfo(User user, String name, String surname, String city, String phoneNumber) {
         user.setName(name);
         user.setSurname(surname);

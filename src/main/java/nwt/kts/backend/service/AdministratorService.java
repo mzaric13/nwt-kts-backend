@@ -3,7 +3,7 @@ package nwt.kts.backend.service;
 import nwt.kts.backend.dto.creation.AnsweredDriverDataCreationDTO;
 import nwt.kts.backend.dto.creation.PasswordChangeCreationDTO;
 import nwt.kts.backend.dto.creation.ProfilePictureCreationDTO;
-import nwt.kts.backend.dto.returnDTO.UserReturnDTO;
+import nwt.kts.backend.dto.returnDTO.AdminDTO;
 import nwt.kts.backend.entity.Driver;
 import nwt.kts.backend.entity.DriverData;
 import nwt.kts.backend.entity.Passenger;
@@ -75,7 +75,7 @@ public class AdministratorService {
         return userRepository.findUserByEmail(user.getEmail());
     }
 
-    public User changePersonalInfo(UserReturnDTO userReturnDTO) {
+    public User changePersonalInfo(AdminDTO userReturnDTO) {
         User user = userRepository.findUserByEmail(userReturnDTO.getEmail());
         return userService.updatePersonalUserInfo(user, userReturnDTO.getName(), userReturnDTO.getSurname(), userReturnDTO.getCity(), userReturnDTO.getPhoneNumber());
     }
@@ -98,5 +98,9 @@ public class AdministratorService {
         Driver driver = driverRepository.findDriverByEmail(email);
         driver.setBlocked(true);
         return driverRepository.save(driver);
+    }
+
+    public User findAdminByEmail(String email) {
+        return userRepository.findUserByEmail(email);
     }
 }

@@ -14,7 +14,8 @@ values ('Novi Sad', 'mirko.ivanic@gmail.com', 'Mirko', '$2a$12$1YdTZA0jjbEM5Ey2p
        ('Novi Sad', 'branko.lazic@gmail.com', 'Branko', '$2a$12$1YdTZA0jjbEM5Ey2piVIpuVvH9vYYvCW69Sau3lFSN7Hw.wscUhYy', '+(381)-64-8301397', 'Lazic', 3, 0),
        ('Novi Sad', 'marko.simonovic@gmail.com', 'Marko', '$2a$12$1YdTZA0jjbEM5Ey2piVIpuVvH9vYYvCW69Sau3lFSN7Hw.wscUhYy', '+(381)-64-0048629', 'Simonovic', 3, 0),
        ('Novi Sad', 'marko.gobeljic@gmail.com', 'Marko', '$2a$12$1YdTZA0jjbEM5Ey2piVIpuVvH9vYYvCW69Sau3lFSN7Hw.wscUhYy', '+(381)-64-8475291', 'Gobeljic', 3, 0),
-       ('Novi Sad', 'darko.darkovic@gmail.com', 'Darko', '$2a$12$1YdTZA0jjbEM5Ey2piVIpuVvH9vYYvCW69Sau3lFSN7Hw.wscUhYy', '+(381)-64-8475222', 'Darkovic', 2, 0);
+       ('Novi Sad', 'darko.darkovic@gmail.com', 'Darko', '$2a$12$1YdTZA0jjbEM5Ey2piVIpuVvH9vYYvCW69Sau3lFSN7Hw.wscUhYy', '+(381)-64-8475222', 'Darkovic', 2, 0),
+       ('Novi Sad', 'admin.admin@gmail.com', 'Zoran', '$2a$12$1YdTZA0jjbEM5Ey2piVIpuVvH9vYYvCW69Sau3lFSN7Hw.wscUhYy', '+(381)-62-3321222', 'Bukorac', 1, 0);
 
 insert into drivers (is_available, is_blocked, id, vehicle_id)
 values (false, false, 1, 1), (false, false, 2, 3), (false, false, 3, 2), (false, false, 4, 4), (false, false, 5, 5);
