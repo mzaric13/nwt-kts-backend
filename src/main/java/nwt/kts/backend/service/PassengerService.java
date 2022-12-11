@@ -81,6 +81,14 @@ public class PassengerService {
         return passengerRepository.findPassengerByEmail(updatedUser.getEmail());
     }
 
+    public Passenger findPassengerById(int id) {
+        return passengerRepository.findPassengersById(id);
+    }
+
+    public Passenger savePassenger(Passenger passenger) {
+        return passengerRepository.save(passenger);
+    }
+    
     public Passenger createPassengerFacebookLogin(FacebookLoginData facebookLoginData, String email, String picture) {
         Passenger passenger = passengerRepository.findPassengerByEmail(email);
         if (passenger == null) {

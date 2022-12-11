@@ -3,6 +3,8 @@ package nwt.kts.backend.dto.returnDTO;
 import nwt.kts.backend.entity.Passenger;
 
 import javax.persistence.Column;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class PassengerDTO {
 
@@ -24,6 +26,8 @@ public class PassengerDTO {
 
     private boolean activated;
 
+    private Set<RouteDTO> favoriteRoutes;
+
     public PassengerDTO() {
     }
 
@@ -37,6 +41,7 @@ public class PassengerDTO {
         this.profilePicture = passenger.getPicture();
         this.activated = passenger.isActivated();
         this.isBlocked = passenger.isBlocked();
+        this.favoriteRoutes = passenger.getFavouriteRoutes().stream().map(RouteDTO::new).collect(Collectors.toSet());
     }
 
     public int getId() {
@@ -70,4 +75,12 @@ public class PassengerDTO {
     }
 
     public boolean isBlocked() {return isBlocked; }
+
+    public Set<RouteDTO> getFavoriteRoutes() {
+        return favoriteRoutes;
+    }
+
+    public void setFavoriteRoutes(Set<RouteDTO> favoriteRoutes) {
+        this.favoriteRoutes = favoriteRoutes;
+    }
 }
