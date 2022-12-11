@@ -92,4 +92,8 @@ public class Passenger extends User {
     public void addFavouriteRoute(Route route) {
         this.favouriteRoutes.add(route);
     }
+
+    public boolean removeFavouriteRoute(Route route) {
+        return this.favouriteRoutes.remove(route);
+    }
 }

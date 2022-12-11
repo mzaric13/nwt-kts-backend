@@ -64,8 +64,7 @@ public class PassengerController {
 
     @PutMapping(value = "/add-favorite-route")
     public ResponseEntity<Void> addFavoriteRoute(Principal principal, @RequestBody RouteDTO routeDTO) {
-        // TODO: Update id for finding passenger when security gets implemented
-        Passenger passenger = passengerService.findPassengerById(6);
+        Passenger passenger = passengerService.findPassengerByEmail(principal.getName());
         Route favoriteRoute;
         if (routeDTO.getId() == 0) {
             favoriteRoute = new Route(routeDTO);
@@ -88,5 +87,19 @@ public class PassengerController {
     public ResponseEntity<PassengerDTO> getLoggedPassenger(Principal principal) {
         Passenger passenger = passengerService.findPassengerByEmail(principal.getName());
         return new ResponseEntity<>(new PassengerDTO(passenger), HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/remove-favorite-route/{routeId}")
+    public ResponseEntity<Void> removeFavoriteRoute(Principal principal, @PathVariable Integer routeId) {
+        Passenger passenger = passengerService.findPassengerByEmail(principal.getName());
+        Route favoriteRoute = routeService.findRouteById(routeId);
+        if (favoriteRoute == null) {
+            throw new EntityNotFoundException("Route with the specified ID does not exist!");
+        }
+        if (!passenger.removeFavouriteRoute(favoriteRoute)) {
+            throw new EntityNotFoundException("Route is not in your favorites!");
+        }
+        passengerService.savePassenger(passenger);
+        return  new ResponseEntity<>(HttpStatus.OK);
     }
 }
