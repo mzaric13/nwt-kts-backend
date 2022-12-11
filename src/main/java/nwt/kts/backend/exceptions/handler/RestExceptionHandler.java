@@ -26,6 +26,9 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.mail.MessagingException;
+import javax.servlet.ServletException;
+
+import java.io.IOException;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -177,12 +180,6 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return buildResponseEntity(new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, ex));
     }
 
-    /**
-     * Handle Exception, handle generic Exception.class
-     *
-     * @param ex the Exception
-     * @return the ApiError object
-     */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     protected ResponseEntity<Object> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException ex,
                                                                       WebRequest request) {
@@ -226,12 +223,32 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(InvalidRatingCreationException.class)
-    protected  ResponseEntity<Object> handleInvalidRatingCreationException(InvalidRatingCreationException ex) {
+    protected ResponseEntity<Object> handleInvalidRatingCreationException(InvalidRatingCreationException ex) {
         ApiError apiError = new ApiError(INTERNAL_SERVER_ERROR);
         apiError.setMessage(ex.getMessage());
         return buildResponseEntity(apiError);
     }
 
+    @ExceptionHandler(IOException.class)
+    protected ResponseEntity<Object> handleIOException(IOException ex) {
+        ApiError apiError = new ApiError(INTERNAL_SERVER_ERROR);
+        apiError.setMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
+
+    @ExceptionHandler(ServletException.class)
+    protected ResponseEntity<Object> handleServletException(ServletException ex) {
+        ApiError apiError = new ApiError(INTERNAL_SERVER_ERROR);
+        apiError.setMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
+
+    /**
+     * Handle Exception, handle generic Exception.class
+     *
+     * @param ex the Exception
+     * @return the ApiError object
+     */
     @ExceptionHandler(Exception.class)
     protected  ResponseEntity<Object> handleOtherException(Exception ex) {
         ApiError apiError = new ApiError(INTERNAL_SERVER_ERROR);

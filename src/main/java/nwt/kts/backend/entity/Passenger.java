@@ -40,7 +40,7 @@ public class Passenger extends User {
     }
 
     public Passenger(String email, String phoneNumber, String password, String name, String surname,
-                     String city, Role role, boolean isBlocked, boolean activated, String profilePicture) {
+                     String city, Role role, boolean isBlocked, boolean activated, String profilePicture, Provider provider) {
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.password = password;
@@ -50,7 +50,19 @@ public class Passenger extends User {
         this.role = role;
         this.isBlocked = isBlocked;
         this.activated = activated;
-        this.profilePicture = profilePicture;
+        this.picture = profilePicture;
+        this.provider = provider;
+    }
+
+    public Passenger(String email, String name, String surname, Role role, String profilePicture, Provider provider) {
+        this.email = email;
+        this.name = name;
+        this.surname = surname;
+        this.role = role;
+        this.picture = profilePicture;
+        this.provider = provider;
+        this.isBlocked = false;
+        this.activated = true;
     }
 
     public boolean isBlocked() {

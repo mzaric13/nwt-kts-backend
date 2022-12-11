@@ -36,12 +36,14 @@ public class Driver extends User {
      * @param driverCreationDTO DriverDTO
      * @param role      Role
      */
-    public Driver(DriverCreationDTO driverCreationDTO, Role role, Type type){
-        super(driverCreationDTO.getEmail(), driverCreationDTO.getPhoneNumber(), driverCreationDTO.getPassword(), driverCreationDTO.getName(),
-                driverCreationDTO.getSurname(), driverCreationDTO.getCity(), role);
+    public Driver(String email, String phoneNumber, String password, String name, String surname,
+                  String city, DriverCreationDTO driverCreationDTO, Role role, Type type, Provider provider){
+        super(email, phoneNumber, password, name,
+                surname, city, role);
+        this.provider = provider;
         this.isBlocked = false;
         this.isAvailable = false;
-        this.profilePicture = "default.jpg";
+        this.picture = "default.jpg";
         this.vehicle = new Vehicle(driverCreationDTO.getVehicleCreationDTO().getRegistrationNumber(), driverCreationDTO.getVehicleCreationDTO().getName(), type);
     }
 

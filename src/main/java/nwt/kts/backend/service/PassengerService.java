@@ -1,10 +1,13 @@
 package nwt.kts.backend.service;
 
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import nwt.kts.backend.dto.creation.PassengerCreationDTO;
 import nwt.kts.backend.dto.creation.PasswordChangeCreationDTO;
 import nwt.kts.backend.dto.creation.ProfilePictureCreationDTO;
+import nwt.kts.backend.dto.login.FacebookLoginData;
 import nwt.kts.backend.dto.returnDTO.PassengerDTO;
 import nwt.kts.backend.entity.Passenger;
+import nwt.kts.backend.entity.Provider;
 import nwt.kts.backend.entity.Role;
 import nwt.kts.backend.entity.User;
 import nwt.kts.backend.exceptions.InvalidUserDataException;
@@ -14,6 +17,7 @@ import nwt.kts.backend.repository.RoleRepository;
 import nwt.kts.backend.repository.UserRepository;
 import nwt.kts.backend.validation.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
@@ -37,13 +41,16 @@ public class PassengerService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     private final UserValidator userValidator = new UserValidator();
 
     public Passenger createPassenger(PassengerCreationDTO passengerCreationDTO) throws MessagingException {
         userValidator.validateNewPassenger(passengerCreationDTO);
-        Role role = roleRepository.findRoleByName("passenger");
+        Role role = roleRepository.findRoleByName("ROLE_PASSENGER");
         if (role == null) throw new InvalidUserDataException("Passenger role doesn't exist.");
-        Passenger passenger = new Passenger(passengerCreationDTO.getEmail(), passengerCreationDTO.getPhoneNumber(), passengerCreationDTO.getPassword(), passengerCreationDTO.getName(), passengerCreationDTO.getSurname(), passengerCreationDTO.getCity(), role, false, false, "default.jpg");
+        Passenger passenger = new Passenger(passengerCreationDTO.getEmail(), passengerCreationDTO.getPhoneNumber(), passwordEncoder.encode(passengerCreationDTO.getPassword()), passengerCreationDTO.getName(), passengerCreationDTO.getSurname(), passengerCreationDTO.getCity(), role, false, false, "default.jpg", Provider.LOCAL);
         passenger = passengerRepository.save(passenger);
         emailService.sendActivationEmail(passenger);
         return passengerRepository.save(passenger);
@@ -81,5 +88,33 @@ public class PassengerService {
     public Passenger savePassenger(Passenger passenger) {
         return passengerRepository.save(passenger);
     }
+    
+    public Passenger createPassengerFacebookLogin(FacebookLoginData facebookLoginData, String email, String picture) {
+        Passenger passenger = passengerRepository.findPassengerByEmail(email);
+        if (passenger == null) {
+            Role role = roleRepository.findRoleByName("ROLE_PASSENGER");
+            if (role == null) throw new InvalidUserDataException("Passenger role doesn't exist.");
+            passenger = new Passenger(email, facebookLoginData.getName(), facebookLoginData.getSurname(), role, picture, Provider.FACEBOOK);
+            passenger = passengerRepository.save(passenger);
+        }
+        return passenger;
+    }
 
+    public Passenger createPassengerGoogleLogin(GoogleIdToken.Payload payload) {
+        Passenger passenger = passengerRepository.findPassengerByEmail(payload.getEmail());
+        if (passenger == null) {
+            Role role = roleRepository.findRoleByName("ROLE_PASSENGER");
+            if (role == null) throw new InvalidUserDataException("Passenger role doesn't exist.");
+            String name = (String) payload.get("given_name");
+            String surname = (String) payload.get("family_name");
+            String picture = (String) payload.get("picture");
+            passenger = new Passenger(payload.getEmail(), name, surname, role, picture, Provider.GOOGLE);
+            passenger = passengerRepository.save(passenger);
+        }
+        return passenger;
+    }
+
+    public Passenger findPassengerByEmail(String email) {
+        return passengerRepository.findPassengerByEmail(email);
+    }
 }

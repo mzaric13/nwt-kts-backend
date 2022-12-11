@@ -5,8 +5,8 @@ import nwt.kts.backend.dto.creation.PasswordChangeCreationDTO;
 import nwt.kts.backend.dto.creation.ProfilePictureCreationDTO;
 import nwt.kts.backend.dto.returnDTO.PassengerDTO;
 import nwt.kts.backend.dto.returnDTO.RouteDTO;
-import nwt.kts.backend.entity.Passenger;
 import nwt.kts.backend.entity.Route;
+import nwt.kts.backend.entity.Passenger;
 import nwt.kts.backend.service.PassengerService;
 import nwt.kts.backend.service.PointService;
 import nwt.kts.backend.service.RouteService;
@@ -82,5 +82,11 @@ public class PassengerController {
         passenger.addFavouriteRoute(favoriteRoute);
         passengerService.savePassenger(passenger);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+    
+    @GetMapping(value = "/get-logged")
+    public ResponseEntity<PassengerDTO> getLoggedPassenger(Principal principal) {
+        Passenger passenger = passengerService.findPassengerByEmail(principal.getName());
+        return new ResponseEntity<>(new PassengerDTO(passenger), HttpStatus.OK);
     }
 }

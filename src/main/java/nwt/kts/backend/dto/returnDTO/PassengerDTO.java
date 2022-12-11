@@ -14,8 +14,6 @@ public class PassengerDTO {
 
     private String phoneNumber;
 
-    private String password;
-
     private String name;
 
     private String surname;
@@ -37,11 +35,10 @@ public class PassengerDTO {
         this.id = passenger.getId();
         this.email = passenger.getEmail();
         this.phoneNumber = passenger.getPhoneNumber();
-        this.password = passenger.getPassword();
         this.name = passenger.getName();
         this.surname = passenger.getSurname();
         this.city = passenger.getCity();
-        this.profilePicture = passenger.getProfilePicture();
+        this.profilePicture = passenger.getPicture();
         this.activated = passenger.isActivated();
         this.isBlocked = passenger.isBlocked();
         this.favoriteRoutes = passenger.getFavouriteRoutes().stream().map(RouteDTO::new).collect(Collectors.toSet());
@@ -57,10 +54,6 @@ public class PassengerDTO {
 
     public String getPhoneNumber() {
         return phoneNumber;
-    }
-
-    public String getPassword() {
-        return password;
     }
 
     public String getName() {

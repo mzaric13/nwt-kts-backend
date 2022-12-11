@@ -1,7 +1,7 @@
 package nwt.kts.backend.dto.returnDTO;
 import nwt.kts.backend.entity.Driver;
 
-public class DriverReturnDTO {
+public class DriverDTO {
 
     private Integer id;
     private String email;
@@ -15,12 +15,12 @@ public class DriverReturnDTO {
     private boolean isBlocked;
     private boolean isAvailable;
 
-    public DriverReturnDTO() {
+    public DriverDTO() {
 
     }
 
-    public DriverReturnDTO(Integer id, String email, String phoneNumber, String password, String name,
-                           String surname, String city, String profilePicture, VehicleReturnDTO vehicle) {
+    public DriverDTO(Integer id, String email, String phoneNumber, String password, String name,
+                     String surname, String city, String profilePicture, VehicleReturnDTO vehicle) {
         this.id = id;
         this.email = email;
         this.phoneNumber = phoneNumber;
@@ -34,7 +34,7 @@ public class DriverReturnDTO {
         this.isAvailable = false;
     }
 
-    public DriverReturnDTO(Driver driver){
+    public DriverDTO(Driver driver){
         this.id = driver.getId();
         this.email = driver.getEmail();
         this.phoneNumber = driver.getPhoneNumber();
@@ -42,7 +42,7 @@ public class DriverReturnDTO {
         this.name = driver.getName();
         this.surname = driver.getSurname();
         this.city = driver.getCity();
-        this.profilePicture = driver.getProfilePicture();
+        this.profilePicture = driver.getPicture();
         this.isBlocked = driver.isBlocked();
         this.isAvailable = driver.isAvailable();
         this.vehicle = new VehicleReturnDTO(driver.getVehicle());
