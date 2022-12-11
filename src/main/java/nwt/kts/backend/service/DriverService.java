@@ -90,4 +90,8 @@ public class DriverService {
     public Driver findDriverByEmail(String email) {
         return driverRepository.findDriverByEmail(email);
     }
+
+    public DriverData findUnansweredDriverData(String email) {
+        return driverDataRepository.getDriverDataByIsAnsweredAndEmail(false, email);
+    }
 }

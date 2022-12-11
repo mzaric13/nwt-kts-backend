@@ -1,8 +1,10 @@
 package nwt.kts.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import nwt.kts.backend.dto.creation.UpdatedUserDataCreationDTO;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name="driver_data")
@@ -28,19 +30,24 @@ public class DriverData {
     @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm")
+    @Column(name="date_of_request", nullable = false, columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
+    private Timestamp dateOfRequest;
+
     @Column(name = "is_answered", nullable = false)
     private boolean isAnswered;
 
     public DriverData() {
     }
 
-    public DriverData(Integer id, String email, String name, String surname, String city, String phoneNumber, boolean isAnswered) {
+    public DriverData(Integer id, String email, String name, String surname, String city, String phoneNumber, Timestamp dateOfRequest, boolean isAnswered) {
         this.id = id;
         this.email = email;
         this.name = name;
         this.surname = surname;
         this.city = city;
         this.phoneNumber = phoneNumber;
+        this.dateOfRequest = dateOfRequest;
         this.isAnswered = isAnswered;
     }
 
@@ -51,6 +58,7 @@ public class DriverData {
         this.city = updatedUserDataCreationDTO.getCity();
         this.phoneNumber = updatedUserDataCreationDTO.getPhoneNumber();
         this.isAnswered = false;
+        this.dateOfRequest = new Timestamp(System.currentTimeMillis());
     }
 
     public Integer getId() {
@@ -107,5 +115,13 @@ public class DriverData {
 
     public void setAnswered(boolean answered) {
         isAnswered = answered;
+    }
+
+    public Timestamp getDateOfRequest() {
+        return dateOfRequest;
+    }
+
+    public void setDateOfRequest(Timestamp dateOfRequest) {
+        this.dateOfRequest = dateOfRequest;
     }
 }

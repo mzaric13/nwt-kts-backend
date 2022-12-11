@@ -2,7 +2,9 @@ package nwt.kts.backend.dto.returnDTO;
 
 import nwt.kts.backend.entity.DriverData;
 
-public class DriverDataReturnDTO {
+import java.sql.Timestamp;
+
+public class DriverDataDTO {
 
     private Integer id;
     private String email;
@@ -10,29 +12,33 @@ public class DriverDataReturnDTO {
     private String surname;
     private String city;
     private String phoneNumber;
+    private String dateOfRequest;
     private boolean isAnswered;
 
-    public DriverDataReturnDTO() {
+    public DriverDataDTO() {
 
     }
 
-    public DriverDataReturnDTO(Integer id, String email, String name, String surname, String city, String phoneNumber, boolean isAnswered) {
+    public DriverDataDTO(Integer id, String email, String name, String surname, String city, String phoneNumber, String dateOfRequest, boolean isAnswered) {
         this.id = id;
         this.email = email;
         this.name = name;
         this.surname = surname;
         this.city = city;
         this.phoneNumber = phoneNumber;
+        this.dateOfRequest = dateOfRequest;
         this.isAnswered = isAnswered;
     }
 
-    public DriverDataReturnDTO(DriverData driverData) {
+    public DriverDataDTO(DriverData driverData) {
         this.id = driverData.getId();
         this.email = driverData.getEmail();
         this.name = driverData.getName();
         this.surname = driverData.getSurname();
         this.city = driverData.getCity();
         this.phoneNumber = driverData.getPhoneNumber();
+        String date = driverData.getDateOfRequest().toString();
+        this.dateOfRequest = date.substring(0, date.length() - 7);
         this.isAnswered = driverData.isAnswered();
     }
 
@@ -91,4 +97,13 @@ public class DriverDataReturnDTO {
     public void setIsAnswered(boolean answered) {
         isAnswered = answered;
     }
+
+    public String getDateOfRequest() {
+        return dateOfRequest;
+    }
+
+    public void setDateOfRequest(String dateOfRequest) {
+        this.dateOfRequest = dateOfRequest;
+    }
+
 }

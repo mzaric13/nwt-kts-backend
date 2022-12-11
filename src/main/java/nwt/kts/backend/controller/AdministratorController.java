@@ -3,7 +3,7 @@ package nwt.kts.backend.controller;
 import nwt.kts.backend.dto.creation.AnsweredDriverDataCreationDTO;
 import nwt.kts.backend.dto.creation.PasswordChangeCreationDTO;
 import nwt.kts.backend.dto.creation.ProfilePictureCreationDTO;
-import nwt.kts.backend.dto.returnDTO.DriverDataReturnDTO;
+import nwt.kts.backend.dto.returnDTO.DriverDataDTO;
 import nwt.kts.backend.dto.returnDTO.DriverDTO;
 import nwt.kts.backend.dto.returnDTO.PassengerDTO;
 import nwt.kts.backend.dto.returnDTO.AdminDTO;
@@ -33,19 +33,19 @@ public class AdministratorController {
     private UserService userService;
 
     @GetMapping(value = "/get-unanswered-driver-data")
-    public ResponseEntity<List<DriverDataReturnDTO>> getUnansweredDriverData() {
+    public ResponseEntity<List<DriverDataDTO>> getUnansweredDriverData() {
         List<DriverData> unansweredDriverData = administratorService.getUnansweredDriverData();
-        List<DriverDataReturnDTO> unansweredDriverDataReturnDTOs = new ArrayList<>();
+        List<DriverDataDTO> unansweredDriverDataDTOs = new ArrayList<>();
         for (DriverData driverData : unansweredDriverData) {
-            unansweredDriverDataReturnDTOs.add(new DriverDataReturnDTO(driverData));
+            unansweredDriverDataDTOs.add(new DriverDataDTO(driverData));
         }
-        return new ResponseEntity<>(unansweredDriverDataReturnDTOs, HttpStatus.FOUND);
+        return new ResponseEntity<>(unansweredDriverDataDTOs, HttpStatus.OK);
     }
 
     @PutMapping(value = "/answer-driver-data-change")
-    public ResponseEntity<DriverDataReturnDTO> answerDriverDataChange(@RequestBody AnsweredDriverDataCreationDTO answeredDriverDataCreationDTO) {
+    public ResponseEntity<DriverDataDTO> answerDriverDataChange(@RequestBody AnsweredDriverDataCreationDTO answeredDriverDataCreationDTO) {
         DriverData driverData = administratorService.answerDriverDataChange(answeredDriverDataCreationDTO);
-        return new ResponseEntity<>(new DriverDataReturnDTO(driverData), HttpStatus.OK);
+        return new ResponseEntity<>(new DriverDataDTO(driverData), HttpStatus.OK);
     }
 
     @PutMapping(value = "/change-password")
@@ -73,7 +73,7 @@ public class AdministratorController {
         for (Passenger passenger : passengers) {
             passengerDTOs.add(new PassengerDTO(passenger));
         }
-        return new ResponseEntity<>(passengerDTOs, HttpStatus.FOUND);
+        return new ResponseEntity<>(passengerDTOs, HttpStatus.OK);
     }
 
     @GetMapping(value = "/get-all-not-blocked-drivers")
@@ -83,7 +83,7 @@ public class AdministratorController {
         for (Driver driver : drivers) {
             driverReturnDTOs.add(new DriverDTO(driver));
         }
-        return new ResponseEntity<>(driverReturnDTOs, HttpStatus.FOUND);
+        return new ResponseEntity<>(driverReturnDTOs, HttpStatus.OK);
     }
 
     @PutMapping(value = "/block-passenger/{email}")
@@ -99,7 +99,7 @@ public class AdministratorController {
     }
 
     @GetMapping(value = "/get-logged")
-    public ResponseEntity<AdminDTO> getLoggedPassenger(Principal principal) {
+    public ResponseEntity<AdminDTO> getLoggedAdmin(Principal principal) {
         User administrator = userService.findUserByEmail(principal.getName());
         return new ResponseEntity<>(new AdminDTO(administrator), HttpStatus.OK);
     }

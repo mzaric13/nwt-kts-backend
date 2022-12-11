@@ -1,5 +1,7 @@
 package nwt.kts.backend.dto.creation;
 
+import java.sql.Timestamp;
+
 public class UpdatedUserDataCreationDTO {
 
     private String email;

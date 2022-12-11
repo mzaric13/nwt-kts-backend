@@ -11,4 +11,6 @@ public interface DriverDataRepository extends JpaRepository<DriverData, Integer>
 
     DriverData getDriverDataById(Integer id);
 
+    DriverData getDriverDataByIsAnsweredAndEmail(boolean answered, String email);
+
 }

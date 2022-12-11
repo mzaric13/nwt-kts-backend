@@ -4,9 +4,9 @@ import nwt.kts.backend.dto.creation.DriverCreationDTO;
 import nwt.kts.backend.dto.creation.PasswordChangeCreationDTO;
 import nwt.kts.backend.dto.creation.ProfilePictureCreationDTO;
 import nwt.kts.backend.dto.creation.UpdatedUserDataCreationDTO;
-import nwt.kts.backend.dto.returnDTO.DriverDataReturnDTO;
+import nwt.kts.backend.dto.returnDTO.DriverDataAnsweredDTO;
+import nwt.kts.backend.dto.returnDTO.DriverDataDTO;
 import nwt.kts.backend.dto.returnDTO.DriverDTO;
-import nwt.kts.backend.dto.returnDTO.PassengerDTO;
 import nwt.kts.backend.entity.Driver;
 import nwt.kts.backend.entity.DriverData;
 import nwt.kts.backend.service.DriverService;
@@ -44,9 +44,9 @@ public class DriverController {
     }
     
     @PostMapping(value="/send-update-request")
-    public ResponseEntity<DriverDataReturnDTO> sendUpdateRequest(@RequestBody UpdatedUserDataCreationDTO updatedUserDataCreationDTO){
+    public ResponseEntity<DriverDataDTO> sendUpdateRequest(@RequestBody UpdatedUserDataCreationDTO updatedUserDataCreationDTO){
         DriverData driverData = driverService.sendUpdateRequest(updatedUserDataCreationDTO);
-        return new ResponseEntity<>(new DriverDataReturnDTO(driverData), HttpStatus.CREATED);
+        return new ResponseEntity<>(new DriverDataDTO(driverData), HttpStatus.CREATED);
     }
 
     @PutMapping(value="/change-password")
@@ -62,8 +62,17 @@ public class DriverController {
     }
 
     @GetMapping(value = "/get-logged")
-    public ResponseEntity<DriverDTO> getLoggedPassenger(Principal principal) {
+    public ResponseEntity<DriverDTO> getLoggedDriver(Principal principal) {
         Driver driver = driverService.findDriverByEmail(principal.getName());
         return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.OK);
+    }
+
+    @GetMapping(value="/is-unanswered-driver-data-present/{email}")
+    public ResponseEntity<DriverDataAnsweredDTO> isUnansweredDriverDataPresent(@PathVariable String email) {
+        DriverData driverData = driverService.findUnansweredDriverData(email);
+        if (driverData != null) {
+            return new ResponseEntity<>(new DriverDataAnsweredDTO(false), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new DriverDataAnsweredDTO(true), HttpStatus.OK);
     }
 }

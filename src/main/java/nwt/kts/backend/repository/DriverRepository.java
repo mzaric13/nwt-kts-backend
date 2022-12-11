@@ -10,4 +10,5 @@ public interface DriverRepository extends JpaRepository<Driver, Integer> {
     Driver findDriverByEmail(String email);
 
     List<Driver> findDriversByIsBlocked(boolean blocked);
+
 }
