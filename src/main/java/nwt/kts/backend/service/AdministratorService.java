@@ -80,23 +80,23 @@ public class AdministratorService {
         return userService.updatePersonalUserInfo(user, userReturnDTO.getName(), userReturnDTO.getSurname(), userReturnDTO.getCity(), userReturnDTO.getPhoneNumber());
     }
 
-    public List<Passenger> getAllNotBlockedPassengers() {
-        return passengerRepository.findPassengersByIsBlocked(false);
+    public List<Passenger> getAllPassengers() {
+        return passengerRepository.findAll();
     }
 
-    public List<Driver> getAllNotBlockedDrivers() {
-        return driverRepository.findDriversByIsBlocked(false);
+    public List<Driver> getAllDrivers() {
+        return driverRepository.findAll();
     }
 
-    public Passenger blockPassenger(String email) {
-        Passenger passenger = passengerRepository.findPassengerByEmail(email);
-        passenger.setBlocked(true);
+    public Passenger changeBlockedStatusPassenger(Integer id) {
+        Passenger passenger = passengerRepository.findPassengerById(id);
+        passenger.setBlocked(!passenger.isBlocked());
         return passengerRepository.save(passenger);
     }
 
-    public Driver blockDriver(String email) {
-        Driver driver = driverRepository.findDriverByEmail(email);
-        driver.setBlocked(true);
+    public Driver changeBlockedStatusDriver(Integer id) {
+        Driver driver = driverRepository.findDriverById(id);
+        driver.setBlocked(!driver.isBlocked());
         return driverRepository.save(driver);
     }
 

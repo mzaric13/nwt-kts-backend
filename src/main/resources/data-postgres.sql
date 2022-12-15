@@ -18,10 +18,10 @@ values ('Novi Sad', 'mirko.ivanic@gmail.com', 'Mirko', '$2a$12$1YdTZA0jjbEM5Ey2p
        ('Novi Sad', 'admin.admin@gmail.com', 'Zoran', '$2a$12$1YdTZA0jjbEM5Ey2piVIpuVvH9vYYvCW69Sau3lFSN7Hw.wscUhYy', '+(381)-62-3321222', 'Bukorac', 1, 0);
 
 insert into drivers (is_available, is_blocked, id, vehicle_id)
-values (false, false, 1, 1), (false, false, 2, 3), (false, false, 3, 2), (false, false, 4, 4), (false, false, 5, 5);
+values (false, true, 1, 1), (false, false, 2, 3), (false, false, 3, 2), (false, false, 4, 4), (false, false, 5, 5);
 
 insert into passengers (activated, is_blocked, id)
-values (true, false, 6);
+values (true, true, 6);
 
 insert into tags (id, name)
 values (1, 'Pet friendly'),

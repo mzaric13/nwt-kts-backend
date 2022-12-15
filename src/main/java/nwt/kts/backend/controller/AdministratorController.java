@@ -3,6 +3,7 @@ package nwt.kts.backend.controller;
 import nwt.kts.backend.dto.creation.AnsweredDriverDataCreationDTO;
 import nwt.kts.backend.dto.creation.PasswordChangeCreationDTO;
 import nwt.kts.backend.dto.creation.ProfilePictureCreationDTO;
+import nwt.kts.backend.dto.creation.UserIdDTO;
 import nwt.kts.backend.dto.returnDTO.DriverDataDTO;
 import nwt.kts.backend.dto.returnDTO.DriverDTO;
 import nwt.kts.backend.dto.returnDTO.PassengerDTO;
@@ -66,9 +67,9 @@ public class AdministratorController {
         return new ResponseEntity<>(new AdminDTO(user), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/get-all-not-blocked-passengers")
-    public ResponseEntity<List<PassengerDTO>> getAllNotBlockedPassengers() {
-        List<Passenger> passengers = administratorService.getAllNotBlockedPassengers();
+    @GetMapping(value = "/get-all-passengers")
+    public ResponseEntity<List<PassengerDTO>> getAllPassengers() {
+        List<Passenger> passengers = administratorService.getAllPassengers();
         List<PassengerDTO> passengerDTOs = new ArrayList<>();
         for (Passenger passenger : passengers) {
             passengerDTOs.add(new PassengerDTO(passenger));
@@ -76,9 +77,9 @@ public class AdministratorController {
         return new ResponseEntity<>(passengerDTOs, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/get-all-not-blocked-drivers")
-    public ResponseEntity<List<DriverDTO>> getAllNotBlockedDrivers() {
-        List<Driver> drivers = administratorService.getAllNotBlockedDrivers();
+    @GetMapping(value = "/get-all-drivers")
+    public ResponseEntity<List<DriverDTO>> getAllDrivers() {
+        List<Driver> drivers = administratorService.getAllDrivers();
         List<DriverDTO> driverReturnDTOs = new ArrayList<>();
         for (Driver driver : drivers) {
             driverReturnDTOs.add(new DriverDTO(driver));
@@ -86,15 +87,15 @@ public class AdministratorController {
         return new ResponseEntity<>(driverReturnDTOs, HttpStatus.OK);
     }
 
-    @PutMapping(value = "/block-passenger/{email}")
-    public ResponseEntity<PassengerDTO> blockPassenger(@PathVariable String email) {
-        Passenger passenger = administratorService.blockPassenger(email);
+    @PutMapping(value = "/change-block-status-passenger")
+    public ResponseEntity<PassengerDTO> changeBlockStatusPassenger(@RequestBody UserIdDTO userIdDTO) {
+        Passenger passenger = administratorService.changeBlockedStatusPassenger(userIdDTO.getId());
         return new ResponseEntity<>(new PassengerDTO(passenger), HttpStatus.OK);
     }
 
-    @PutMapping(value = "/block-driver/{email}")
-    public ResponseEntity<DriverDTO> blockDriver(@PathVariable String email) {
-        Driver driver = administratorService.blockDriver(email);
+    @PutMapping(value = "/change-block-status-driver")
+    public ResponseEntity<DriverDTO> changeBlockStatusDriver(@RequestBody UserIdDTO userIdDTO) {
+        Driver driver = administratorService.changeBlockedStatusDriver(userIdDTO.getId());
         return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.OK);
     }
 
