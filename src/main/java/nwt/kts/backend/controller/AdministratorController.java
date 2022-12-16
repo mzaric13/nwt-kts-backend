@@ -89,13 +89,13 @@ public class AdministratorController {
 
     @PutMapping(value = "/change-block-status-passenger")
     public ResponseEntity<PassengerDTO> changeBlockStatusPassenger(@RequestBody UserIdDTO userIdDTO) {
-        Passenger passenger = administratorService.changeBlockedStatusPassenger(userIdDTO.getId());
+        Passenger passenger = administratorService.changeBlockedStatusPassenger(userIdDTO);
         return new ResponseEntity<>(new PassengerDTO(passenger), HttpStatus.OK);
     }
 
     @PutMapping(value = "/change-block-status-driver")
     public ResponseEntity<DriverDTO> changeBlockStatusDriver(@RequestBody UserIdDTO userIdDTO) {
-        Driver driver = administratorService.changeBlockedStatusDriver(userIdDTO.getId());
+        Driver driver = administratorService.changeBlockedStatusDriver(userIdDTO);
         return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.OK);
     }
 

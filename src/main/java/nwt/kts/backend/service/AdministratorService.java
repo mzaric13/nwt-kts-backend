@@ -3,6 +3,7 @@ package nwt.kts.backend.service;
 import nwt.kts.backend.dto.creation.AnsweredDriverDataCreationDTO;
 import nwt.kts.backend.dto.creation.PasswordChangeCreationDTO;
 import nwt.kts.backend.dto.creation.ProfilePictureCreationDTO;
+import nwt.kts.backend.dto.creation.UserIdDTO;
 import nwt.kts.backend.dto.returnDTO.AdminDTO;
 import nwt.kts.backend.entity.Driver;
 import nwt.kts.backend.entity.DriverData;
@@ -88,14 +89,16 @@ public class AdministratorService {
         return driverRepository.findAll();
     }
 
-    public Passenger changeBlockedStatusPassenger(Integer id) {
-        Passenger passenger = passengerRepository.findPassengerById(id);
+    public Passenger changeBlockedStatusPassenger(UserIdDTO userIdDTO) {
+        Passenger passenger = passengerRepository.findPassengerById(userIdDTO.getId());
+        //TODO DODAJ SLANJE PORUKE NA LIVE CHAT (poruka : userIdDTO.getReasoning())
         passenger.setBlocked(!passenger.isBlocked());
         return passengerRepository.save(passenger);
     }
 
-    public Driver changeBlockedStatusDriver(Integer id) {
-        Driver driver = driverRepository.findDriverById(id);
+    public Driver changeBlockedStatusDriver(UserIdDTO userIdDTO) {
+        Driver driver = driverRepository.findDriverById(userIdDTO.getId());
+        //TODO DODAJ SLANJE PORUKE NA LIVE CHAT (poruka : userIdDTO.getReasoning())
         driver.setBlocked(!driver.isBlocked());
         return driverRepository.save(driver);
     }
