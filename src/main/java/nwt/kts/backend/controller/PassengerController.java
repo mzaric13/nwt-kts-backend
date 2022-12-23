@@ -102,4 +102,11 @@ public class PassengerController {
         passengerService.savePassenger(passenger);
         return  new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @PutMapping(value = "/add-tokens/{tokensToAdd}")
+    public ResponseEntity<PassengerDTO> addTokens(Principal principal, @PathVariable int tokensToAdd) {
+        Passenger passenger = passengerService.findPassengerByEmail(principal.getName());
+        passenger = passengerService.addTokens(passenger, tokensToAdd);
+        return new ResponseEntity<>(new PassengerDTO(passenger), HttpStatus.OK);
+    }
 }

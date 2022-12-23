@@ -28,6 +28,8 @@ public class PassengerDTO {
 
     private Set<RouteDTO> favoriteRoutes;
 
+    private int tokens;
+
     public PassengerDTO() {
     }
 
@@ -42,6 +44,7 @@ public class PassengerDTO {
         this.activated = passenger.isActivated();
         this.isBlocked = passenger.isBlocked();
         this.favoriteRoutes = passenger.getFavouriteRoutes().stream().map(RouteDTO::new).collect(Collectors.toSet());
+        this.tokens = passenger.getTokens();
     }
 
     public int getId() {
@@ -82,5 +85,9 @@ public class PassengerDTO {
 
     public void setFavoriteRoutes(Set<RouteDTO> favoriteRoutes) {
         this.favoriteRoutes = favoriteRoutes;
+    }
+
+    public int getTokens() {
+        return tokens;
     }
 }
