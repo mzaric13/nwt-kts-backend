@@ -12,8 +12,8 @@ public class DriverDTO {
     private String city;
     private VehicleReturnDTO vehicle;
     private String profilePicture;
-    private boolean isBlocked;
-    private boolean isAvailable;
+    private boolean blocked;
+    private boolean available;
 
     public DriverDTO() {
 
@@ -30,8 +30,8 @@ public class DriverDTO {
         this.city = city;
         this.profilePicture = profilePicture;
         this.vehicle = vehicle;
-        this.isBlocked = false;
-        this.isAvailable = false;
+        this.blocked = false;
+        this.available = false;
     }
 
     public DriverDTO(Driver driver){
@@ -43,8 +43,8 @@ public class DriverDTO {
         this.surname = driver.getSurname();
         this.city = driver.getCity();
         this.profilePicture = driver.getPicture();
-        this.isBlocked = driver.isBlocked();
-        this.isAvailable = driver.isAvailable();
+        this.blocked = driver.isBlocked();
+        this.available = driver.isAvailable();
         this.vehicle = new VehicleReturnDTO(driver.getVehicle());
     }
 
@@ -121,18 +121,18 @@ public class DriverDTO {
     }
 
     public boolean isBlocked() {
-        return isBlocked;
+        return blocked;
     }
 
     public void setIsBlocked(boolean blocked) {
-        isBlocked = blocked;
+        blocked = blocked;
     }
 
     public boolean isAvailable() {
-        return isAvailable;
+        return available;
     }
 
     public void setIsAvailable(boolean available) {
-        isAvailable = available;
+        available = available;
     }
 }
