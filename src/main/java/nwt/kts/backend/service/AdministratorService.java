@@ -3,6 +3,7 @@ package nwt.kts.backend.service;
 import nwt.kts.backend.dto.creation.AnsweredDriverDataCreationDTO;
 import nwt.kts.backend.dto.creation.PasswordChangeCreationDTO;
 import nwt.kts.backend.dto.creation.ProfilePictureCreationDTO;
+import nwt.kts.backend.dto.creation.UserIdDTO;
 import nwt.kts.backend.dto.returnDTO.AdminDTO;
 import nwt.kts.backend.entity.Driver;
 import nwt.kts.backend.entity.DriverData;
@@ -80,23 +81,25 @@ public class AdministratorService {
         return userService.updatePersonalUserInfo(user, userReturnDTO.getName(), userReturnDTO.getSurname(), userReturnDTO.getCity(), userReturnDTO.getPhoneNumber());
     }
 
-    public List<Passenger> getAllNotBlockedPassengers() {
-        return passengerRepository.findPassengersByIsBlocked(false);
+    public List<Passenger> getAllPassengers() {
+        return passengerRepository.findAll();
     }
 
-    public List<Driver> getAllNotBlockedDrivers() {
-        return driverRepository.findDriversByIsBlocked(false);
+    public List<Driver> getAllDrivers() {
+        return driverRepository.findAll();
     }
 
-    public Passenger blockPassenger(String email) {
-        Passenger passenger = passengerRepository.findPassengerByEmail(email);
-        passenger.setBlocked(true);
+    public Passenger changeBlockedStatusPassenger(UserIdDTO userIdDTO) {
+        Passenger passenger = passengerRepository.findPassengerById(userIdDTO.getId());
+        //TODO DODAJ SLANJE PORUKE NA LIVE CHAT (poruka : userIdDTO.getReasoning())
+        passenger.setBlocked(!passenger.isBlocked());
         return passengerRepository.save(passenger);
     }
 
-    public Driver blockDriver(String email) {
-        Driver driver = driverRepository.findDriverByEmail(email);
-        driver.setBlocked(true);
+    public Driver changeBlockedStatusDriver(UserIdDTO userIdDTO) {
+        Driver driver = driverRepository.findDriverById(userIdDTO.getId());
+        //TODO DODAJ SLANJE PORUKE NA LIVE CHAT (poruka : userIdDTO.getReasoning())
+        driver.setBlocked(!driver.isBlocked());
         return driverRepository.save(driver);
     }
 

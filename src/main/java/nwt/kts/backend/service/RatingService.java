@@ -30,7 +30,7 @@ public class RatingService {
 
     public Rating createRating(RatingCreationDTO ratingCreationDTO) {
         Drive drive = driveRepository.findDriveById(ratingCreationDTO.getDriveId());
-        Passenger passenger = passengerRepository.findPassengersById(ratingCreationDTO.getPassengerId());
+        Passenger passenger = passengerRepository.findPassengerById(ratingCreationDTO.getPassengerId());
         Rating rating = ratingRepository.findRatingByDriveAndPassenger(drive, passenger);
         if (rating == null) {
             ratingValidator.validateRatingCreation(drive.getEndDate());

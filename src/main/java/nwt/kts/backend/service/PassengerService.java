@@ -82,7 +82,7 @@ public class PassengerService {
     }
 
     public Passenger findPassengerById(int id) {
-        return passengerRepository.findPassengersById(id);
+        return passengerRepository.findPassengerById(id);
     }
 
     public Passenger savePassenger(Passenger passenger) {
