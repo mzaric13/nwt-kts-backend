@@ -117,4 +117,10 @@ public class PassengerService {
     public Passenger findPassengerByEmail(String email) {
         return passengerRepository.findPassengerByEmail(email);
     }
+
+    public Passenger addTokens(Passenger passenger, int tokensToAdd) {
+        int currentTokens = passenger.getTokens();
+        passenger.setTokens(currentTokens + tokensToAdd);
+        return passengerRepository.save(passenger);
+    }
 }

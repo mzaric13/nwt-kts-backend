@@ -24,9 +24,13 @@ public class Passenger extends User {
     @Column(name = "activated", nullable = false)
     private boolean activated;
 
+    @Column(name = "tokens", nullable = false)
+    private int tokens;
+
     public Passenger(){
         this.isBlocked = false;
         this.favouriteRoutes = new HashSet<>();
+        this.tokens = 0;
     }
 
     public Passenger(Integer id, String email, String phoneNumber, String password, String name, String surname,
@@ -52,6 +56,7 @@ public class Passenger extends User {
         this.activated = activated;
         this.picture = profilePicture;
         this.provider = provider;
+        this.tokens = 0;
     }
 
     public Passenger(String email, String name, String surname, Role role, String profilePicture, Provider provider) {
@@ -63,6 +68,7 @@ public class Passenger extends User {
         this.provider = provider;
         this.isBlocked = false;
         this.activated = true;
+        this.tokens = 0;
     }
 
     public boolean isBlocked() {
@@ -95,5 +101,13 @@ public class Passenger extends User {
 
     public boolean removeFavouriteRoute(Route route) {
         return this.favouriteRoutes.remove(route);
+    }
+
+    public int getTokens() {
+        return tokens;
+    }
+
+    public void setTokens(int tokens) {
+        this.tokens = tokens;
     }
 }

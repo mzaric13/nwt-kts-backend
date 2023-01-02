@@ -20,8 +20,8 @@ values ('Novi Sad', 'mirko.ivanic@gmail.com', 'Mirko', '$2a$12$1YdTZA0jjbEM5Ey2p
 insert into drivers (is_available, is_blocked, id, vehicle_id)
 values (false, true, 1, 1), (false, false, 2, 3), (false, false, 3, 2), (false, false, 4, 4), (false, false, 5, 5);
 
-insert into passengers (activated, is_blocked, id)
-values (true, true, 6);
+insert into passengers (activated, is_blocked, id, tokens)
+values (true, true, 6, 10);
 
 insert into tags (id, name)
 values (1, 'Pet friendly'),
