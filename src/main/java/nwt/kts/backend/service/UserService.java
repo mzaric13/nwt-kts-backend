@@ -2,6 +2,7 @@ package nwt.kts.backend.service;
 
 import nwt.kts.backend.dto.creation.PasswordChangeCreationDTO;
 import nwt.kts.backend.dto.creation.ProfilePictureCreationDTO;
+import nwt.kts.backend.dto.returnDTO.PasswordResetDTO;
 import nwt.kts.backend.entity.User;
 import nwt.kts.backend.repository.UserRepository;
 import nwt.kts.backend.validation.UserValidator;
@@ -56,6 +57,13 @@ public class UserService {
         user.setSurname(surname);
         user.setCity(city);
         user.setPhoneNumber(phoneNumber);
+    }
+
+    public User resetPassword(PasswordResetDTO passwordResetDTO, String email) {
+        userValidator.validatePasswords(passwordResetDTO.getPassword(), passwordResetDTO.getConfirmPassword());
+        User user = userRepository.findUserByEmail(email);
+        user.setPassword(passwordEncoder.encode(passwordResetDTO.getPassword()));
+        return userRepository.save(user);
     }
 
 }

@@ -1,6 +1,7 @@
 package nwt.kts.backend.service;
 
 import nwt.kts.backend.entity.Passenger;
+import nwt.kts.backend.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.mail.SimpleMailMessage;
@@ -40,6 +41,17 @@ public class EmailService {
     }
 
     private String buildEmail(String passengerName, int id) {
-        return "<a href=\"" + "http://localhost:9000/passengers/activate-account/" + id  + "\">Activate Now</a>";
+        return "<a href=\"" + "http://localhost:4200/activated-account/" + id  + "\">Activate Now</a>";
+    }
+
+    @Async
+    public void sendPasswordResetEmail(User user) throws MessagingException {
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+        helper.setTo(Objects.requireNonNull(env.getProperty(emailTo)));
+        helper.setFrom(emailFrom);
+        helper.setSubject("Password reset");
+        helper.setText("You can reset your password " + "<a href=\"" + "http://localhost:4200/reset-password/" + user.getEmail()  + "\">here</a>.", true);
+        javaMailSender.send(mimeMessage);
     }
 }
