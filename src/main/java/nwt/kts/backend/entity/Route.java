@@ -1,5 +1,6 @@
 package nwt.kts.backend.entity;
 
+import nwt.kts.backend.dto.creation.RouteCreationDTO;
 import nwt.kts.backend.dto.returnDTO.RouteDTO;
 
 import javax.persistence.*;
@@ -48,6 +49,24 @@ public class Route {
         this.expectedTime = routeDTO.getExpectedTime();
         this.length = routeDTO.getLength();
         this.routePath = routeDTO.getRoutePath().stream().map(Point::new).collect(Collectors.toSet());
+    }
+
+    public Route(RouteCreationDTO routeCreationDTO) {
+        this.routeName = routeCreationDTO.getRouteName();
+        this.startPoint = new Point(routeCreationDTO.getStartPoint());
+        this.endPoint = new Point(routeCreationDTO.getEndPoint());
+        this.expectedTime = routeCreationDTO.getExpectedTime();
+        this.length = routeCreationDTO.getLength();
+        this.routePath = routeCreationDTO.getRoutePath().stream().map(Point::new).collect(Collectors.toSet());
+    }
+
+    public Route(String routeName, Point startPoint, Point endPoint, double expectedTime, double length, Set<Point> routePath) {
+        this.routeName = routeName;
+        this.startPoint = startPoint;
+        this.endPoint = endPoint;
+        this.expectedTime = expectedTime;
+        this.length = length;
+        this.routePath = routePath;
     }
 
     public Integer getId() {

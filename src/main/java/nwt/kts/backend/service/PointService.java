@@ -14,4 +14,8 @@ public class PointService {
     public Point savePoint(Point point) {
         return pointRepository.save(point);
     }
+
+    public Point findPointByLatitudeAndLongitude(Point point) {
+        return pointRepository.findByLatitudeAndLongitude(point.getLatitude(), point.getLongitude());
+    }
 }

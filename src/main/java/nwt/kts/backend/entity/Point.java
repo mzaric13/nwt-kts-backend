@@ -1,5 +1,6 @@
 package nwt.kts.backend.entity;
 
+import nwt.kts.backend.dto.creation.PointCreationDTO;
 import nwt.kts.backend.dto.returnDTO.PointDTO;
 
 import javax.persistence.*;
@@ -29,6 +30,16 @@ public class Point {
     public Point(PointDTO pointDTO) {
         this.latitude = pointDTO.getLatitude();
         this.longitude = pointDTO.getLongitude();
+    }
+
+    public Point(PointCreationDTO pointCreationDTO) {
+        this.latitude = pointCreationDTO.getLatitude();
+        this.longitude = pointCreationDTO.getLongitude();
+    }
+
+    public Point(double latitude, double longitude) {
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public Integer getId() {
