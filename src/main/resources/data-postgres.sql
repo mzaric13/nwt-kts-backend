@@ -3,6 +3,10 @@ insert into vehicle_types (name) values ('SUV'), ('Crossover'), ('Sedan'), ('Tru
 
 insert into roles (name) values ('ROLE_ADMIN'), ('ROLE_PASSENGER'), ('ROLE_DRIVER');
 
+-- stajalista
+insert into points (latitude, longitude) values (45.238548, 19.848225), (45.243097, 19.836284), (45.256863, 19.844129),
+                                                (45.255055, 19.810161), (45.246540, 19.849282);
+
 insert into vehicles (name, registration_number, type_id)
 values ('Audi SQ7', 'NS482AL', 1), ('Citroen C4 Picasso', 'NS205MM', 6), ('BMW i3', 'NS943HG', 7),
        ('Peugeot 208', 'NS122MK', 5), ('Volkswagen Jetta', 'NS003ZX', 3);
@@ -17,11 +21,11 @@ values ('Novi Sad', 'mirko.ivanic@gmail.com', 'Mirko', '$2a$12$1YdTZA0jjbEM5Ey2p
        ('Novi Sad', 'darko.darkovic@gmail.com', 'Darko', '$2a$12$1YdTZA0jjbEM5Ey2piVIpuVvH9vYYvCW69Sau3lFSN7Hw.wscUhYy', '+(381)-64-8475222', 'Darkovic', 2, 0),
        ('Novi Sad', 'admin.admin@gmail.com', 'Zoran', '$2a$12$1YdTZA0jjbEM5Ey2piVIpuVvH9vYYvCW69Sau3lFSN7Hw.wscUhYy', '+(381)-62-3321222', 'Bukorac', 1, 0);
 
-insert into drivers (is_available, is_blocked, id, vehicle_id)
-values (false, true, 1, 1), (false, false, 2, 3), (false, false, 3, 2), (false, false, 4, 4), (false, false, 5, 5);
+insert into drivers (is_available, is_blocked, id, vehicle_id, location_id)
+values (false, true, 1, 1, 1), (false, false, 2, 3, 2), (false, false, 3, 2, 3), (false, false, 4, 4, 4), (false, false, 5, 5, 5);
 
 insert into passengers (activated, is_blocked, id, tokens)
-values (true, true, 6, 10);
+values (true, false, 6, 10);
 
 insert into tags (id, name)
 values (1, 'Pet friendly'),
