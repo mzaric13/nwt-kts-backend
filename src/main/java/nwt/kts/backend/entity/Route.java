@@ -19,13 +19,10 @@ public class Route {
     @Column(name="route_name")
     private String routeName;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name="start_point")
-    private Point startPoint;
-
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name="end_point")
-    private Point endPoint;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "route_waypoints", joinColumns = @JoinColumn(name = "route_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "point_id", referencedColumnName = "id"))
+    private Set<Point> waypoints;
 
     @Column(name = "expected_time", nullable = false)
     private double expectedTime;
@@ -33,40 +30,29 @@ public class Route {
     @Column(name = "length", nullable = false)
     private double length;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "route_points", joinColumns = @JoinColumn(name = "route_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "point_id", referencedColumnName = "id"))
-    private Set<Point> routePath;
-
     public Route() {
 
     }
 
     public Route(RouteDTO routeDTO) {
         this.routeName = routeDTO.getRouteName();
-        this.startPoint = new Point(routeDTO.getStartPoint());
-        this.endPoint = new Point(routeDTO.getEndPoint());
         this.expectedTime = routeDTO.getExpectedTime();
         this.length = routeDTO.getLength();
-        this.routePath = routeDTO.getRoutePath().stream().map(Point::new).collect(Collectors.toSet());
+        this.waypoints = routeDTO.getWaypoints().stream().map(Point::new).collect(Collectors.toSet());
     }
 
     public Route(RouteCreationDTO routeCreationDTO) {
         this.routeName = routeCreationDTO.getRouteName();
-        this.startPoint = new Point(routeCreationDTO.getStartPoint());
-        this.endPoint = new Point(routeCreationDTO.getEndPoint());
         this.expectedTime = routeCreationDTO.getExpectedTime();
         this.length = routeCreationDTO.getLength();
-        this.routePath = routeCreationDTO.getRoutePath().stream().map(Point::new).collect(Collectors.toSet());
+        this.waypoints = routeCreationDTO.getWaypoints().stream().map(Point::new).collect(Collectors.toSet());
     }
 
-    public Route(String routeName, Point startPoint, Point endPoint, double expectedTime, double length, Set<Point> routePath) {
+    public Route(String routeName, double expectedTime, double length, Set<Point> waypoints) {
         this.routeName = routeName;
-        this.startPoint = startPoint;
-        this.endPoint = endPoint;
         this.expectedTime = expectedTime;
         this.length = length;
-        this.routePath = routePath;
+        this.waypoints = waypoints;
     }
 
     public Integer getId() {
@@ -85,22 +71,6 @@ public class Route {
         this.routeName = routeName;
     }
 
-    public Point getStartPoint() {
-        return startPoint;
-    }
-
-    public void setStartPoint(Point startPoint) {
-        this.startPoint = startPoint;
-    }
-
-    public Point getEndPoint() {
-        return endPoint;
-    }
-
-    public void setEndPoint(Point endPoint) {
-        this.endPoint = endPoint;
-    }
-
     public double getExpectedTime() {
         return expectedTime;
     }
@@ -117,11 +87,11 @@ public class Route {
         this.length = length;
     }
 
-    public Set<Point> getRoutePath() {
-        return routePath;
+    public Set<Point> getWaypoints() {
+        return waypoints;
     }
 
-    public void setRoutePath(Set<Point> routePath) {
-        this.routePath = routePath;
+    public void setWaypoints(Set<Point> waypoints) {
+        this.waypoints = waypoints;
     }
 }

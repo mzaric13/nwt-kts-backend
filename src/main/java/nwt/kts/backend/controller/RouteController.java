@@ -27,21 +27,7 @@ public class RouteController {
     @PostMapping(value = "/", consumes = "application/json", produces = "application/json")
     public ResponseEntity<RouteDTO> addRoute(@RequestBody RouteCreationDTO routeCreationDTO) {
         Route newRoute = new Route(routeCreationDTO);
-        if (pointService.findPointByLatitudeAndLongitude(newRoute.getStartPoint()) == null) {
-            pointService.savePoint(newRoute.getStartPoint());
-        }
-        if (pointService.findPointByLatitudeAndLongitude(newRoute.getEndPoint()) == null) {
-            pointService.savePoint(newRoute.getEndPoint());
-        }
-        Iterator<Point> i = newRoute.getRoutePath().iterator();
-        while (i.hasNext()) {
-            Point point = i.next();
-            if (pointService.findPointByLatitudeAndLongitude(point) == null) {
-                pointService.savePoint(point);
-            } else {
-                i.remove();
-            }
-        }
+        newRoute.getWaypoints().forEach(waypoint -> pointService.savePoint(waypoint));
         newRoute = routeService.saveRoute(newRoute);
         return new ResponseEntity<>(new RouteDTO(newRoute), HttpStatus.CREATED);
     }

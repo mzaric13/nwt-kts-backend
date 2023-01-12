@@ -6,27 +6,20 @@ public class RouteCreationDTO {
 
     private String routeName;
 
-    private PointCreationDTO startPoint;
-
-    private PointCreationDTO endPoint;
-
     private double expectedTime;
 
     private double length;
 
-    private Set<PointCreationDTO> routePath;
+    private Set<PointCreationDTO> waypoints;
 
     public RouteCreationDTO() {
     }
 
-    public RouteCreationDTO(String routeName, PointCreationDTO startPoint, PointCreationDTO endPoint, double expectedTime,
-                            double length, Set<PointCreationDTO> routePath) {
+    public RouteCreationDTO(String routeName, double expectedTime, double length, Set<PointCreationDTO> waypoints) {
         this.routeName = routeName;
-        this.startPoint = startPoint;
-        this.endPoint = endPoint;
         this.expectedTime = expectedTime;
         this.length = length;
-        this.routePath = routePath;
+        this.waypoints = waypoints;
     }
 
     public String getRouteName() {
@@ -35,22 +28,6 @@ public class RouteCreationDTO {
 
     public void setRouteName(String routeName) {
         this.routeName = routeName;
-    }
-
-    public PointCreationDTO getStartPoint() {
-        return startPoint;
-    }
-
-    public void setStartPoint(PointCreationDTO startPoint) {
-        this.startPoint = startPoint;
-    }
-
-    public PointCreationDTO getEndPoint() {
-        return endPoint;
-    }
-
-    public void setEndPoint(PointCreationDTO endPoint) {
-        this.endPoint = endPoint;
     }
 
     public double getExpectedTime() {
@@ -69,11 +46,11 @@ public class RouteCreationDTO {
         this.length = length;
     }
 
-    public Set<PointCreationDTO> getRoutePath() {
-        return routePath;
+    public Set<PointCreationDTO> getWaypoints() {
+        return waypoints;
     }
 
-    public void setRoutePath(Set<PointCreationDTO> routePath) {
-        this.routePath = routePath;
+    public void setWaypoints(Set<PointCreationDTO> waypoints) {
+        this.waypoints = waypoints;
     }
 }

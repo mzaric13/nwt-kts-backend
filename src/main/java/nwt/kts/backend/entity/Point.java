@@ -6,10 +6,7 @@ import nwt.kts.backend.dto.returnDTO.PointDTO;
 import javax.persistence.*;
 
 @Entity
-@Table(name="points",
-        uniqueConstraints = {
-        @UniqueConstraint(name = "UniqueLatitudeAndLongitude", columnNames = {"latitude", "longitude"})},
-        indexes = { @Index(name = "points_latitude_longitude_idx", columnList = "latitude, longitude")})
+@Table(name="points", indexes = { @Index(name = "points_latitude_longitude_idx", columnList = "latitude, longitude")})
 public class Point {
 
     @Id

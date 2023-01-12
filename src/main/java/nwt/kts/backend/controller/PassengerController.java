@@ -68,9 +68,7 @@ public class PassengerController {
         Route favoriteRoute;
         if (routeDTO.getId() == 0) {
             favoriteRoute = new Route(routeDTO);
-            pointService.savePoint(favoriteRoute.getStartPoint());
-            pointService.savePoint(favoriteRoute.getEndPoint());
-            favoriteRoute.getRoutePath().forEach(point -> pointService.savePoint(point));
+            favoriteRoute.getWaypoints().forEach(point -> pointService.savePoint(point));
             favoriteRoute = routeService.saveRoute(favoriteRoute);
         } else {
             favoriteRoute = routeService.findRouteById(routeDTO.getId());
