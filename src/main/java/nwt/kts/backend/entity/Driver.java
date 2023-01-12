@@ -18,16 +18,22 @@ public class Driver extends User {
     @JoinColumn(name = "vehicle_id")
     private Vehicle vehicle;
 
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "location_id")
+    private Point location;
+
     public Driver() {
         this.isBlocked = false;
         this.isAvailable = false;
     }
 
-    public Driver(Integer id, String email, String phoneNumber, String password, String name, String surname, String city, Role role, boolean isBlocked, boolean isAvailable, Vehicle vehicle) {
+    public Driver(Integer id, String email, String phoneNumber, String password, String name, String surname, String city,
+                  Role role, boolean isBlocked, boolean isAvailable, Vehicle vehicle, Point location) {
         super(id, email, phoneNumber, password, name, surname, city, role);
         this.isBlocked = isBlocked;
         this.isAvailable = isAvailable;
         this.vehicle = vehicle;
+        this.location = location;
     }
 
     /**
@@ -69,5 +75,13 @@ public class Driver extends User {
 
     public void setVehicle(Vehicle vehicle) {
         this.vehicle = vehicle;
+    }
+
+    public Point getLocation() {
+        return location;
+    }
+
+    public void setLocation(Point location) {
+        this.location = location;
     }
 }

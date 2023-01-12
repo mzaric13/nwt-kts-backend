@@ -15,12 +15,14 @@ public class DriverDTO {
     private boolean blocked;
     private boolean available;
 
+    private PointDTO location;
+
     public DriverDTO() {
 
     }
 
     public DriverDTO(Integer id, String email, String phoneNumber, String password, String name,
-                     String surname, String city, String profilePicture, VehicleReturnDTO vehicle) {
+                     String surname, String city, String profilePicture, VehicleReturnDTO vehicle, PointDTO location) {
         this.id = id;
         this.email = email;
         this.phoneNumber = phoneNumber;
@@ -32,6 +34,7 @@ public class DriverDTO {
         this.vehicle = vehicle;
         this.blocked = false;
         this.available = false;
+        this.location = location;
     }
 
     public DriverDTO(Driver driver){
@@ -46,6 +49,7 @@ public class DriverDTO {
         this.blocked = driver.isBlocked();
         this.available = driver.isAvailable();
         this.vehicle = new VehicleReturnDTO(driver.getVehicle());
+        this.location = new PointDTO(driver.getLocation());
     }
 
     public Integer getId() {
@@ -134,5 +138,21 @@ public class DriverDTO {
 
     public void setIsAvailable(boolean available) {
         available = available;
+    }
+
+    public void setBlocked(boolean blocked) {
+        this.blocked = blocked;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
+
+    public PointDTO getLocation() {
+        return location;
+    }
+
+    public void setLocation(PointDTO location) {
+        this.location = location;
     }
 }
