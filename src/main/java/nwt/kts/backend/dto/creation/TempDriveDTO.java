@@ -1,5 +1,6 @@
 package nwt.kts.backend.dto.creation;
 
+import nwt.kts.backend.dto.returnDTO.RouteDTO;
 import nwt.kts.backend.dto.returnDTO.TagDTO;
 
 import java.sql.Timestamp;
@@ -7,21 +8,25 @@ import java.util.Set;
 
 public class TempDriveDTO {
 
-    public Timestamp startDate;
-    public double price;
-    public double length;
-    public Set<TagDTO> tags;
-    public Set<String> emails;
+    private Timestamp startDate;
+    private double price;
+
+    private double length;
+    private Set<TagDTO> tags;
+    private Set<String> emails;
+
+    private RouteDTO routeDTO;
 
     public TempDriveDTO() {
     }
 
-    public TempDriveDTO(Timestamp startDate, double price, double length, Set<TagDTO> tags, Set<String> emails) {
+    public TempDriveDTO(Timestamp startDate, double price, double length, Set<TagDTO> tags, Set<String> emails, RouteDTO routeDTO) {
         this.startDate = startDate;
         this.price = price;
         this.length = length;
         this.tags = tags;
         this.emails = emails;
+        this.routeDTO = routeDTO;
     }
 
     public Timestamp getStartDate() {
@@ -62,5 +67,13 @@ public class TempDriveDTO {
 
     public void setEmails(Set<String> emails) {
         this.emails = emails;
+    }
+
+    public RouteDTO getRouteDTO() {
+        return routeDTO;
+    }
+
+    public void setRouteDTO(RouteDTO routeDTO) {
+        this.routeDTO = routeDTO;
     }
 }
