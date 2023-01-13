@@ -31,4 +31,76 @@ public class TempDrive {
     @JoinTable(name = "temp_drive_passengers", joinColumns = @JoinColumn(name = "temp_drive_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "passenger_id", referencedColumnName = "id"))
     private Set<Passenger> passengers;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "route_id")
+    private Route route;
+
+    public TempDrive() {
+    }
+
+    public TempDrive(Timestamp startDate, double price, double length, Set<Tag> tags, Set<Passenger> passengers, Route route) {
+        this.startDate = startDate;
+        this.price = price;
+        this.length = length;
+        this.tags = tags;
+        this.passengers = passengers;
+        this.route = route;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Timestamp getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Timestamp startDate) {
+        this.startDate = startDate;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public double getLength() {
+        return length;
+    }
+
+    public void setLength(double length) {
+        this.length = length;
+    }
+
+    public Set<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(Set<Tag> tags) {
+        this.tags = tags;
+    }
+
+    public Set<Passenger> getPassengers() {
+        return passengers;
+    }
+
+    public void setPassengers(Set<Passenger> passengers) {
+        this.passengers = passengers;
+    }
+
+    public Route getRoute() {
+        return route;
+    }
+
+    public void setRoute(Route route) {
+        this.route = route;
+    }
 }

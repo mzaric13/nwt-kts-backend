@@ -46,15 +46,16 @@ public class Drive {
             inverseJoinColumns = @JoinColumn(name = "passenger_id", referencedColumnName = "id"))
     private Set<Passenger> passengers;
 
-    //TODO
-    //Route?
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "route_id")
+    private Route route;
 
     public Drive() {
 
     }
 
     public Drive(Integer id, Timestamp startDate, Timestamp endDate, double price, double length,
-                 String inconsistentDriveReasoning, Set<Tag> tags, Status status, Driver driver, Set<Passenger> passengers) {
+                 String inconsistentDriveReasoning, Set<Tag> tags, Status status, Driver driver, Set<Passenger> passengers, Route route) {
         this.id = id;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -65,6 +66,7 @@ public class Drive {
         this.status = status;
         this.driver = driver;
         this.passengers = passengers;
+        this.route = route;
     }
 
     public Integer getId() {
@@ -105,5 +107,13 @@ public class Drive {
 
     public Set<Passenger> getPassengers() {
         return passengers;
+    }
+
+    public Route getRoute() {
+        return route;
+    }
+
+    public void setRoute(Route route) {
+        this.route = route;
     }
 }
