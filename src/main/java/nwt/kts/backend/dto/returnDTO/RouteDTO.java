@@ -13,12 +13,15 @@ public class RouteDTO {
     private double length;
     private Set<PointDTO> waypoints;
 
-    public RouteDTO(int id, String routeName, double expectedTime, double length, Set<PointDTO> waypoints) {
+    private int routeIdx;
+
+    public RouteDTO(int id, String routeName, double expectedTime, double length, Set<PointDTO> waypoints, int routeIdx) {
         this.id = id;
         this.routeName = routeName;
         this.expectedTime = expectedTime;
         this.length = length;
         this.waypoints = waypoints;
+        this.routeIdx = routeIdx;
     }
 
     public RouteDTO() {
@@ -30,6 +33,7 @@ public class RouteDTO {
         this.expectedTime = route.getExpectedTime();
         this.length = route.getLength();
         this.waypoints = route.getWaypoints().stream().map(PointDTO::new).collect(Collectors.toSet());
+        this.routeIdx = route.getRouteIdx();
     }
 
     public int getId() {
@@ -70,5 +74,13 @@ public class RouteDTO {
 
     public void setWaypoints(Set<PointDTO> waypoints) {
         this.waypoints = waypoints;
+    }
+
+    public int getRouteIdx() {
+        return routeIdx;
+    }
+
+    public void setRouteIdx(int routeIdx) {
+        this.routeIdx = routeIdx;
     }
 }

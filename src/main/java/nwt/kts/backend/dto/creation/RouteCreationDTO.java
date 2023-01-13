@@ -12,14 +12,17 @@ public class RouteCreationDTO {
 
     private Set<PointCreationDTO> waypoints;
 
+    private int routeIdx;
+
     public RouteCreationDTO() {
     }
 
-    public RouteCreationDTO(String routeName, double expectedTime, double length, Set<PointCreationDTO> waypoints) {
+    public RouteCreationDTO(String routeName, double expectedTime, double length, Set<PointCreationDTO> waypoints, int routeIdx) {
         this.routeName = routeName;
         this.expectedTime = expectedTime;
         this.length = length;
         this.waypoints = waypoints;
+        this.routeIdx = routeIdx;
     }
 
     public String getRouteName() {
@@ -52,5 +55,13 @@ public class RouteCreationDTO {
 
     public void setWaypoints(Set<PointCreationDTO> waypoints) {
         this.waypoints = waypoints;
+    }
+
+    public int getRouteIdx() {
+        return routeIdx;
+    }
+
+    public void setRouteIdx(int routeIdx) {
+        this.routeIdx = routeIdx;
     }
 }

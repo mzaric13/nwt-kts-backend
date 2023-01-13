@@ -30,6 +30,9 @@ public class Route {
     @Column(name = "length", nullable = false)
     private double length;
 
+    @Column(name = "route_idx", nullable = false)
+    private int routeIdx;
+
     public Route() {
 
     }
@@ -39,6 +42,7 @@ public class Route {
         this.expectedTime = routeDTO.getExpectedTime();
         this.length = routeDTO.getLength();
         this.waypoints = routeDTO.getWaypoints().stream().map(Point::new).collect(Collectors.toSet());
+        this.routeIdx = routeDTO.getRouteIdx();
     }
 
     public Route(RouteCreationDTO routeCreationDTO) {
@@ -46,13 +50,15 @@ public class Route {
         this.expectedTime = routeCreationDTO.getExpectedTime();
         this.length = routeCreationDTO.getLength();
         this.waypoints = routeCreationDTO.getWaypoints().stream().map(Point::new).collect(Collectors.toSet());
+        this.routeIdx = routeCreationDTO.getRouteIdx();
     }
 
-    public Route(String routeName, double expectedTime, double length, Set<Point> waypoints) {
+    public Route(String routeName, double expectedTime, double length, Set<Point> waypoints, int routeIdx) {
         this.routeName = routeName;
         this.expectedTime = expectedTime;
         this.length = length;
         this.waypoints = waypoints;
+        this.routeIdx = routeIdx;
     }
 
     public Integer getId() {
@@ -93,5 +99,13 @@ public class Route {
 
     public void setWaypoints(Set<Point> waypoints) {
         this.waypoints = waypoints;
+    }
+
+    public int getRouteIdx() {
+        return routeIdx;
+    }
+
+    public void setRouteIdx(int routeIdx) {
+        this.routeIdx = routeIdx;
     }
 }
