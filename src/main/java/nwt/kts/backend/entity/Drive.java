@@ -109,5 +109,11 @@ public class Drive {
         return passengers;
     }
 
-    public Route getRoute() {return route;}
+    public Route getRoute() {
+        return route;
+    }
+
+    public void setRoute(Route route) {
+        this.route = route;
+    }
 }

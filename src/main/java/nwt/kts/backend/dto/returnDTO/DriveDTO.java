@@ -42,6 +42,7 @@ public class DriveDTO {
     @JsonProperty("passengers")
     private List<PassengerDTO> passengers;
 
+    //dodato
     @JsonProperty("route")
     private RouteDTO route;
 
