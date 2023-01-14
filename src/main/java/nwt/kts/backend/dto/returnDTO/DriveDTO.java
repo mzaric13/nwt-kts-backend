@@ -42,6 +42,9 @@ public class DriveDTO {
     @JsonProperty("passengers")
     private List<PassengerDTO> passengers;
 
+    @JsonProperty("route")
+    private RouteDTO route;
+
     public DriveDTO() {
     }
 
@@ -60,6 +63,7 @@ public class DriveDTO {
         this.driver = new DriverDTO(drive.getDriver());
         this.passengers = new ArrayList<>();
         for (Passenger passenger: drive.getPassengers()) this.passengers.add(new PassengerDTO(passenger));
+        this.route = new RouteDTO(drive.getRoute());
     }
 
 
