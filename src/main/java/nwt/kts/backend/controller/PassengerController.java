@@ -29,9 +29,6 @@ public class PassengerController {
     @Autowired
     private RouteService routeService;
 
-    @Autowired
-    private PointService pointService;
-
     @PostMapping(value = "/register", consumes = "application/json", produces = "application/json")
     public ResponseEntity<PassengerDTO> registerPassenger(@RequestBody PassengerCreationDTO passengerCreationDTO) throws MessagingException {
         Passenger passenger = passengerService.createPassenger(passengerCreationDTO);
@@ -63,12 +60,11 @@ public class PassengerController {
     }
 
     @PutMapping(value = "/add-favorite-route")
-    public ResponseEntity<Void> addFavoriteRoute(Principal principal, @RequestBody RouteDTO routeDTO) {
+    public ResponseEntity<RouteDTO> addFavoriteRoute(Principal principal, @RequestBody RouteDTO routeDTO) {
         Passenger passenger = passengerService.findPassengerByEmail(principal.getName());
         Route favoriteRoute;
         if (routeDTO.getId() == 0) {
             favoriteRoute = new Route(routeDTO);
-            favoriteRoute.getWaypoints().forEach(point -> pointService.savePoint(point));
             favoriteRoute = routeService.saveRoute(favoriteRoute);
         } else {
             favoriteRoute = routeService.findRouteById(routeDTO.getId());
@@ -78,7 +74,7 @@ public class PassengerController {
         }
         passenger.addFavouriteRoute(favoriteRoute);
         passengerService.savePassenger(passenger);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(new RouteDTO(favoriteRoute), HttpStatus.OK);
     }
     
     @GetMapping(value = "/get-logged")

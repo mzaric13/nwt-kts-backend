@@ -10,11 +10,9 @@ public class TempDriveDTO {
 
     private Timestamp startDate;
     private double price;
-
     private double length;
     private Set<TagDTO> tags;
     private Set<String> emails;
-
     private RouteDTO routeDTO;
 
     public TempDriveDTO() {

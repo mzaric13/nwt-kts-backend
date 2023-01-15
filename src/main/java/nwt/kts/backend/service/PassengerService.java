@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class PassengerService {
@@ -122,5 +123,14 @@ public class PassengerService {
         int currentTokens = passenger.getTokens();
         passenger.setTokens(currentTokens + tokensToAdd);
         return passengerRepository.save(passenger);
+    }
+
+    public boolean allPassengersExist(Set<String> emails) {
+        for (String email : emails) {
+            if (passengerRepository.findPassengerByEmail(email) == null) {
+                return false;
+            }
+        }
+        return true;
     }
 }

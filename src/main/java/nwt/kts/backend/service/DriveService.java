@@ -1,12 +1,10 @@
 package nwt.kts.backend.service;
 
-import nwt.kts.backend.entity.Drive;
-import nwt.kts.backend.entity.Driver;
-import nwt.kts.backend.entity.Passenger;
-import nwt.kts.backend.entity.Status;
+import nwt.kts.backend.entity.*;
 import nwt.kts.backend.repository.DriveRepository;
 import nwt.kts.backend.repository.DriverRepository;
 import nwt.kts.backend.repository.PassengerRepository;
+import nwt.kts.backend.repository.TempDriveRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,6 +25,9 @@ public class DriveService {
     @Autowired
     private PassengerRepository passengerRepository;
 
+    @Autowired
+    private TempDriveRepository tempDriveRepository;
+
     public Page<Drive> getDrives(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return driveRepository.findAllByStatus(Status.FINISHED, pageable);
@@ -42,5 +43,9 @@ public class DriveService {
         Passenger passenger = passengerRepository.findPassengerByEmail("putnik2@gmail.com");    // dummy data
         Pageable pageable = PageRequest.of(page, size);
         return driveRepository.findAllByPassengersContainsAndStatus(passenger, Status.FINISHED, pageable);
+    }
+
+    public TempDrive saveTempDrive(TempDrive tempDrive) {
+        return tempDriveRepository.save(tempDrive);
     }
 }

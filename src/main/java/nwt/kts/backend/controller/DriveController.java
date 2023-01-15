@@ -1,21 +1,21 @@
 package nwt.kts.backend.controller;
 
+import nwt.kts.backend.dto.creation.TempDriveDTO;
 import nwt.kts.backend.dto.returnDTO.DriveDTO;
 import nwt.kts.backend.entity.Drive;
+import nwt.kts.backend.entity.Passenger;
+import nwt.kts.backend.entity.TempDrive;
 import nwt.kts.backend.service.DriveService;
+import nwt.kts.backend.service.PassengerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.persistence.EntityNotFoundException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value="/drives")
@@ -23,6 +23,9 @@ public class DriveController {
 
     @Autowired
     private DriveService driveService;
+
+    @Autowired
+    private PassengerService passengerService;
 
     @GetMapping("/get-drives")
     public ResponseEntity<Map<String, Object>> getDrives(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
@@ -42,6 +45,17 @@ public class DriveController {
         // TODO: get passenger from JWT
         Page<Drive> drivePage = driveService.getDrivesByPassenger(page, size);
         return new ResponseEntity<>(createDrivesResponse(drivePage), HttpStatus.OK);
+    }
+
+    @PostMapping("/create-temp-drive")
+    public ResponseEntity<Void> createTempDrive(@RequestBody TempDriveDTO tempDriveDTO) {
+        if (!passengerService.allPassengersExist(tempDriveDTO.getEmails()))
+            throw new EntityNotFoundException("Not all passenger emails exist");
+        Set<Passenger> passengers = tempDriveDTO.getEmails().stream()
+                .map(email -> passengerService.findPassengerByEmail(email)).collect(Collectors.toSet());
+        TempDrive tempDrive = new TempDrive(tempDriveDTO, passengers);
+        tempDrive = driveService.saveTempDrive(tempDrive);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     private Map<String, Object> createDrivesResponse(Page<Drive> drivePage) {

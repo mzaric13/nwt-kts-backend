@@ -1,8 +1,11 @@
 package nwt.kts.backend.entity;
 
+import nwt.kts.backend.dto.creation.TempDriveDTO;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "temp_drives")
@@ -32,7 +35,7 @@ public class TempDrive {
             inverseJoinColumns = @JoinColumn(name = "passenger_id", referencedColumnName = "id"))
     private Set<Passenger> passengers;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "route_id")
     private Route route;
 
@@ -46,6 +49,15 @@ public class TempDrive {
         this.tags = tags;
         this.passengers = passengers;
         this.route = route;
+    }
+
+    public TempDrive(TempDriveDTO tempDriveDTO, Set<Passenger> passengers) {
+        this.startDate = tempDriveDTO.getStartDate();
+        this.price = tempDriveDTO.getPrice();
+        this.length = tempDriveDTO.getLength();
+        this.tags = tempDriveDTO.getTags().stream().map(Tag::new).collect(Collectors.toSet());
+        this.passengers = passengers;
+        this.route = new Route(tempDriveDTO.getRouteDTO());
     }
 
     public Integer getId() {

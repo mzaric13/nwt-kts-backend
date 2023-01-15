@@ -19,7 +19,7 @@ public class Route {
     @Column(name="route_name")
     private String routeName;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "route_waypoints", joinColumns = @JoinColumn(name = "route_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "point_id", referencedColumnName = "id"))
     private Set<Point> waypoints;
