@@ -19,7 +19,7 @@ public class Route {
     @Column(name="route_name")
     private String routeName;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinTable(name = "route_waypoints", joinColumns = @JoinColumn(name = "route_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "point_id", referencedColumnName = "id"))
     private Set<Point> waypoints;
@@ -38,6 +38,7 @@ public class Route {
     }
 
     public Route(RouteDTO routeDTO) {
+        this.id = routeDTO.getId();
         this.routeName = routeDTO.getRouteName();
         this.expectedTime = routeDTO.getExpectedTime();
         this.length = routeDTO.getLength();

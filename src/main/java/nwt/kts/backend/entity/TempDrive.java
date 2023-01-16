@@ -35,7 +35,7 @@ public class TempDrive {
             inverseJoinColumns = @JoinColumn(name = "passenger_id", referencedColumnName = "id"))
     private Set<Passenger> passengers;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "route_id")
     private Route route;
 

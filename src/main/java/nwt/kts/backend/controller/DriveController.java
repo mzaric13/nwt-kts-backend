@@ -4,9 +4,11 @@ import nwt.kts.backend.dto.creation.TempDriveDTO;
 import nwt.kts.backend.dto.returnDTO.DriveDTO;
 import nwt.kts.backend.entity.Drive;
 import nwt.kts.backend.entity.Passenger;
+import nwt.kts.backend.entity.Route;
 import nwt.kts.backend.entity.TempDrive;
 import nwt.kts.backend.service.DriveService;
 import nwt.kts.backend.service.PassengerService;
+import nwt.kts.backend.service.RouteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -26,6 +28,9 @@ public class DriveController {
 
     @Autowired
     private PassengerService passengerService;
+
+    @Autowired
+    private RouteService routeService;
 
     @GetMapping("/get-drives")
     public ResponseEntity<Map<String, Object>> getDrives(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
@@ -54,7 +59,9 @@ public class DriveController {
         Set<Passenger> passengers = tempDriveDTO.getEmails().stream()
                 .map(email -> passengerService.findPassengerByEmail(email)).collect(Collectors.toSet());
         TempDrive tempDrive = new TempDrive(tempDriveDTO, passengers);
-        tempDrive = driveService.saveTempDrive(tempDrive);
+        Route route = routeService.saveRoute(tempDrive.getRoute());
+        tempDrive.setRoute(route);
+        driveService.saveTempDrive(tempDrive);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 

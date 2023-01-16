@@ -25,6 +25,7 @@ public class Point {
     }
 
     public Point(PointDTO pointDTO) {
+        this.id = pointDTO.getId();
         this.latitude = pointDTO.getLatitude();
         this.longitude = pointDTO.getLongitude();
     }
