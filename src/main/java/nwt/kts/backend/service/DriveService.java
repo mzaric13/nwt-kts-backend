@@ -33,14 +33,12 @@ public class DriveService {
         return driveRepository.findAllByStatus(Status.FINISHED, pageable);
     }
 
-    public Page<Drive> getDrivesByDriver(int page, int size) {
-        Driver driver = driverRepository.findDriverByEmail("mirko.ivanic@gmail.com");   // dummy data
+    public Page<Drive> getDrivesByDriver(int page, int size, Driver driver) {
         Pageable pageable = PageRequest.of(page, size);
         return driveRepository.findAllByDriverAndStatus(driver, Status.FINISHED, pageable);
     }
 
-    public Page<Drive> getDrivesByPassenger(int page, int size) {
-        Passenger passenger = passengerRepository.findPassengerByEmail("putnik2@gmail.com");    // dummy data
+    public Page<Drive> getDrivesByPassenger(int page, int size, Passenger passenger) {
         Pageable pageable = PageRequest.of(page, size);
         return driveRepository.findAllByPassengersContainsAndStatus(passenger, Status.FINISHED, pageable);
     }
