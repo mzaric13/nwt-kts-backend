@@ -9,6 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
+
 public interface DriveRepository extends JpaRepository<Drive, Integer> {
 
     Page<Drive> findAllByStatus(Status status, Pageable pageable);
@@ -18,4 +20,6 @@ public interface DriveRepository extends JpaRepository<Drive, Integer> {
     Page<Drive> findAllByPassengersContainsAndStatus(Passenger passenger, Status status, Pageable pageable);
 
     Drive findDriveById(Integer id);
+
+    List<Drive> findAllByDriver_IdAndStatus(Integer id, Status status);
 }
