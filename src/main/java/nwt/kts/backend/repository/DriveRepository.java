@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 public interface DriveRepository extends JpaRepository<Drive, Integer> {
@@ -22,4 +23,10 @@ public interface DriveRepository extends JpaRepository<Drive, Integer> {
     Drive findDriveById(Integer id);
 
     List<Drive> findAllByDriver_IdAndStatus(Integer id, Status status);
+
+    List<Drive> findAllByStartDateAfterAndEndDateBeforeAndPassengersContains(Timestamp startDate, Timestamp endDate, Passenger passenger);
+
+    List<Drive> findAllByStartDateAfterAndEndDateBeforeAndDriver(Timestamp startDate, Timestamp endDate, Driver driver);
+
+    List<Drive> findAllByStartDateAfterAndEndDateBefore(Timestamp startDate, Timestamp endDate);
 }

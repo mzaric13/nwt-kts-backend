@@ -1,9 +1,6 @@
 package nwt.kts.backend.controller;
 
-import nwt.kts.backend.dto.creation.AnsweredDriverDataCreationDTO;
-import nwt.kts.backend.dto.creation.PasswordChangeCreationDTO;
-import nwt.kts.backend.dto.creation.ProfilePictureCreationDTO;
-import nwt.kts.backend.dto.creation.UserIdDTO;
+import nwt.kts.backend.dto.creation.*;
 import nwt.kts.backend.dto.returnDTO.DriverDataDTO;
 import nwt.kts.backend.dto.returnDTO.DriverDTO;
 import nwt.kts.backend.dto.returnDTO.PassengerDTO;
@@ -20,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -103,5 +101,11 @@ public class AdministratorController {
     public ResponseEntity<AdminDTO> getLoggedAdmin(Principal principal) {
         User administrator = userService.findUserByEmail(principal.getName());
         return new ResponseEntity<>(new AdminDTO(administrator), HttpStatus.OK);
+    }
+
+    @GetMapping(value= "/create-admin-chart/{startDate}/{endDate}")
+    public ResponseEntity<ChartCreationDTO> createAdminChart(@PathVariable Timestamp startDate, @PathVariable Timestamp endDate) {
+        ChartCreationDTO chartCreationDTO = administratorService.createAdminChart(startDate, endDate);
+        return new ResponseEntity<>(chartCreationDTO, HttpStatus.OK);
     }
 }

@@ -1,5 +1,6 @@
 package nwt.kts.backend.controller;
 
+import nwt.kts.backend.dto.creation.ChartCreationDTO;
 import nwt.kts.backend.dto.creation.PassengerCreationDTO;
 import nwt.kts.backend.dto.creation.PasswordChangeCreationDTO;
 import nwt.kts.backend.dto.creation.ProfilePictureCreationDTO;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.mail.MessagingException;
 import javax.persistence.EntityNotFoundException;
 import java.security.Principal;
+import java.sql.Timestamp;
 
 @RestController
 @RequestMapping(value = "/passengers")
@@ -102,5 +104,12 @@ public class PassengerController {
         Passenger passenger = passengerService.findPassengerByEmail(principal.getName());
         passenger = passengerService.addTokens(passenger, tokensToAdd);
         return new ResponseEntity<>(new PassengerDTO(passenger), HttpStatus.OK);
+    }
+
+    @GetMapping(value= "/create-passenger-chart/{startDate}/{endDate}")
+    public ResponseEntity<ChartCreationDTO> createPassengerChart(Principal principal, @PathVariable Timestamp startDate, @PathVariable Timestamp endDate) {
+        Passenger passenger = passengerService.findPassengerByEmail(principal.getName());
+        ChartCreationDTO chartCreationDTO = passengerService.createPassengerChart(passenger, startDate, endDate);
+        return new ResponseEntity<>(chartCreationDTO, HttpStatus.OK);
     }
 }

@@ -1,10 +1,8 @@
 package nwt.kts.backend.service;
 
-import nwt.kts.backend.dto.creation.DriverCreationDTO;
-import nwt.kts.backend.dto.creation.PasswordChangeCreationDTO;
-import nwt.kts.backend.dto.creation.ProfilePictureCreationDTO;
-import nwt.kts.backend.dto.creation.UpdatedUserDataCreationDTO;
+import nwt.kts.backend.dto.creation.*;
 import nwt.kts.backend.entity.*;
+import nwt.kts.backend.repository.DriveRepository;
 import nwt.kts.backend.repository.DriverDataRepository;
 import nwt.kts.backend.repository.DriverRepository;
 import nwt.kts.backend.repository.UserRepository;
@@ -14,6 +12,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
+import java.util.Hashtable;
 import java.util.List;
 
 @Service
@@ -47,6 +47,9 @@ public class DriverService {
 
     @Autowired
     private DriverDataRepository driverDataRepository;
+
+    @Autowired
+    private DriveRepository driveRepository;
 
     /**
      * Constants
@@ -93,5 +96,32 @@ public class DriverService {
 
     public DriverData findUnansweredDriverData(String email) {
         return driverDataRepository.getDriverDataByIsAnsweredAndEmail(false, email);
+    }
+
+    public ChartCreationDTO createDriverChart(Driver driver, Timestamp startDate, Timestamp endDate) {
+        List<Drive> drives = driveRepository.findAllByStartDateAfterAndEndDateBeforeAndDriver(startDate, endDate, driver);
+        return createChartForDriver(drives);
+    }
+
+    private ChartCreationDTO createChartForDriver(List<Drive> drives) {
+        Hashtable<String, Double> drivesPerDay = new Hashtable<>();
+        Hashtable<String, Double> drivenKilometersPerDay = new Hashtable<>();
+        Hashtable<String, Double> moneySpentOrEarnedPerDay = new Hashtable<>();
+        for (Drive drive :
+                drives) {
+            String date = drive.getStartDate().toString().split(" ")[0];
+            updateHashtable(date, drivesPerDay, 1.0);
+            updateHashtable(date, drivenKilometersPerDay, drive.getLength());
+            updateHashtable(date, moneySpentOrEarnedPerDay, drive.getPrice());
+        }
+        return new ChartCreationDTO(drivesPerDay, drivenKilometersPerDay, moneySpentOrEarnedPerDay);
+    }
+
+    private void updateHashtable(String date, Hashtable<String, Double> hashtable, Double updateValue) {
+        if (hashtable.containsKey(date)) {
+            hashtable.replace(date, hashtable.get(date), hashtable.get(date) + updateValue);
+        } else {
+            hashtable.put(date, updateValue);
+        }
     }
 }

@@ -1,17 +1,16 @@
 package nwt.kts.backend.service;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import nwt.kts.backend.dto.creation.ChartCreationDTO;
 import nwt.kts.backend.dto.creation.PassengerCreationDTO;
 import nwt.kts.backend.dto.creation.PasswordChangeCreationDTO;
 import nwt.kts.backend.dto.creation.ProfilePictureCreationDTO;
 import nwt.kts.backend.dto.login.FacebookLoginData;
 import nwt.kts.backend.dto.returnDTO.PassengerDTO;
-import nwt.kts.backend.entity.Passenger;
-import nwt.kts.backend.entity.Provider;
-import nwt.kts.backend.entity.Role;
-import nwt.kts.backend.entity.User;
+import nwt.kts.backend.entity.*;
 import nwt.kts.backend.exceptions.InvalidUserDataException;
 import nwt.kts.backend.exceptions.NonExistingEntityException;
+import nwt.kts.backend.repository.DriveRepository;
 import nwt.kts.backend.repository.PassengerRepository;
 import nwt.kts.backend.repository.RoleRepository;
 import nwt.kts.backend.repository.UserRepository;
@@ -21,8 +20,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
-import java.util.Optional;
-import java.util.Set;
+import java.sql.Timestamp;
+import java.util.*;
 
 @Service
 public class PassengerService {
@@ -41,6 +40,9 @@ public class PassengerService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private DriveRepository driveRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -89,7 +91,7 @@ public class PassengerService {
     public Passenger savePassenger(Passenger passenger) {
         return passengerRepository.save(passenger);
     }
-    
+
     public Passenger createPassengerFacebookLogin(FacebookLoginData facebookLoginData, String email, String picture) {
         Passenger passenger = passengerRepository.findPassengerByEmail(email);
         if (passenger == null) {
@@ -132,5 +134,32 @@ public class PassengerService {
             }
         }
         return true;
+    }
+
+    public ChartCreationDTO createPassengerChart(Passenger passenger, Timestamp startDate, Timestamp endDate) {
+        List<Drive> drives = driveRepository.findAllByStartDateAfterAndEndDateBeforeAndPassengersContains(startDate, endDate, passenger);
+        return createChartForPassenger(drives);
+    }
+
+    private ChartCreationDTO createChartForPassenger(List<Drive> drives) {
+        Hashtable<String, Double> drivesPerDay = new Hashtable<>();
+        Hashtable<String, Double> drivenKilometersPerDay = new Hashtable<>();
+        Hashtable<String, Double> moneySpentOrEarnedPerDay = new Hashtable<>();
+        for (Drive drive :
+                drives) {
+            String date = drive.getStartDate().toString().split(" ")[0];
+            updateHashtable(date, drivesPerDay, 1.0);
+            updateHashtable(date, drivenKilometersPerDay, drive.getLength());
+            updateHashtable(date, moneySpentOrEarnedPerDay, drive.getPrice() / drive.getPassengers().size());
+        }
+        return new ChartCreationDTO(drivesPerDay, drivenKilometersPerDay, moneySpentOrEarnedPerDay);
+    }
+
+    private void updateHashtable(String date, Hashtable<String, Double> hashtable, Double updateValue) {
+        if (hashtable.containsKey(date)) {
+            hashtable.replace(date, hashtable.get(date), hashtable.get(date) + updateValue);
+        } else {
+            hashtable.put(date, updateValue);
+        }
     }
 }

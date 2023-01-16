@@ -1,14 +1,12 @@
 package nwt.kts.backend.controller;
 
-import nwt.kts.backend.dto.creation.DriverCreationDTO;
-import nwt.kts.backend.dto.creation.PasswordChangeCreationDTO;
-import nwt.kts.backend.dto.creation.ProfilePictureCreationDTO;
-import nwt.kts.backend.dto.creation.UpdatedUserDataCreationDTO;
+import nwt.kts.backend.dto.creation.*;
 import nwt.kts.backend.dto.returnDTO.DriverDataAnsweredDTO;
 import nwt.kts.backend.dto.returnDTO.DriverDataDTO;
 import nwt.kts.backend.dto.returnDTO.DriverDTO;
 import nwt.kts.backend.entity.Driver;
 import nwt.kts.backend.entity.DriverData;
+import nwt.kts.backend.entity.Passenger;
 import nwt.kts.backend.service.DriverService;
 import nwt.kts.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -74,5 +73,12 @@ public class DriverController {
             return new ResponseEntity<>(new DriverDataAnsweredDTO(false), HttpStatus.OK);
         }
         return new ResponseEntity<>(new DriverDataAnsweredDTO(true), HttpStatus.OK);
+    }
+
+    @GetMapping(value= "/create-driver-chart/{startDate}/{endDate}")
+    public ResponseEntity<ChartCreationDTO> createDriverChart(Principal principal, @PathVariable Timestamp startDate, @PathVariable Timestamp endDate) {
+        Driver driver = driverService.findDriverByEmail(principal.getName());
+        ChartCreationDTO chartCreationDTO = driverService.createDriverChart(driver, startDate, endDate);
+        return new ResponseEntity<>(chartCreationDTO, HttpStatus.OK);
     }
 }

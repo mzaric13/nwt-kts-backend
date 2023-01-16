@@ -1,22 +1,15 @@
 package nwt.kts.backend.service;
 
-import nwt.kts.backend.dto.creation.AnsweredDriverDataCreationDTO;
-import nwt.kts.backend.dto.creation.PasswordChangeCreationDTO;
-import nwt.kts.backend.dto.creation.ProfilePictureCreationDTO;
-import nwt.kts.backend.dto.creation.UserIdDTO;
+import nwt.kts.backend.dto.creation.*;
 import nwt.kts.backend.dto.returnDTO.AdminDTO;
-import nwt.kts.backend.entity.Driver;
-import nwt.kts.backend.entity.DriverData;
-import nwt.kts.backend.entity.Passenger;
-import nwt.kts.backend.entity.User;
-import nwt.kts.backend.repository.DriverDataRepository;
-import nwt.kts.backend.repository.DriverRepository;
-import nwt.kts.backend.repository.PassengerRepository;
-import nwt.kts.backend.repository.UserRepository;
+import nwt.kts.backend.entity.*;
+import nwt.kts.backend.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
+import java.util.Hashtable;
 import java.util.List;
 
 @Service
@@ -46,6 +39,9 @@ public class AdministratorService {
 
     @Autowired
     private DriverRepository driverRepository;
+
+    @Autowired
+    private DriveRepository driveRepository;
 
 
     public List<DriverData> getUnansweredDriverData() {
@@ -106,4 +102,32 @@ public class AdministratorService {
     public User findAdminByEmail(String email) {
         return userRepository.findUserByEmail(email);
     }
+
+    public ChartCreationDTO createAdminChart(Timestamp startDate, Timestamp endDate) {
+        List<Drive> drives = driveRepository.findAllByStartDateAfterAndEndDateBefore(startDate, endDate);
+        return createChartForAdmin(drives);
+    }
+
+    private ChartCreationDTO createChartForAdmin(List<Drive> drives) {
+        Hashtable<String, Double> drivesPerDay = new Hashtable<>();
+        Hashtable<String, Double> drivenKilometersPerDay = new Hashtable<>();
+        Hashtable<String, Double> moneySpentOrEarnedPerDay = new Hashtable<>();
+        for (Drive drive :
+                drives) {
+            String date = drive.getStartDate().toString().split(" ")[0];
+            updateHashtable(date, drivesPerDay, 1.0);
+            updateHashtable(date, drivenKilometersPerDay, drive.getLength());
+            updateHashtable(date, moneySpentOrEarnedPerDay, drive.getPrice());
+        }
+        return new ChartCreationDTO(drivesPerDay, drivenKilometersPerDay, moneySpentOrEarnedPerDay);
+    }
+
+    private void updateHashtable(String date, Hashtable<String, Double> hashtable, Double updateValue) {
+        if (hashtable.containsKey(date)) {
+            hashtable.replace(date, hashtable.get(date), hashtable.get(date) + updateValue);
+        } else {
+            hashtable.put(date, updateValue);
+        }
+    }
+
 }
