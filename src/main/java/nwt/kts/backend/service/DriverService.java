@@ -1,6 +1,7 @@
 package nwt.kts.backend.service;
 
 import nwt.kts.backend.dto.creation.*;
+import nwt.kts.backend.dto.returnDTO.DatesChartDTO;
 import nwt.kts.backend.entity.*;
 import nwt.kts.backend.repository.DriveRepository;
 import nwt.kts.backend.repository.DriverDataRepository;
@@ -98,8 +99,8 @@ public class DriverService {
         return driverDataRepository.getDriverDataByIsAnsweredAndEmail(false, email);
     }
 
-    public ChartCreationDTO createDriverChart(Driver driver, Timestamp startDate, Timestamp endDate) {
-        List<Drive> drives = driveRepository.findAllByStartDateAfterAndEndDateBeforeAndDriver(startDate, endDate, driver);
+    public ChartCreationDTO createDriverChart(Driver driver, DatesChartDTO datesChartDTO) {
+        List<Drive> drives = driveRepository.findAllByStartDateAfterAndEndDateBeforeAndDriver(datesChartDTO.getStartDate(), datesChartDTO.getEndDate(), driver);
         return createChartForDriver(drives);
     }
 
@@ -114,7 +115,8 @@ public class DriverService {
             updateHashtable(date, drivenKilometersPerDay, drive.getLength());
             updateHashtable(date, moneySpentOrEarnedPerDay, drive.getPrice());
         }
-        return new ChartCreationDTO(drivesPerDay, drivenKilometersPerDay, moneySpentOrEarnedPerDay);
+        return null;
+        //return new ChartCreationDTO(drivesPerDay, drivenKilometersPerDay, moneySpentOrEarnedPerDay);
     }
 
     private void updateHashtable(String date, Hashtable<String, Double> hashtable, Double updateValue) {

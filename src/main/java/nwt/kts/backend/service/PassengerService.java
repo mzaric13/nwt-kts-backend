@@ -1,11 +1,9 @@
 package nwt.kts.backend.service;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
-import nwt.kts.backend.dto.creation.ChartCreationDTO;
-import nwt.kts.backend.dto.creation.PassengerCreationDTO;
-import nwt.kts.backend.dto.creation.PasswordChangeCreationDTO;
-import nwt.kts.backend.dto.creation.ProfilePictureCreationDTO;
+import nwt.kts.backend.dto.creation.*;
 import nwt.kts.backend.dto.login.FacebookLoginData;
+import nwt.kts.backend.dto.returnDTO.DatesChartDTO;
 import nwt.kts.backend.dto.returnDTO.PassengerDTO;
 import nwt.kts.backend.entity.*;
 import nwt.kts.backend.exceptions.InvalidUserDataException;
@@ -136,8 +134,8 @@ public class PassengerService {
         return true;
     }
 
-    public ChartCreationDTO createPassengerChart(Passenger passenger, Timestamp startDate, Timestamp endDate) {
-        List<Drive> drives = driveRepository.findAllByStartDateAfterAndEndDateBeforeAndPassengersContains(startDate, endDate, passenger);
+    public ChartCreationDTO createPassengerChart(Passenger passenger, DatesChartDTO datesChartDTO) {
+        List<Drive> drives = driveRepository.findAllByStartDateAfterAndEndDateBeforeAndPassengersContains(datesChartDTO.getStartDate(), datesChartDTO.getEndDate(), passenger);
         return createChartForPassenger(drives);
     }
 
@@ -145,6 +143,7 @@ public class PassengerService {
         Hashtable<String, Double> drivesPerDay = new Hashtable<>();
         Hashtable<String, Double> drivenKilometersPerDay = new Hashtable<>();
         Hashtable<String, Double> moneySpentOrEarnedPerDay = new Hashtable<>();
+
         for (Drive drive :
                 drives) {
             String date = drive.getStartDate().toString().split(" ")[0];
@@ -152,7 +151,22 @@ public class PassengerService {
             updateHashtable(date, drivenKilometersPerDay, drive.getLength());
             updateHashtable(date, moneySpentOrEarnedPerDay, drive.getPrice() / drive.getPassengers().size());
         }
-        return new ChartCreationDTO(drivesPerDay, drivenKilometersPerDay, moneySpentOrEarnedPerDay);
+
+        List<SeriesObjectCreationDTO> listDrivesPerDay = new ArrayList<>();
+        List<SeriesObjectCreationDTO> listDrivenKilometersPerDay = new ArrayList<>();
+        List<SeriesObjectCreationDTO> listMoneySpentOrEarnedPerDay = new ArrayList<>();
+
+        Set<String> setOfKeys = drivesPerDay.keySet();
+
+        for (String key : setOfKeys) {
+            listDrivesPerDay.add(new SeriesObjectCreationDTO(key, drivesPerDay.get(key)));
+            listDrivenKilometersPerDay.add(new SeriesObjectCreationDTO(key, drivenKilometersPerDay.get(key)));
+            listMoneySpentOrEarnedPerDay.add(new SeriesObjectCreationDTO(key, moneySpentOrEarnedPerDay.get(key)));
+        }
+
+        return new ChartCreationDTO(new ChartObjectCreationDTO("Drives per day", listDrivesPerDay),
+                new ChartObjectCreationDTO("Driven kilometers per day", listDrivenKilometersPerDay),
+                new ChartObjectCreationDTO("Money spent/earned per day", listMoneySpentOrEarnedPerDay));
     }
 
     private void updateHashtable(String date, Hashtable<String, Double> hashtable, Double updateValue) {

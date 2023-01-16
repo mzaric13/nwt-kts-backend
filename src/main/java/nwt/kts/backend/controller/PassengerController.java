@@ -4,6 +4,7 @@ import nwt.kts.backend.dto.creation.ChartCreationDTO;
 import nwt.kts.backend.dto.creation.PassengerCreationDTO;
 import nwt.kts.backend.dto.creation.PasswordChangeCreationDTO;
 import nwt.kts.backend.dto.creation.ProfilePictureCreationDTO;
+import nwt.kts.backend.dto.returnDTO.DatesChartDTO;
 import nwt.kts.backend.dto.returnDTO.PassengerDTO;
 import nwt.kts.backend.dto.returnDTO.RouteDTO;
 import nwt.kts.backend.entity.Route;
@@ -106,10 +107,10 @@ public class PassengerController {
         return new ResponseEntity<>(new PassengerDTO(passenger), HttpStatus.OK);
     }
 
-    @GetMapping(value= "/create-passenger-chart/{startDate}/{endDate}")
-    public ResponseEntity<ChartCreationDTO> createPassengerChart(Principal principal, @PathVariable Timestamp startDate, @PathVariable Timestamp endDate) {
+    @PostMapping(value= "/create-passenger-chart")
+    public ResponseEntity<ChartCreationDTO> createPassengerChart(Principal principal, @RequestBody DatesChartDTO datesChartDTO) {
         Passenger passenger = passengerService.findPassengerByEmail(principal.getName());
-        ChartCreationDTO chartCreationDTO = passengerService.createPassengerChart(passenger, startDate, endDate);
+        ChartCreationDTO chartCreationDTO = passengerService.createPassengerChart(passenger, datesChartDTO);
         return new ResponseEntity<>(chartCreationDTO, HttpStatus.OK);
     }
 }

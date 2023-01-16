@@ -2,46 +2,47 @@ package nwt.kts.backend.dto.creation;
 
 import java.sql.Timestamp;
 import java.util.Hashtable;
+import java.util.List;
 
 public class ChartCreationDTO {
 
-    private Hashtable<String, Double> drivesPerDay;
-    private Hashtable<String, Double> drivenKilometersPerDay;
-    private Hashtable<String, Double> moneySpentOrEarnedPerDay;
+    private ChartObjectCreationDTO drivesPerDay;
+    private ChartObjectCreationDTO  drivenKilometersPerDay;
+    private ChartObjectCreationDTO  moneySpentOrEarnedPerDay;
 
     public ChartCreationDTO() {
 
     }
 
-    public ChartCreationDTO(Hashtable<String, Double> drivesPerDay,
-                            Hashtable<String, Double> drivenKilometersPerDay,
-                            Hashtable<String, Double> moneySpentOrEarnedPerDay) {
+    public ChartCreationDTO(ChartObjectCreationDTO  drivesPerDay,
+                            ChartObjectCreationDTO  drivenKilometersPerDay,
+                            ChartObjectCreationDTO  moneySpentOrEarnedPerDay) {
         this.drivesPerDay = drivesPerDay;
         this.drivenKilometersPerDay = drivenKilometersPerDay;
         this.moneySpentOrEarnedPerDay = moneySpentOrEarnedPerDay;
     }
 
-    public Hashtable<String, Double> getDrivesPerDay() {
+    public ChartObjectCreationDTO  getDrivesPerDay() {
         return drivesPerDay;
     }
 
-    public void setDrivesPerDay(Hashtable<String, Double> drivesPerDay) {
+    public void setDrivesPerDay(ChartObjectCreationDTO drivesPerDay) {
         this.drivesPerDay = drivesPerDay;
     }
 
-    public Hashtable<String, Double> getDrivenKilometersPerDay() {
+    public ChartObjectCreationDTO  getDrivenKilometersPerDay() {
         return drivenKilometersPerDay;
     }
 
-    public void setDrivenKilometresPerDay(Hashtable<String, Double> drivenKilometersPerDay) {
+    public void setDrivenKilometresPerDay(ChartObjectCreationDTO  drivenKilometersPerDay) {
         this.drivenKilometersPerDay = drivenKilometersPerDay;
     }
 
-    public Hashtable<String, Double> getMoneySpentOrEarnedPerDay() {
+    public ChartObjectCreationDTO  getMoneySpentOrEarnedPerDay() {
         return moneySpentOrEarnedPerDay;
     }
 
-    public void setMoneySpentOrEarnedPerDay(Hashtable<String, Double> moneySpentOrEarnedPerDay) {
+    public void setMoneySpentOrEarnedPerDay(ChartObjectCreationDTO  moneySpentOrEarnedPerDay) {
         this.moneySpentOrEarnedPerDay = moneySpentOrEarnedPerDay;
     }
 }

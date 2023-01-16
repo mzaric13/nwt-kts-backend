@@ -1,10 +1,7 @@
 package nwt.kts.backend.controller;
 
 import nwt.kts.backend.dto.creation.*;
-import nwt.kts.backend.dto.returnDTO.DriverDataDTO;
-import nwt.kts.backend.dto.returnDTO.DriverDTO;
-import nwt.kts.backend.dto.returnDTO.PassengerDTO;
-import nwt.kts.backend.dto.returnDTO.AdminDTO;
+import nwt.kts.backend.dto.returnDTO.*;
 import nwt.kts.backend.entity.Driver;
 import nwt.kts.backend.entity.DriverData;
 import nwt.kts.backend.entity.Passenger;
@@ -103,9 +100,9 @@ public class AdministratorController {
         return new ResponseEntity<>(new AdminDTO(administrator), HttpStatus.OK);
     }
 
-    @GetMapping(value= "/create-admin-chart/{startDate}/{endDate}")
-    public ResponseEntity<ChartCreationDTO> createAdminChart(@PathVariable Timestamp startDate, @PathVariable Timestamp endDate) {
-        ChartCreationDTO chartCreationDTO = administratorService.createAdminChart(startDate, endDate);
+    @PostMapping(value= "/create-admin-chart")
+    public ResponseEntity<ChartCreationDTO> createAdminChart(@RequestBody DatesChartDTO datesChartDTO) {
+        ChartCreationDTO chartCreationDTO = administratorService.createAdminChart(datesChartDTO);
         return new ResponseEntity<>(chartCreationDTO, HttpStatus.OK);
     }
 }

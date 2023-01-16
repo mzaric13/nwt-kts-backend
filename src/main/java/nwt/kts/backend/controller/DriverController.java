@@ -1,6 +1,7 @@
 package nwt.kts.backend.controller;
 
 import nwt.kts.backend.dto.creation.*;
+import nwt.kts.backend.dto.returnDTO.DatesChartDTO;
 import nwt.kts.backend.dto.returnDTO.DriverDataAnsweredDTO;
 import nwt.kts.backend.dto.returnDTO.DriverDataDTO;
 import nwt.kts.backend.dto.returnDTO.DriverDTO;
@@ -75,10 +76,10 @@ public class DriverController {
         return new ResponseEntity<>(new DriverDataAnsweredDTO(true), HttpStatus.OK);
     }
 
-    @GetMapping(value= "/create-driver-chart/{startDate}/{endDate}")
-    public ResponseEntity<ChartCreationDTO> createDriverChart(Principal principal, @PathVariable Timestamp startDate, @PathVariable Timestamp endDate) {
+    @PostMapping(value= "/create-driver-chart")
+    public ResponseEntity<ChartCreationDTO> createDriverChart(Principal principal, @RequestBody DatesChartDTO datesChartDTO) {
         Driver driver = driverService.findDriverByEmail(principal.getName());
-        ChartCreationDTO chartCreationDTO = driverService.createDriverChart(driver, startDate, endDate);
+        ChartCreationDTO chartCreationDTO = driverService.createDriverChart(driver, datesChartDTO);
         return new ResponseEntity<>(chartCreationDTO, HttpStatus.OK);
     }
 }

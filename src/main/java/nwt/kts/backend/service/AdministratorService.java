@@ -2,6 +2,7 @@ package nwt.kts.backend.service;
 
 import nwt.kts.backend.dto.creation.*;
 import nwt.kts.backend.dto.returnDTO.AdminDTO;
+import nwt.kts.backend.dto.returnDTO.DatesChartDTO;
 import nwt.kts.backend.entity.*;
 import nwt.kts.backend.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,8 +104,8 @@ public class AdministratorService {
         return userRepository.findUserByEmail(email);
     }
 
-    public ChartCreationDTO createAdminChart(Timestamp startDate, Timestamp endDate) {
-        List<Drive> drives = driveRepository.findAllByStartDateAfterAndEndDateBefore(startDate, endDate);
+    public ChartCreationDTO createAdminChart(DatesChartDTO datesChartDTO) {
+        List<Drive> drives = driveRepository.findAllByStartDateAfterAndEndDateBefore(datesChartDTO.getStartDate(), datesChartDTO.getEndDate());
         return createChartForAdmin(drives);
     }
 
@@ -119,7 +120,8 @@ public class AdministratorService {
             updateHashtable(date, drivenKilometersPerDay, drive.getLength());
             updateHashtable(date, moneySpentOrEarnedPerDay, drive.getPrice());
         }
-        return new ChartCreationDTO(drivesPerDay, drivenKilometersPerDay, moneySpentOrEarnedPerDay);
+        return null;
+        //return new ChartCreationDTO(drivesPerDay, drivenKilometersPerDay, moneySpentOrEarnedPerDay);
     }
 
     private void updateHashtable(String date, Hashtable<String, Double> hashtable, Double updateValue) {
