@@ -2,13 +2,11 @@ package nwt.kts.backend.controller;
 
 import nwt.kts.backend.dto.creation.*;
 import nwt.kts.backend.dto.returnDTO.*;
-import nwt.kts.backend.entity.Driver;
-import nwt.kts.backend.entity.DriverData;
-import nwt.kts.backend.entity.Passenger;
-import nwt.kts.backend.entity.User;
+import nwt.kts.backend.entity.*;
 import nwt.kts.backend.service.AdministratorService;
 import nwt.kts.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/administrators")
@@ -29,13 +29,9 @@ public class AdministratorController {
     private UserService userService;
 
     @GetMapping(value = "/get-unanswered-driver-data")
-    public ResponseEntity<List<DriverDataDTO>> getUnansweredDriverData() {
-        List<DriverData> unansweredDriverData = administratorService.getUnansweredDriverData();
-        List<DriverDataDTO> unansweredDriverDataDTOs = new ArrayList<>();
-        for (DriverData driverData : unansweredDriverData) {
-            unansweredDriverDataDTOs.add(new DriverDataDTO(driverData));
-        }
-        return new ResponseEntity<>(unansweredDriverDataDTOs, HttpStatus.OK);
+    public ResponseEntity<Map<String, Object>> getUnansweredDriverData(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+        Page<DriverData> unansweredDriverDataPage = administratorService.getUnansweredDriverData(page, size);
+        return new ResponseEntity<>(createDriverDataResponse(unansweredDriverDataPage), HttpStatus.OK);
     }
 
     @PutMapping(value = "/answer-driver-data-change")
@@ -104,5 +100,17 @@ public class AdministratorController {
     public ResponseEntity<ChartCreationDTO> createAdminChart(@RequestBody DatesChartDTO datesChartDTO) {
         ChartCreationDTO chartCreationDTO = administratorService.createAdminChart(datesChartDTO);
         return new ResponseEntity<>(chartCreationDTO, HttpStatus.OK);
+    }
+
+    private Map<String, Object> createDriverDataResponse(Page<DriverData> driverDataPage) {
+        Map<String, Object> returnValue = new HashMap<>();
+        List<DriverDataDTO> driverDataDTOS = new ArrayList<>();
+        for (DriverData driverData: driverDataPage.getContent()) {
+            driverDataDTOS.add(new DriverDataDTO(driverData));
+        }
+        returnValue.put("driverData", driverDataDTOS);
+        returnValue.put("totalItems", driverDataPage.getTotalElements());
+        returnValue.put("totalPages", driverDataPage.getTotalPages());
+        return returnValue;
     }
 }

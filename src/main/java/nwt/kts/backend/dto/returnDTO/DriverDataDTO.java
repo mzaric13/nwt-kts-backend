@@ -12,14 +12,14 @@ public class DriverDataDTO {
     private String surname;
     private String city;
     private String phoneNumber;
-    private String dateOfRequest;
+    private Timestamp dateOfRequest;
     private boolean isAnswered;
 
     public DriverDataDTO() {
 
     }
 
-    public DriverDataDTO(Integer id, String email, String name, String surname, String city, String phoneNumber, String dateOfRequest, boolean isAnswered) {
+    public DriverDataDTO(Integer id, String email, String name, String surname, String city, String phoneNumber, Timestamp dateOfRequest, boolean isAnswered) {
         this.id = id;
         this.email = email;
         this.name = name;
@@ -37,8 +37,7 @@ public class DriverDataDTO {
         this.surname = driverData.getSurname();
         this.city = driverData.getCity();
         this.phoneNumber = driverData.getPhoneNumber();
-        String date = driverData.getDateOfRequest().toString();
-        this.dateOfRequest = date.substring(0, date.length() - 7);
+        this.dateOfRequest = driverData.getDateOfRequest();
         this.isAnswered = driverData.isAnswered();
     }
 
@@ -98,12 +97,11 @@ public class DriverDataDTO {
         isAnswered = answered;
     }
 
-    public String getDateOfRequest() {
+    public Timestamp getDateOfRequest() {
         return dateOfRequest;
     }
 
-    public void setDateOfRequest(String dateOfRequest) {
+    public void setDateOfRequest(Timestamp dateOfRequest) {
         this.dateOfRequest = dateOfRequest;
     }
-
 }

@@ -6,6 +6,9 @@ import nwt.kts.backend.dto.returnDTO.DatesChartDTO;
 import nwt.kts.backend.entity.*;
 import nwt.kts.backend.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,8 +50,9 @@ public class AdministratorService {
     private DriveRepository driveRepository;
 
 
-    public List<DriverData> getUnansweredDriverData() {
-        return driverDataRepository.getAllByIsAnswered(false);
+    public Page<DriverData> getUnansweredDriverData(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return driverDataRepository.getAllByIsAnswered(false, pageable);
     }
 
     public DriverData answerDriverDataChange(AnsweredDriverDataCreationDTO answeredDriverDataCreationDTO) {
