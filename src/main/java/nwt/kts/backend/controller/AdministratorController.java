@@ -59,23 +59,15 @@ public class AdministratorController {
     }
 
     @GetMapping(value = "/get-all-passengers")
-    public ResponseEntity<List<PassengerDTO>> getAllPassengers() {
-        List<Passenger> passengers = administratorService.getAllPassengers();
-        List<PassengerDTO> passengerDTOs = new ArrayList<>();
-        for (Passenger passenger : passengers) {
-            passengerDTOs.add(new PassengerDTO(passenger));
-        }
-        return new ResponseEntity<>(passengerDTOs, HttpStatus.OK);
+    public ResponseEntity<Map<String, Object>> getAllPassengers(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+        Page<Passenger> passengers = administratorService.getAllPassengers(page, size);
+        return new ResponseEntity<>(createPassengerResponse(passengers), HttpStatus.OK);
     }
 
     @GetMapping(value = "/get-all-drivers")
-    public ResponseEntity<List<DriverDTO>> getAllDrivers() {
-        List<Driver> drivers = administratorService.getAllDrivers();
-        List<DriverDTO> driverReturnDTOs = new ArrayList<>();
-        for (Driver driver : drivers) {
-            driverReturnDTOs.add(new DriverDTO(driver));
-        }
-        return new ResponseEntity<>(driverReturnDTOs, HttpStatus.OK);
+    public ResponseEntity<Map<String, Object>> getAllDrivers(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+        Page<Driver> drivers = administratorService.getAllDrivers(page, size);
+        return new ResponseEntity<>(createDriverResponse(drivers), HttpStatus.OK);
     }
 
     @PutMapping(value = "/change-block-status-passenger")
@@ -96,7 +88,7 @@ public class AdministratorController {
         return new ResponseEntity<>(new AdminDTO(administrator), HttpStatus.OK);
     }
 
-    @PostMapping(value= "/create-admin-chart")
+    @PostMapping(value = "/create-admin-chart")
     public ResponseEntity<ChartCreationDTO> createAdminChart(@RequestBody DatesChartDTO datesChartDTO) {
         ChartCreationDTO chartCreationDTO = administratorService.createAdminChart(datesChartDTO);
         return new ResponseEntity<>(chartCreationDTO, HttpStatus.OK);
@@ -105,12 +97,36 @@ public class AdministratorController {
     private Map<String, Object> createDriverDataResponse(Page<DriverData> driverDataPage) {
         Map<String, Object> returnValue = new HashMap<>();
         List<DriverDataDTO> driverDataDTOS = new ArrayList<>();
-        for (DriverData driverData: driverDataPage.getContent()) {
+        for (DriverData driverData : driverDataPage.getContent()) {
             driverDataDTOS.add(new DriverDataDTO(driverData));
         }
         returnValue.put("driverData", driverDataDTOS);
         returnValue.put("totalItems", driverDataPage.getTotalElements());
         returnValue.put("totalPages", driverDataPage.getTotalPages());
+        return returnValue;
+    }
+
+    private Map<String, Object> createPassengerResponse(Page<Passenger> passengersPage) {
+        Map<String, Object> returnValue = new HashMap<>();
+        List<PassengerDTO> passengerDTOS = new ArrayList<>();
+        for (Passenger passenger : passengersPage.getContent()) {
+            passengerDTOS.add(new PassengerDTO(passenger));
+        }
+        returnValue.put("passengers", passengerDTOS);
+        returnValue.put("totalItems", passengersPage.getTotalElements());
+        returnValue.put("totalPages", passengersPage.getTotalPages());
+        return returnValue;
+    }
+
+    private Map<String, Object> createDriverResponse(Page<Driver> driversPage) {
+        Map<String, Object> returnValue = new HashMap<>();
+        List<DriverDTO> driverDTOS = new ArrayList<>();
+        for (Driver driver : driversPage.getContent()) {
+            driverDTOS.add(new DriverDTO(driver));
+        }
+        returnValue.put("drivers", driverDTOS);
+        returnValue.put("totalItems", driversPage.getTotalElements());
+        returnValue.put("totalPages", driversPage.getTotalPages());
         return returnValue;
     }
 }

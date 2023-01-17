@@ -84,12 +84,14 @@ public class AdministratorService {
         return userService.updatePersonalUserInfo(user, userReturnDTO.getName(), userReturnDTO.getSurname(), userReturnDTO.getCity(), userReturnDTO.getPhoneNumber());
     }
 
-    public List<Passenger> getAllPassengers() {
-        return passengerRepository.findAll();
+    public Page<Passenger> getAllPassengers(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return passengerRepository.findAll(pageable);
     }
 
-    public List<Driver> getAllDrivers() {
-        return driverRepository.findAll();
+    public Page<Driver> getAllDrivers(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return driverRepository.findAll(pageable);
     }
 
     public Passenger changeBlockedStatusPassenger(UserIdDTO userIdDTO) {
