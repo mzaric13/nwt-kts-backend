@@ -82,4 +82,11 @@ public class DriverController {
         ChartCreationDTO chartCreationDTO = driverService.createDriverChart(driver, datesChartDTO);
         return new ResponseEntity<>(chartCreationDTO, HttpStatus.OK);
     }
+
+    @GetMapping(value="/change-status")
+    public ResponseEntity<DriverDTO> changeDriverStatus(Principal principal) {
+        Driver driver = driverService.findDriverByEmail(principal.getName());
+        Driver updatedDriver = driverService.changeStatus(driver);
+        return new ResponseEntity<>(new DriverDTO(updatedDriver), HttpStatus.OK);
+    }
 }

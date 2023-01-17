@@ -106,6 +106,11 @@ public class DriverService {
         return createChartForDriver(drives);
     }
 
+    public Driver changeStatus(Driver driver) {
+        driver.setAvailable(!driver.isAvailable());
+        return driverRepository.save(driver);
+    }
+
     private ChartCreationDTO createChartForDriver(List<Drive> drives) {
         Hashtable<String, Double> drivesPerDay = new Hashtable<>();
         Hashtable<String, Double> drivenKilometersPerDay = new Hashtable<>();
