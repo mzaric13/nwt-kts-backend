@@ -14,19 +14,19 @@ import java.util.List;
 
 public interface DriveRepository extends JpaRepository<Drive, Integer> {
 
-    Page<Drive> findAllByStatus(Status status, Pageable pageable);
+    Page<Drive> findAllByStatusOrderByStartDateAsc(Status status, Pageable pageable);
 
-    Page<Drive> findAllByDriverAndStatus(Driver driver, Status status, Pageable pageable);
+    Page<Drive> findAllByDriverAndStatusOrderByStartDateAsc(Driver driver, Status status, Pageable pageable);
 
-    Page<Drive> findAllByPassengersContainsAndStatus(Passenger passenger, Status status, Pageable pageable);
+    Page<Drive> findAllByPassengersContainsAndStatusOrderByStartDateAsc(Passenger passenger, Status status, Pageable pageable);
 
     Drive findDriveById(Integer id);
 
     List<Drive> findAllByDriver_IdAndStatus(Integer id, Status status);
 
-    List<Drive> findAllByStartDateAfterAndEndDateBeforeAndPassengersContains(Timestamp startDate, Timestamp endDate, Passenger passenger);
+    List<Drive> findAllByStartDateAfterAndEndDateBeforeAndPassengersContainsOrderByStartDateAsc(Timestamp startDate, Timestamp endDate, Passenger passenger);
 
-    List<Drive> findAllByStartDateAfterAndEndDateBeforeAndDriver(Timestamp startDate, Timestamp endDate, Driver driver);
+    List<Drive> findAllByStartDateAfterAndEndDateBeforeAndDriverOrderByStartDateAsc(Timestamp startDate, Timestamp endDate, Driver driver);
 
-    List<Drive> findAllByStartDateAfterAndEndDateBefore(Timestamp startDate, Timestamp endDate);
+    List<Drive> findAllByStartDateAfterAndEndDateBeforeOrderByStartDateAsc(Timestamp startDate, Timestamp endDate);
 }

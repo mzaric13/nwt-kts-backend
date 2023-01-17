@@ -30,17 +30,17 @@ public class DriveService {
 
     public Page<Drive> getDrives(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return driveRepository.findAllByStatus(Status.FINISHED, pageable);
+        return driveRepository.findAllByStatusOrderByStartDateAsc(Status.FINISHED, pageable);
     }
 
     public Page<Drive> getDrivesByDriver(int page, int size, Driver driver) {
         Pageable pageable = PageRequest.of(page, size);
-        return driveRepository.findAllByDriverAndStatus(driver, Status.FINISHED, pageable);
+        return driveRepository.findAllByDriverAndStatusOrderByStartDateAsc(driver, Status.FINISHED, pageable);
     }
 
     public Page<Drive> getDrivesByPassenger(int page, int size, Passenger passenger) {
         Pageable pageable = PageRequest.of(page, size);
-        return driveRepository.findAllByPassengersContainsAndStatus(passenger, Status.FINISHED, pageable);
+        return driveRepository.findAllByPassengersContainsAndStatusOrderByStartDateAsc(passenger, Status.FINISHED, pageable);
     }
 
     public TempDrive saveTempDrive(TempDrive tempDrive) {

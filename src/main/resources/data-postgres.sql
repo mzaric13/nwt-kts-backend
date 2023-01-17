@@ -42,7 +42,7 @@ values (1, 1), (1, 2), (1, 3), (1, 4), (1, 5);
 
 insert into drives (start_date, end_date, price, length, inconsistent_drive_reasoning, status, driver, route_id)
 values ('2022-11-10 14:00:00', '2022-11-10 14:30:00', 300, 50, 'aaaaaa', 3, 1, 1),
-       ('2022-11-11 15:00:00', '2022-11-11 15:30:00', 300, 50, 'bbbbbb', 3, 1, 1);
+       ('2022-11-13 15:00:00', '2022-11-13 15:30:00', 300, 50, 'bbbbbb', 3, 1, 1);
 
 insert into drive_passengers (drive_id, passenger_id)
 values (1, 6), (1, 8), (1, 9), (2, 6), (2, 8);

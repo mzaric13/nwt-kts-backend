@@ -135,7 +135,7 @@ public class PassengerService {
     }
 
     public ChartCreationDTO createPassengerChart(Passenger passenger, DatesChartDTO datesChartDTO) {
-        List<Drive> drives = driveRepository.findAllByStartDateAfterAndEndDateBeforeAndPassengersContains(datesChartDTO.getStartDate(), datesChartDTO.getEndDate(), passenger);
+        List<Drive> drives = driveRepository.findAllByStartDateAfterAndEndDateBeforeAndPassengersContainsOrderByStartDateAsc(datesChartDTO.getStartDate(), datesChartDTO.getEndDate(), passenger);
         return createChartForPassenger(drives);
     }
 
@@ -166,7 +166,7 @@ public class PassengerService {
 
         return new ChartCreationDTO(new ChartObjectCreationDTO("Drives per day", listDrivesPerDay),
                 new ChartObjectCreationDTO("Driven kilometers per day", listDrivenKilometersPerDay),
-                new ChartObjectCreationDTO("Money spent/earned per day", listMoneySpentOrEarnedPerDay));
+                new ChartObjectCreationDTO("Money spent per day", listMoneySpentOrEarnedPerDay));
     }
 
     private void updateHashtable(String date, Hashtable<String, Double> hashtable, Double updateValue) {

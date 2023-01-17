@@ -14,8 +14,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -100,7 +102,7 @@ public class DriverService {
     }
 
     public ChartCreationDTO createDriverChart(Driver driver, DatesChartDTO datesChartDTO) {
-        List<Drive> drives = driveRepository.findAllByStartDateAfterAndEndDateBeforeAndDriver(datesChartDTO.getStartDate(), datesChartDTO.getEndDate(), driver);
+        List<Drive> drives = driveRepository.findAllByStartDateAfterAndEndDateBeforeAndDriverOrderByStartDateAsc(datesChartDTO.getStartDate(), datesChartDTO.getEndDate(), driver);
         return createChartForDriver(drives);
     }
 
@@ -115,8 +117,21 @@ public class DriverService {
             updateHashtable(date, drivenKilometersPerDay, drive.getLength());
             updateHashtable(date, moneySpentOrEarnedPerDay, drive.getPrice());
         }
-        return null;
-        //return new ChartCreationDTO(drivesPerDay, drivenKilometersPerDay, moneySpentOrEarnedPerDay);
+        List<SeriesObjectCreationDTO> listDrivesPerDay = new ArrayList<>();
+        List<SeriesObjectCreationDTO> listDrivenKilometersPerDay = new ArrayList<>();
+        List<SeriesObjectCreationDTO> listMoneySpentOrEarnedPerDay = new ArrayList<>();
+
+        Set<String> setOfKeys = drivesPerDay.keySet();
+
+        for (String key : setOfKeys) {
+            listDrivesPerDay.add(new SeriesObjectCreationDTO(key, drivesPerDay.get(key)));
+            listDrivenKilometersPerDay.add(new SeriesObjectCreationDTO(key, drivenKilometersPerDay.get(key)));
+            listMoneySpentOrEarnedPerDay.add(new SeriesObjectCreationDTO(key, moneySpentOrEarnedPerDay.get(key)));
+        }
+
+        return new ChartCreationDTO(new ChartObjectCreationDTO("Drives per day", listDrivesPerDay),
+                new ChartObjectCreationDTO("Driven kilometers per day", listDrivenKilometersPerDay),
+                new ChartObjectCreationDTO("Money earned per day", listMoneySpentOrEarnedPerDay));
     }
 
     private void updateHashtable(String date, Hashtable<String, Double> hashtable, Double updateValue) {
