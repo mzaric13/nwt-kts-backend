@@ -22,4 +22,6 @@ public interface DriveRepository extends JpaRepository<Drive, Integer> {
     Drive findDriveById(Integer id);
 
     List<Drive> findAllByDriver_IdAndStatus(Integer id, Status status);
+
+    Drive findDriveByDriverAndStatus(Driver driver, Status status);
 }

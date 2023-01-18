@@ -13,4 +13,5 @@ public interface DriverRepository extends JpaRepository<Driver, Integer> {
 
     Driver findDriverById(Integer id);
 
+    List<Driver> findDriversByIsAvailable(boolean available);
 }

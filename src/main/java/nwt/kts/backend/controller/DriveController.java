@@ -2,13 +2,11 @@ package nwt.kts.backend.controller;
 
 import nwt.kts.backend.dto.creation.TempDriveDTO;
 import nwt.kts.backend.dto.returnDTO.DriveDTO;
-import nwt.kts.backend.entity.Drive;
-import nwt.kts.backend.entity.Passenger;
-import nwt.kts.backend.entity.TempDrive;
+import nwt.kts.backend.entity.*;
 import nwt.kts.backend.service.DriveService;
-import nwt.kts.backend.entity.Driver;
 import nwt.kts.backend.service.DriverService;
 import nwt.kts.backend.service.PassengerService;
+import nwt.kts.backend.service.TypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -32,6 +30,9 @@ public class DriveController {
 
     @Autowired
     private PassengerService passengerService;
+
+    @Autowired
+    private TypeService typeService;
 
     @GetMapping("/get-drives")
     public ResponseEntity<Map<String, Object>> getDrives(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
@@ -59,7 +60,8 @@ public class DriveController {
             throw new EntityNotFoundException("Not all passenger emails exist");
         Set<Passenger> passengers = tempDriveDTO.getEmails().stream()
                 .map(email -> passengerService.findPassengerByEmail(email)).collect(Collectors.toSet());
-        TempDrive tempDrive = new TempDrive(tempDriveDTO, passengers);
+        Type type = typeService.findTypeByName(tempDriveDTO.getTypeDTO().getName());
+        TempDrive tempDrive = new TempDrive(tempDriveDTO, passengers, type);
         tempDrive = driveService.saveTempDrive(tempDrive);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
