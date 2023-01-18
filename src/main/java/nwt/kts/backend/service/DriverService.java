@@ -9,6 +9,7 @@ import nwt.kts.backend.repository.DriverRepository;
 import nwt.kts.backend.repository.UserRepository;
 import nwt.kts.backend.validation.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -145,5 +147,87 @@ public class DriverService {
         } else {
             hashtable.put(date, updateValue);
         }
+    }
+    
+    @Scheduled(fixedRate = 60000)
+    @Transactional(readOnly = false)
+    public void checkDriversWorkTime() {
+        List<Driver> drivers = driverRepository.findAll();
+        Date now = new Date();
+        Timestamp timestampNow = new Timestamp(now.getTime());
+        for (Driver driver: drivers) {
+            if (driver.getTimeOfLogin() != null) {
+                long difference = timestampNow.getTime() - driver.getTimeOfLogin().getTime();
+                long diffHours = difference / (60 * 60 * 1000);
+                if (diffHours >= 8) {
+                    driver.setAvailable(false);
+                    driver.setTimeOfLogin(null);
+                    driverRepository.save(driver);
+                }
+            }
+        }
+    }
+
+    @Transactional
+    public void setDriverLoginTime(String email) {
+        Driver driver = driverRepository.findDriverByEmail(email);
+        Date now = new Date();
+        Timestamp timestampNow =new Timestamp(now.getTime());
+        driver.setTimeOfLogin(timestampNow);
+        driver.setAvailable(true);
+        driverRepository.save(driver);
+    }
+
+    public Driver selectDriverForDrive(TempDrive tempDrive) {
+        Driver closestDriver = null;
+        closestDriver = findFromAvailableDrivers(tempDrive);
+        if (closestDriver == null) {
+            closestDriver = findFromDriversWithDrive(tempDrive);
+        }
+        return closestDriver;
+    }
+
+    private Driver findFromAvailableDrivers(TempDrive tempDrive) {
+        List<Driver> availableDrivers = driverRepository.findDriversByIsAvailable(true);
+        if (availableDrivers.size() == 0) return null;
+        else {
+            Driver closestDriver = null;
+            double minDistance = Double.POSITIVE_INFINITY;
+            ArrayList<Point> waypoints = new ArrayList<>(tempDrive.getRoute().getWaypoints());
+            for (Driver driver: availableDrivers) {
+                if (driver.getVehicle().getType().getId().equals(tempDrive.getVehicleType().getId())) {
+                    double distance = Math.pow(driver.getLocation().getLatitude() - waypoints.get(waypoints.size() - 1).getLatitude(), 2) + Math.pow(driver.getLocation().getLongitude() - waypoints.get(waypoints.size() - 1).getLongitude(), 2);
+                    distance = Math.sqrt(distance);
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        closestDriver = driver;
+                    }
+                }
+            }
+            return closestDriver;
+        }
+    }
+
+    private Driver findFromDriversWithDrive(TempDrive tempDrive) {
+        List<Driver> nonAvailableDrivers = driverRepository.findDriversByIsAvailable(false);
+        Driver closestDriver = null;
+        double minDistance = Double.POSITIVE_INFINITY;
+        for (Driver driver: nonAvailableDrivers) {
+            if (driver.getTimeOfLogin() != null && !driver.isHasFutureDrive() && driver.getVehicle().getType().getId().equals(tempDrive.getVehicleType().getId())) {
+                Drive currentDrive = driveRepository.findDriveByDriverAndStatus(driver, Status.STARTED);
+                ArrayList<Point> waypoints = new ArrayList<>(currentDrive.getRoute().getWaypoints());
+                double distance = Math.pow(driver.getLocation().getLatitude() - waypoints.get(0).getLatitude(), 2) + Math.pow(driver.getLocation().getLongitude() - waypoints.get(0).getLongitude(), 2);
+                distance = Math.sqrt(distance);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestDriver = driver;
+                }
+            }
+        }
+        if (closestDriver != null) {
+            closestDriver.setHasFutureDrive(true);
+            return driverRepository.save(closestDriver);
+        }
+        return null;
     }
 }

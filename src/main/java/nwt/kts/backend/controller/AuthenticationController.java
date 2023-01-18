@@ -11,6 +11,7 @@ import nwt.kts.backend.dto.returnDTO.TokenDTO;
 import nwt.kts.backend.entity.Passenger;
 import nwt.kts.backend.entity.User;
 import nwt.kts.backend.repository.UserRepository;
+import nwt.kts.backend.service.DriverService;
 import nwt.kts.backend.service.PassengerService;
 import nwt.kts.backend.service.UserService;
 import nwt.kts.backend.util.TokenUtils;
@@ -56,6 +57,9 @@ public class AuthenticationController {
     private UserService userService;
 
     @Autowired
+    private DriverService driverService;
+
+    @Autowired
     private PassengerService passengerService;
 
     @PostMapping("/login-credentials")
@@ -65,6 +69,9 @@ public class AuthenticationController {
                 emailPasswordLoginDTO.getUsername(), emailPasswordLoginDTO.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         User user = (User) authentication.getPrincipal();
+        if (user.getRole().getName().equals("ROLE_DRIVER")) {
+            driverService.setDriverLoginTime(user.getUsername());
+        }
         String jwt = tokenUtils.generateToken(user.getUsername(), user.getRole().getName());
         int expiresIn = tokenUtils.getExpiredIn();
         return ResponseEntity.ok(new TokenDTO(jwt, expiresIn));

@@ -29,4 +29,6 @@ public interface DriveRepository extends JpaRepository<Drive, Integer> {
     List<Drive> findAllByStartDateAfterAndEndDateBeforeAndDriverOrderByStartDateAsc(Timestamp startDate, Timestamp endDate, Driver driver);
 
     List<Drive> findAllByStartDateAfterAndEndDateBeforeOrderByStartDateAsc(Timestamp startDate, Timestamp endDate);
+    
+    Drive findDriveByDriverAndStatus(Driver driver, Status status);
 }

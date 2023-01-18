@@ -39,25 +39,31 @@ public class TempDrive {
     @JoinColumn(name = "route_id")
     private Route route;
 
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "vehicle_type_id")
+    private Type vehicleType;
+
     public TempDrive() {
     }
 
-    public TempDrive(Timestamp startDate, double price, double length, Set<Tag> tags, Set<Passenger> passengers, Route route) {
+    public TempDrive(Timestamp startDate, double price, double length, Set<Tag> tags, Set<Passenger> passengers, Route route, Type type) {
         this.startDate = startDate;
         this.price = price;
         this.length = length;
         this.tags = tags;
         this.passengers = passengers;
         this.route = route;
+        this.vehicleType = type;
     }
 
-    public TempDrive(TempDriveDTO tempDriveDTO, Set<Passenger> passengers) {
+    public TempDrive(TempDriveDTO tempDriveDTO, Set<Passenger> passengers, Type type) {
         this.startDate = tempDriveDTO.getStartDate();
         this.price = tempDriveDTO.getPrice();
         this.length = tempDriveDTO.getLength();
         this.tags = tempDriveDTO.getTags().stream().map(Tag::new).collect(Collectors.toSet());
         this.passengers = passengers;
         this.route = new Route(tempDriveDTO.getRouteDTO());
+        this.vehicleType = type;
     }
 
     public Integer getId() {
@@ -114,5 +120,13 @@ public class TempDrive {
 
     public void setRoute(Route route) {
         this.route = route;
+    }
+
+    public Type getVehicleType() {
+        return vehicleType;
+    }
+
+    public void setVehicleType(Type vehicleType) {
+        this.vehicleType = vehicleType;
     }
 }

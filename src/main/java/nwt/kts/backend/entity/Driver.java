@@ -3,6 +3,7 @@ package nwt.kts.backend.entity;
 import nwt.kts.backend.dto.creation.DriverCreationDTO;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "drivers")
@@ -21,6 +22,12 @@ public class Driver extends User {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "location_id")
     private Point location;
+
+    @Column(name = "time_of_login")
+    private Timestamp timeOfLogin;
+
+    @Column(name = "has_future_drive", columnDefinition = "boolean default false")
+    private Boolean hasFutureDrive;
 
     public Driver() {
         this.isBlocked = false;
@@ -83,5 +90,21 @@ public class Driver extends User {
 
     public void setLocation(Point location) {
         this.location = location;
+    }
+
+    public Timestamp getTimeOfLogin() {
+        return timeOfLogin;
+    }
+
+    public void setTimeOfLogin(Timestamp timeOfLogin) {
+        this.timeOfLogin = timeOfLogin;
+    }
+
+    public boolean isHasFutureDrive() {
+        return hasFutureDrive;
+    }
+
+    public void setHasFutureDrive(boolean hasFutureDrive) {
+        this.hasFutureDrive = hasFutureDrive;
     }
 }
