@@ -1,5 +1,6 @@
 package nwt.kts.backend.service;
 
+import nwt.kts.backend.dto.creation.PassengerRatingDTO;
 import nwt.kts.backend.dto.creation.RatingCreationDTO;
 import nwt.kts.backend.entity.Drive;
 import nwt.kts.backend.entity.Passenger;
@@ -13,8 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class RatingService {
@@ -31,9 +36,9 @@ public class RatingService {
     private final RatingValidator ratingValidator = new RatingValidator();
     private String ENTITY_EXISTS_EXCEPTION_MESSAGE = "Rating has already been given by the passenger.";
 
-    public Rating createRating(RatingCreationDTO ratingCreationDTO) {
+    public Rating createRating(RatingCreationDTO ratingCreationDTO, Passenger passenger) {
         Drive drive = driveRepository.findDriveById(ratingCreationDTO.getDriveId());
-        Passenger passenger = passengerRepository.findPassengerById(ratingCreationDTO.getPassengerId());
+        ratingCreationDTO.setPassengerId(passenger.getId());
         Rating rating = ratingRepository.findRatingByDriveAndPassenger(drive, passenger);
         if (rating == null) {
             ratingValidator.validateRatingCreation(drive.getEndDate());
@@ -79,5 +84,29 @@ public class RatingService {
         avgRatings.set(0, sumOfDriverRatings/numberOfDriverRatings);
         avgRatings.set(1, sumOfVehicleRatings/numberOfVehicleRatings);
         return avgRatings;
+    }
+
+    public List<PassengerRatingDTO> findPassengersEligibleRatings(Passenger passenger) {
+        List<PassengerRatingDTO> passengerCanRateDrive = new ArrayList<>();
+        List<Drive> drives = driveRepository.findAllByPassengersContains(passenger);
+        for (Drive drive:
+             drives) {
+            Rating rating = ratingRepository.findRatingByDriveAndPassenger(drive, passenger);
+            if (rating != null) {
+                passengerCanRateDrive.add(new PassengerRatingDTO(drive.getId(), false));
+            }
+            else {
+                long today = new Timestamp(System.currentTimeMillis()).getTime();
+                long driveDate = drive.getEndDate().getTime();
+                long timeDiff = Math.abs(today - driveDate);
+                if (TimeUnit.DAYS.convert(timeDiff, TimeUnit.MILLISECONDS) > 3) {
+                    passengerCanRateDrive.add(new PassengerRatingDTO(drive.getId(), false));
+                }
+                else {
+                    passengerCanRateDrive.add(new PassengerRatingDTO(drive.getId(), true));
+                }
+            }
+        }
+        return passengerCanRateDrive;
     }
 }
