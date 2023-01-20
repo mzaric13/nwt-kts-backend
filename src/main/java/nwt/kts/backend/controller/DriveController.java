@@ -3,21 +3,18 @@ package nwt.kts.backend.controller;
 import nwt.kts.backend.dto.creation.TempDriveDTO;
 import nwt.kts.backend.dto.returnDTO.DriveDTO;
 import nwt.kts.backend.entity.*;
-import nwt.kts.backend.service.DriveService;
-import nwt.kts.backend.service.DriverService;
-import nwt.kts.backend.service.PassengerService;
-import nwt.kts.backend.service.RouteService;
-import nwt.kts.backend.service.TypeService;
+import nwt.kts.backend.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
 import javax.persistence.EntityNotFoundException;
+import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.security.Principal;
 
 @RestController
 @RequestMapping(value="/drives")
@@ -37,6 +34,9 @@ public class DriveController {
 
     @Autowired
     private TypeService typeService;
+
+    @Autowired
+    private EmailService emailService;
 
     @GetMapping("/get-drives")
     public ResponseEntity<Map<String, Object>> getDrives(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
@@ -59,7 +59,7 @@ public class DriveController {
     }
 
     @PostMapping("/create-temp-drive")
-    public ResponseEntity<Void> createTempDrive(@RequestBody TempDriveDTO tempDriveDTO) {
+    public ResponseEntity<Integer> createTempDrive(@RequestBody TempDriveDTO tempDriveDTO) {
         if (!passengerService.allPassengersExist(tempDriveDTO.getEmails()))
             throw new EntityNotFoundException("Not all passenger emails exist");
         Set<Passenger> passengers = tempDriveDTO.getEmails().stream()
@@ -69,7 +69,45 @@ public class DriveController {
         Route route = routeService.saveRoute(tempDrive.getRoute());
         tempDrive.setRoute(route);
         driveService.saveTempDrive(tempDrive);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(tempDrive.getId(), HttpStatus.CREATED);
+    }
+
+    @GetMapping("/send-confirmation-email/{tempDriveId}")
+    public ResponseEntity<Void> sendConfirmationEmail(Principal principal, @PathVariable Integer tempDriveId) {
+        TempDrive tempDrive = driveService.getTempDriveById(tempDriveId);
+        tempDrive.getPassengers().forEach(passenger -> {
+            try {
+                emailService.sendDriveConfirmationEmail(tempDrive, passenger);
+            } catch (MessagingException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping("/accept-drive-consent")
+    public ResponseEntity<Void> acceptDriveConsent(Principal principal, @RequestParam("tempDriveId") Integer tempDriveId) {
+        TempDrive tempDrive = driveService.getTempDriveById(tempDriveId);
+        tempDrive.addAcceptedPassenger();
+        driveService.saveTempDrive(tempDrive);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping("/reject-drive-consent")
+    public ResponseEntity<Void> rejectDriveConsent(Principal principal, @RequestParam("tempDriveId") Integer tempDriveId,
+                                                   @RequestParam("passengerId") Integer passengerId) {
+        TempDrive tempDrive = driveService.getTempDriveById(tempDriveId);
+        Passenger rejectPassenger = passengerService.findPassengerById(passengerId);
+        tempDrive.getPassengers().forEach(passenger -> {
+            if (!Objects.equals(passenger.getId(), passengerId)) {
+                try {
+                    emailService.sendDriveRejectedEmail(tempDrive, passenger, rejectPassenger);
+                } catch (MessagingException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     private Map<String, Object> createDrivesResponse(Page<Drive> drivePage) {

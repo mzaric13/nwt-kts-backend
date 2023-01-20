@@ -46,4 +46,8 @@ public class DriveService {
     public TempDrive saveTempDrive(TempDrive tempDrive) {
         return tempDriveRepository.save(tempDrive);
     }
+
+    public TempDrive getTempDriveById(int id) {
+        return tempDriveRepository.findTempDriveById(id);
+    }
 }

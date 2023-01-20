@@ -43,10 +43,14 @@ public class TempDrive {
     @JoinColumn(name = "vehicle_type_id")
     private Type vehicleType;
 
+    @Column(name="num_accepted_passengers")
+    private int numAcceptedPassengers;
+
     public TempDrive() {
     }
 
-    public TempDrive(Timestamp startDate, double price, double length, Set<Tag> tags, Set<Passenger> passengers, Route route, Type type) {
+    public TempDrive(Timestamp startDate, double price, double length, Set<Tag> tags, Set<Passenger> passengers, Route route,
+                     Type type) {
         this.startDate = startDate;
         this.price = price;
         this.length = length;
@@ -54,6 +58,7 @@ public class TempDrive {
         this.passengers = passengers;
         this.route = route;
         this.vehicleType = type;
+        this.numAcceptedPassengers = 0;
     }
 
     public TempDrive(TempDriveDTO tempDriveDTO, Set<Passenger> passengers, Type type) {
@@ -64,6 +69,7 @@ public class TempDrive {
         this.passengers = passengers;
         this.route = new Route(tempDriveDTO.getRouteDTO());
         this.vehicleType = type;
+        this.numAcceptedPassengers = 0;
     }
 
     public Integer getId() {
@@ -128,5 +134,13 @@ public class TempDrive {
 
     public void setVehicleType(Type vehicleType) {
         this.vehicleType = vehicleType;
+    }
+
+    public int getNumAcceptedPassengers() {
+        return numAcceptedPassengers;
+    }
+
+    public void addAcceptedPassenger() {
+        numAcceptedPassengers += 1;
     }
 }
