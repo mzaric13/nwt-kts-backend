@@ -7,10 +7,9 @@ import nwt.kts.backend.dto.creation.ProfilePictureCreationDTO;
 import nwt.kts.backend.dto.returnDTO.DatesChartDTO;
 import nwt.kts.backend.dto.returnDTO.PassengerDTO;
 import nwt.kts.backend.dto.returnDTO.RouteDTO;
-import nwt.kts.backend.entity.Route;
 import nwt.kts.backend.entity.Passenger;
+import nwt.kts.backend.entity.Route;
 import nwt.kts.backend.service.PassengerService;
-import nwt.kts.backend.service.PointService;
 import nwt.kts.backend.service.RouteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,7 +19,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.mail.MessagingException;
 import javax.persistence.EntityNotFoundException;
 import java.security.Principal;
-import java.sql.Timestamp;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/passengers")
@@ -112,5 +112,12 @@ public class PassengerController {
         Passenger passenger = passengerService.findPassengerByEmail(principal.getName());
         ChartCreationDTO chartCreationDTO = passengerService.createPassengerChart(passenger, datesChartDTO);
         return new ResponseEntity<>(chartCreationDTO, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/activated-passengers")
+    public ResponseEntity<List<PassengerDTO>> getAllActivatedPassengers() {
+        List<Passenger> passengers = passengerService.getAllActivatedPassengers();
+        List<PassengerDTO> passengerDTOs = passengers.stream().map(PassengerDTO::new).collect(Collectors.toList());
+        return new ResponseEntity<>(passengerDTOs, HttpStatus.OK);
     }
 }

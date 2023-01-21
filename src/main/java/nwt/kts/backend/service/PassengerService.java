@@ -18,7 +18,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
-import java.sql.Timestamp;
 import java.util.*;
 
 @Service
@@ -46,6 +45,10 @@ public class PassengerService {
     private PasswordEncoder passwordEncoder;
 
     private final UserValidator userValidator = new UserValidator();
+
+    public List<Passenger> getAllActivatedPassengers() {
+        return passengerRepository.findAllByActivatedTrue();
+    }
 
     public Passenger createPassenger(PassengerCreationDTO passengerCreationDTO) throws MessagingException {
         userValidator.validateNewPassenger(passengerCreationDTO);
