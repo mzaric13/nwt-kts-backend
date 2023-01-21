@@ -1,5 +1,6 @@
 package nwt.kts.backend.entity;
 
+import nwt.kts.backend.dto.creation.MessageCreationDTO;
 import nwt.kts.backend.dto.returnDTO.MessageDTO;
 
 import javax.persistence.*;
@@ -14,7 +15,7 @@ public class Message {
     @Column(name = "id", unique = true, nullable = false)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "chat_id")
     private Chat chat;
 
@@ -44,6 +45,11 @@ public class Message {
         this.timestamp = messageDTO.getTimestamp();
         this.message = messageDTO.getMessage();
     }
+    public Message(MessageCreationDTO messageCreationDTO) {
+        this.sender = messageCreationDTO.getSender();
+        this.message = messageCreationDTO.getMessage();
+    }
+
 
     public Integer getId() {
         return id;

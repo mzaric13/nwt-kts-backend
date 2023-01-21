@@ -1,5 +1,6 @@
 package nwt.kts.backend.controller;
 
+import nwt.kts.backend.dto.creation.MessageCreationDTO;
 import nwt.kts.backend.dto.returnDTO.MessageDTO;
 import nwt.kts.backend.entity.Chat;
 import nwt.kts.backend.entity.Message;
@@ -34,8 +35,8 @@ public class ChatController {
     private MessageService messageService;
 
     @MessageMapping("/chat/{to}")
-    public void sendMessage(@DestinationVariable String to, MessageDTO messageDTO) {
-        Message message = new Message(messageDTO);
+    public void sendMessage(@DestinationVariable String to, MessageCreationDTO messageCreationDTO) {
+        Message message = new Message(messageCreationDTO);
         message.setChat(getChat(to));
         message.setTimestamp(generateTimestamp());
         message = messageService.saveMessage(message);
