@@ -110,4 +110,8 @@ public class Passenger extends User {
     public void setTokens(int tokens) {
         this.tokens = tokens;
     }
+
+    public void payDrive(int price) {
+        this.tokens -= price;
+    }
 }
