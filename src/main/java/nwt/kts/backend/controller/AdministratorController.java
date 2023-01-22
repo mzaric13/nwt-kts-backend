@@ -64,6 +64,12 @@ public class AdministratorController {
         return new ResponseEntity<>(createPassengerResponse(passengers), HttpStatus.OK);
     }
 
+    @GetMapping(value = "/get-all-active-passengers")
+    public ResponseEntity<Map<String, Object>> getAllActivePassengers(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+        Page<Passenger> passengers = administratorService.getAllActivePassengers(page, size);
+        return new ResponseEntity<>(createPassengerResponse(passengers), HttpStatus.OK);
+    }
+
     @GetMapping(value = "/get-all-drivers")
     public ResponseEntity<Map<String, Object>> getAllDrivers(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
         Page<Driver> drivers = administratorService.getAllDrivers(page, size);

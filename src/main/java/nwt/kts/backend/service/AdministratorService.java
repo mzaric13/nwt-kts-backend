@@ -97,6 +97,11 @@ public class AdministratorService {
         return passengerRepository.findAll(pageable);
     }
 
+    public Page<Passenger> getAllActivePassengers(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return passengerRepository.findAllByActivatedTrue(pageable);
+    }
+
     public Page<Driver> getAllDrivers(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return driverRepository.findAll(pageable);
