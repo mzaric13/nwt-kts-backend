@@ -3,20 +3,19 @@ package nwt.kts.backend.service;
 import nwt.kts.backend.dto.creation.*;
 import nwt.kts.backend.dto.returnDTO.AdminDTO;
 import nwt.kts.backend.dto.returnDTO.DatesChartDTO;
+import nwt.kts.backend.dto.returnDTO.MessageDTO;
 import nwt.kts.backend.entity.*;
 import nwt.kts.backend.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @Transactional
@@ -48,6 +47,15 @@ public class AdministratorService {
 
     @Autowired
     private DriveRepository driveRepository;
+
+    @Autowired
+    private ChatService chatService;
+
+    @Autowired
+    private MessageRepository messageRepository;
+
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
 
 
     public Page<DriverData> getUnansweredDriverData(int page, int size) {
@@ -96,14 +104,14 @@ public class AdministratorService {
 
     public Passenger changeBlockedStatusPassenger(UserIdDTO userIdDTO) {
         Passenger passenger = passengerRepository.findPassengerById(userIdDTO.getId());
-        //TODO DODAJ SLANJE PORUKE NA LIVE CHAT (poruka : userIdDTO.getReasoning())
+        sendBlockMessage(passenger.getEmail(), userIdDTO.getReasoning());
         passenger.setBlocked(!passenger.isBlocked());
         return passengerRepository.save(passenger);
     }
 
     public Driver changeBlockedStatusDriver(UserIdDTO userIdDTO) {
         Driver driver = driverRepository.findDriverById(userIdDTO.getId());
-        //TODO DODAJ SLANJE PORUKE NA LIVE CHAT (poruka : userIdDTO.getReasoning())
+        sendBlockMessage(driver.getEmail(), userIdDTO.getReasoning());
         driver.setBlocked(!driver.isBlocked());
         return driverRepository.save(driver);
     }
@@ -151,6 +159,17 @@ public class AdministratorService {
         } else {
             hashtable.put(date, updateValue);
         }
+    }
+
+    private void sendBlockMessage(String email, String reasoning) {
+        String to = email + "&" + "admin";
+        Message message = new Message();
+        message.setSender("admin");
+        message.setMessage(reasoning);
+        message.setTimestamp(new Timestamp(new Date().getTime()));
+        message.setChat(chatService.getChat(to));
+        message = messageRepository.save(message);
+        simpMessagingTemplate.convertAndSend("/topic/messages/" + to, new MessageDTO(message));
     }
 
 }

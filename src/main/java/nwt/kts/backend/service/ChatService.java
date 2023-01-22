@@ -18,4 +18,14 @@ public class ChatService {
     public Chat findByName(String chatName) {
         return chatRepository.findByChatName(chatName);
     }
+
+    public Chat getChat(String chatName) {
+        Chat chat = findByName(chatName);
+        if (chat != null) {
+            return chat;
+        } else {
+            Chat newChat = new Chat(chatName);
+            return saveChat(newChat);
+        }
+    }
 }

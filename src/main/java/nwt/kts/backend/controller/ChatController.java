@@ -37,7 +37,7 @@ public class ChatController {
     @MessageMapping("/chat/{to}")
     public void sendMessage(@DestinationVariable String to, MessageCreationDTO messageCreationDTO) {
         Message message = new Message(messageCreationDTO);
-        message.setChat(getChat(to));
+        message.setChat(chatService.getChat(to));
         message.setTimestamp(generateTimestamp());
         message = messageService.saveMessage(message);
         simpMessagingTemplate.convertAndSend("/topic/messages/" + to, new MessageDTO(message));
@@ -52,16 +52,6 @@ public class ChatController {
             return new ResponseEntity<>(messageDTOs, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
-        }
-    }
-
-    private Chat getChat(String chatName) {
-        Chat chat = chatService.findByName(chatName);
-        if (chat != null) {
-            return chat;
-        } else {
-            Chat newChat = new Chat(chatName);
-            return chatService.saveChat(newChat);
         }
     }
 
