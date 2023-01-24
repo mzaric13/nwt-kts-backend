@@ -11,6 +11,7 @@ import nwt.kts.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -27,6 +28,9 @@ public class DriverController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     @PostMapping(value="/register")
     public ResponseEntity<DriverDTO> registerDriver(@RequestBody DriverCreationDTO driverCreationDTO) {
@@ -97,7 +101,14 @@ public class DriverController {
     @PutMapping(value = "/update-coordinates/{id}")
     public ResponseEntity<DriverDTO> updateDriverPosition(@RequestBody PointDTO pointDTO, @PathVariable(value = "id") Integer id) {
         Driver driver = driverService.updateDriverPosition(id, pointDTO);
-        // TODO: socket call for frontend
+        simpMessagingTemplate.convertAndSend("/simulation/update-vehicle-position", new DriverDTO(driver));
+        return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/set-coordinates/{id}")
+    public ResponseEntity<DriverDTO> setDriverPosition(@RequestBody PointDTO pointDTO, @PathVariable(value = "id") Integer id) {
+        Driver driver = driverService.updateDriverPosition(id, pointDTO);
+        simpMessagingTemplate.convertAndSend("/simulation/set-vehicle-position", new DriverDTO(driver));
         return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.OK);
     }
 
