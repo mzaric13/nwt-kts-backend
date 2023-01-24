@@ -2,9 +2,7 @@ package nwt.kts.backend.exceptions.handler;
 
 import lombok.extern.slf4j.Slf4j;
 import nwt.kts.backend.apierror.ApiError;
-import nwt.kts.backend.exceptions.InvalidRatingCreationException;
-import nwt.kts.backend.exceptions.InvalidUserDataException;
-import nwt.kts.backend.exceptions.InvalidVehicleDataException;
+import nwt.kts.backend.exceptions.*;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -238,6 +236,20 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ServletException.class)
     protected ResponseEntity<Object> handleServletException(ServletException ex) {
+        ApiError apiError = new ApiError(INTERNAL_SERVER_ERROR);
+        apiError.setMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
+
+    @ExceptionHandler(DriverNotFoundException.class)
+    protected  ResponseEntity<Object> handleDriverNotFound(DriverNotFoundException ex) {
+        ApiError apiError = new ApiError(INTERNAL_SERVER_ERROR);
+        apiError.setMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
+
+    @ExceptionHandler(NotEnoughTokensException.class)
+    protected  ResponseEntity<Object> handleNotEnoughTokens(NotEnoughTokensException ex) {
         ApiError apiError = new ApiError(INTERNAL_SERVER_ERROR);
         apiError.setMessage(ex.getMessage());
         return buildResponseEntity(apiError);
