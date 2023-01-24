@@ -3,6 +3,7 @@ package nwt.kts.backend.entity;
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -67,6 +68,17 @@ public class Drive {
         this.driver = driver;
         this.passengers = passengers;
         this.route = route;
+    }
+
+    public Drive(TempDrive tempDrive, Driver driver) {
+        this.startDate = tempDrive.getStartDate();
+        this.price = tempDrive.getPrice();
+        this.length = tempDrive.getLength();
+        this.tags = new HashSet<>(tempDrive.getTags());
+        this.status = Status.PAID;
+        this.passengers = new HashSet<>(tempDrive.getPassengers());
+        this.route = tempDrive.getRoute();
+        this.driver = driver;
     }
 
     public Integer getId() {
