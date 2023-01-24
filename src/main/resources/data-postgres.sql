@@ -28,7 +28,7 @@ values (false, true, 1, 1, 1), (false, false, 2, 3, 2), (false, false, 3, 2, 3),
        (false, false, 4, 4, 4), (false, false, 5, 5, 5);
 
 insert into passengers (activated, is_blocked, id, tokens)
-values (true, false, 6, 10), (true, false, 8, 10), (true, false, 9, 10);
+values (true, false, 6, 600), (true, false, 8, 10), (true, false, 9, 10);
 
 insert into tags (id, name)
 values (1, 'Pet friendly'),

@@ -3,6 +3,8 @@ package nwt.kts.backend.controller;
 import nwt.kts.backend.dto.creation.TempDriveDTO;
 import nwt.kts.backend.dto.returnDTO.DriveDTO;
 import nwt.kts.backend.entity.*;
+import nwt.kts.backend.exceptions.DriverNotFoundException;
+import nwt.kts.backend.exceptions.NotEnoughTokensException;
 import nwt.kts.backend.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -34,9 +36,6 @@ public class DriveController {
 
     @Autowired
     private TypeService typeService;
-
-    @Autowired
-    private EmailService emailService;
 
     @GetMapping("/get-drives")
     public ResponseEntity<Map<String, Object>> getDrives(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
@@ -73,40 +72,36 @@ public class DriveController {
     }
 
     @GetMapping("/send-confirmation-email/{tempDriveId}")
-    public ResponseEntity<Void> sendConfirmationEmail(Principal principal, @PathVariable Integer tempDriveId) {
+    public ResponseEntity<Void> sendConfirmationEmail(Principal principal, @PathVariable Integer tempDriveId) throws MessagingException {
         TempDrive tempDrive = driveService.getTempDriveById(tempDriveId);
-        tempDrive.getPassengers().forEach(passenger -> {
-            try {
-                emailService.sendDriveConfirmationEmail(tempDrive, passenger);
-            } catch (MessagingException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        driveService.sendConfirmationEmail(tempDrive);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PutMapping("/accept-drive-consent")
     public ResponseEntity<Void> acceptDriveConsent(Principal principal, @RequestParam("tempDriveId") Integer tempDriveId) {
         TempDrive tempDrive = driveService.getTempDriveById(tempDriveId);
-        tempDrive.addAcceptedPassenger();
+        driveService.acceptDrive(tempDrive);
+        if (driveService.allPassengersAcceptedDrive(tempDrive)) {
+            if (driveService.passengersHaveTokens(tempDrive)) {
+                Driver driver = driverService.selectDriverForDrive(tempDrive);
+                if (driver == null) throw new DriverNotFoundException("There are no available drivers right now!");
+                driveService.payDrive(tempDrive);
+                driveService.createDrive(tempDrive, driver);
+            } else {
+                throw new NotEnoughTokensException("You don't have enough tokens to pay for the ride!");
+            }
+        }
         driveService.saveTempDrive(tempDrive);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PutMapping("/reject-drive-consent")
     public ResponseEntity<Void> rejectDriveConsent(Principal principal, @RequestParam("tempDriveId") Integer tempDriveId,
-                                                   @RequestParam("passengerId") Integer passengerId) {
+                                                   @RequestParam("passengerId") Integer passengerId) throws MessagingException {
         TempDrive tempDrive = driveService.getTempDriveById(tempDriveId);
         Passenger rejectPassenger = passengerService.findPassengerById(passengerId);
-        tempDrive.getPassengers().forEach(passenger -> {
-            if (!Objects.equals(passenger.getId(), passengerId)) {
-                try {
-                    emailService.sendDriveRejectedEmail(tempDrive, passenger, rejectPassenger);
-                } catch (MessagingException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
+        driveService.rejectDrive(tempDrive, passengerId, rejectPassenger);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

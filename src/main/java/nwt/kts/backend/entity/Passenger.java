@@ -25,7 +25,7 @@ public class Passenger extends User {
     private boolean activated;
 
     @Column(name = "tokens", nullable = false)
-    private int tokens;
+    private double tokens;
 
     public Passenger(){
         this.isBlocked = false;
@@ -103,11 +103,15 @@ public class Passenger extends User {
         return this.favouriteRoutes.remove(route);
     }
 
-    public int getTokens() {
+    public double getTokens() {
         return tokens;
     }
 
-    public void setTokens(int tokens) {
+    public void setTokens(double tokens) {
         this.tokens = tokens;
+    }
+
+    public void payDrive(double price) {
+        this.tokens -= price;
     }
 }
