@@ -28,7 +28,7 @@ public class PassengerDTO {
 
     private Set<RouteDTO> favoriteRoutes;
 
-    private int tokens;
+    private double tokens;
 
     public PassengerDTO() {
     }
@@ -87,7 +87,7 @@ public class PassengerDTO {
         this.favoriteRoutes = favoriteRoutes;
     }
 
-    public int getTokens() {
+    public double getTokens() {
         return tokens;
     }
 }
