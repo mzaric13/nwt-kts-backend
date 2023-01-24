@@ -2,13 +2,14 @@ package nwt.kts.backend.service;
 
 import nwt.kts.backend.dto.creation.*;
 import nwt.kts.backend.dto.returnDTO.DatesChartDTO;
+import nwt.kts.backend.dto.returnDTO.PointDTO;
 import nwt.kts.backend.entity.*;
-import nwt.kts.backend.repository.DriveRepository;
-import nwt.kts.backend.repository.DriverDataRepository;
-import nwt.kts.backend.repository.DriverRepository;
-import nwt.kts.backend.repository.UserRepository;
+import nwt.kts.backend.repository.*;
 import nwt.kts.backend.validation.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -55,6 +56,9 @@ public class DriverService {
 
     @Autowired
     private DriveRepository driveRepository;
+
+    @Autowired
+    private PointRepository pointRepository;
 
     /**
      * Constants
@@ -229,5 +233,31 @@ public class DriverService {
             return driverRepository.save(closestDriver);
         }
         return null;
+    }
+
+    public Driver findDriverById(Integer id) {
+        return driverRepository.findDriverById(id);
+    }
+
+    public Driver updateDriverPosition(Integer id, PointDTO pointDTO) {
+        Driver driver = driverRepository.findDriverById(id);
+        driver.setLocation(new Point(pointDTO.getLatitude(), pointDTO.getLongitude()));
+        return driverRepository.save(driver);
+    }
+
+    public Point findClosestTaxiStop(Integer id) {
+        Driver driver = driverRepository.findDriverById(id);
+        Page<Point> stations = pointRepository.findAll(PageRequest.of(0, 5, Sort.by("id")));
+        Point station = null;
+        double minDistance = Double.POSITIVE_INFINITY;
+        for (Point point: stations.getContent()) {
+            double distance = Math.pow(driver.getLocation().getLatitude() - point.getLatitude(), 2) + Math.pow(driver.getLocation().getLongitude() - point.getLongitude(), 2);
+            distance = Math.sqrt(distance);
+            if (distance < minDistance) {
+                minDistance = distance;
+                station = point;
+            }
+        }
+        return station;
     }
 }

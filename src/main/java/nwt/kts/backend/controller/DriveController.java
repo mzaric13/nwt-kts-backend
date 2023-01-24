@@ -2,6 +2,7 @@ package nwt.kts.backend.controller;
 
 import nwt.kts.backend.dto.creation.TempDriveDTO;
 import nwt.kts.backend.dto.returnDTO.DriveDTO;
+import nwt.kts.backend.dto.returnDTO.DriverDTO;
 import nwt.kts.backend.entity.*;
 import nwt.kts.backend.exceptions.DriverNotFoundException;
 import nwt.kts.backend.exceptions.NotEnoughTokensException;
@@ -117,5 +118,24 @@ public class DriveController {
         return returnValue;
     }
 
+    @GetMapping(value = "/get-paid-drive", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<DriveDTO> getPaidDriveForDriver(@RequestBody DriverDTO driverDTO) {
+        Driver driver = driverService.findDriverById(driverDTO.getId());
+        Drive drive = driveService.getDriveForDriverByStatus(driver, Status.PAID);
+        return new ResponseEntity<>(new DriveDTO(drive), HttpStatus.OK);
+    }
 
+    @GetMapping(value = "/get-started-drive", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<DriveDTO> getStartedDriveForDriver(@RequestBody DriverDTO driverDTO) {
+        Driver driver = driverService.findDriverById(driverDTO.getId());
+        Drive drive = driveService.getDriveForDriverByStatus(driver, Status.STARTED);
+        return new ResponseEntity<>(new DriveDTO(drive), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/get-ended-drive", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<DriveDTO> getEndedDriveForDriver(@RequestBody DriverDTO driverDTO) {
+        Driver driver = driverService.findDriverById(driverDTO.getId());
+        Drive drive = driveService.getDriveForDriverByStatus(driver, Status.FINISHED);
+        return new ResponseEntity<>(new DriveDTO(drive), HttpStatus.OK);
+    }
 }

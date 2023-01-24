@@ -1,13 +1,11 @@
 package nwt.kts.backend.controller;
 
 import nwt.kts.backend.dto.creation.*;
-import nwt.kts.backend.dto.returnDTO.DatesChartDTO;
-import nwt.kts.backend.dto.returnDTO.DriverDataAnsweredDTO;
-import nwt.kts.backend.dto.returnDTO.DriverDataDTO;
-import nwt.kts.backend.dto.returnDTO.DriverDTO;
+import nwt.kts.backend.dto.returnDTO.*;
 import nwt.kts.backend.entity.Driver;
 import nwt.kts.backend.entity.DriverData;
 import nwt.kts.backend.entity.Passenger;
+import nwt.kts.backend.entity.Point;
 import nwt.kts.backend.service.DriverService;
 import nwt.kts.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,5 +86,25 @@ public class DriverController {
         Driver driver = driverService.findDriverByEmail(principal.getName());
         Driver updatedDriver = driverService.changeStatus(driver);
         return new ResponseEntity<>(new DriverDTO(updatedDriver), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/get-by-id/{id}", produces = "application/json")
+    public ResponseEntity<DriverDTO> getDriverById(@PathVariable(value = "id") Integer id) {
+        Driver driver = driverService.findDriverById(id);
+        return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/update-coordinates/{id}")
+    public ResponseEntity<DriverDTO> updateDriverPosition(@RequestBody PointDTO pointDTO, @PathVariable(value = "id") Integer id) {
+        Driver driver = driverService.updateDriverPosition(id, pointDTO);
+        // TODO: socket call for frontend
+        return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/closest-stop/{id}", produces = "application/json")
+    public ResponseEntity<PointDTO> getClosestTaxiStop(@PathVariable("id") Integer id) {
+        System.out.println("asasgasgasg");
+        Point closestStation = driverService.findClosestTaxiStop(id);
+        return new ResponseEntity<>(new PointDTO(closestStation), HttpStatus.OK);
     }
 }

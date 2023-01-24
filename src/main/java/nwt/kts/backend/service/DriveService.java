@@ -121,4 +121,8 @@ public class DriveService {
             }
         }
     }
+
+    public Drive getDriveForDriverByStatus(Driver driver, Status status) {
+        return driveRepository.findDriveByDriverAndStatus(driver, status);
+    }
 }
