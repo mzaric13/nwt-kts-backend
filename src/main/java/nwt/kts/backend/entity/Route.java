@@ -4,6 +4,7 @@ import nwt.kts.backend.dto.creation.RouteCreationDTO;
 import nwt.kts.backend.dto.returnDTO.RouteDTO;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -22,7 +23,7 @@ public class Route {
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinTable(name = "route_waypoints", joinColumns = @JoinColumn(name = "route_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "point_id", referencedColumnName = "id"))
-    private Set<Point> waypoints;
+    private List<Point> waypoints;
 
     @Column(name = "expected_time", nullable = false)
     private double expectedTime;
@@ -42,7 +43,7 @@ public class Route {
         this.routeName = routeDTO.getRouteName();
         this.expectedTime = routeDTO.getExpectedTime();
         this.length = routeDTO.getLength();
-        this.waypoints = routeDTO.getWaypoints().stream().map(Point::new).collect(Collectors.toSet());
+        this.waypoints = routeDTO.getWaypoints().stream().map(Point::new).collect(Collectors.toList());
         this.routeIdx = routeDTO.getRouteIdx();
     }
 
@@ -50,11 +51,11 @@ public class Route {
         this.routeName = routeCreationDTO.getRouteName();
         this.expectedTime = routeCreationDTO.getExpectedTime();
         this.length = routeCreationDTO.getLength();
-        this.waypoints = routeCreationDTO.getWaypoints().stream().map(Point::new).collect(Collectors.toSet());
+        this.waypoints = routeCreationDTO.getWaypoints().stream().map(Point::new).collect(Collectors.toList());
         this.routeIdx = routeCreationDTO.getRouteIdx();
     }
 
-    public Route(String routeName, double expectedTime, double length, Set<Point> waypoints, int routeIdx) {
+    public Route(String routeName, double expectedTime, double length, List<Point> waypoints, int routeIdx) {
         this.routeName = routeName;
         this.expectedTime = expectedTime;
         this.length = length;
@@ -94,11 +95,11 @@ public class Route {
         this.length = length;
     }
 
-    public Set<Point> getWaypoints() {
+    public List<Point> getWaypoints() {
         return waypoints;
     }
 
-    public void setWaypoints(Set<Point> waypoints) {
+    public void setWaypoints(List<Point> waypoints) {
         this.waypoints = waypoints;
     }
 

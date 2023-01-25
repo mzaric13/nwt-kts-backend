@@ -2,6 +2,7 @@ package nwt.kts.backend.dto.returnDTO;
 
 import nwt.kts.backend.entity.Route;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -11,11 +12,11 @@ public class RouteDTO {
     private String routeName;
     private double expectedTime;
     private double length;
-    private Set<PointDTO> waypoints;
+    private List<PointDTO> waypoints;
 
     private int routeIdx;
 
-    public RouteDTO(int id, String routeName, double expectedTime, double length, Set<PointDTO> waypoints, int routeIdx) {
+    public RouteDTO(int id, String routeName, double expectedTime, double length, List<PointDTO> waypoints, int routeIdx) {
         this.id = id;
         this.routeName = routeName;
         this.expectedTime = expectedTime;
@@ -32,7 +33,7 @@ public class RouteDTO {
         this.routeName = route.getRouteName();
         this.expectedTime = route.getExpectedTime();
         this.length = route.getLength();
-        this.waypoints = route.getWaypoints().stream().map(PointDTO::new).collect(Collectors.toSet());
+        this.waypoints = route.getWaypoints().stream().map(PointDTO::new).collect(Collectors.toList());
         this.routeIdx = route.getRouteIdx();
     }
 
@@ -68,11 +69,11 @@ public class RouteDTO {
         this.length = length;
     }
 
-    public Set<PointDTO> getWaypoints() {
+    public List<PointDTO> getWaypoints() {
         return waypoints;
     }
 
-    public void setWaypoints(Set<PointDTO> waypoints) {
+    public void setWaypoints(List<PointDTO> waypoints) {
         this.waypoints = waypoints;
     }
 

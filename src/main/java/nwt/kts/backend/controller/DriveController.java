@@ -138,4 +138,18 @@ public class DriveController {
         Drive drive = driveService.getDriveForDriverByStatus(driver, Status.FINISHED);
         return new ResponseEntity<>(new DriveDTO(drive), HttpStatus.OK);
     }
+
+    @PutMapping(value = "/start-drive", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<DriveDTO> startDrive(@RequestBody DriveDTO driveDTO) {
+        Drive drive = driveService.startDrive(driveDTO);
+        // TODO: socket call for passengers
+        return new ResponseEntity<>(new DriveDTO(drive), HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/end-drive", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<DriveDTO> endDrive(@RequestBody DriveDTO driveDTO) {
+        Drive drive = driveService.endDrive(driveDTO);
+        // TODO: socket call for map update and for passenger to rate drive
+        return new ResponseEntity<>(new DriveDTO(drive), HttpStatus.OK);
+    }
 }

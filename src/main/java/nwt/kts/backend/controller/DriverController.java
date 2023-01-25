@@ -114,7 +114,6 @@ public class DriverController {
 
     @GetMapping(value = "/closest-stop/{id}", produces = "application/json")
     public ResponseEntity<PointDTO> getClosestTaxiStop(@PathVariable("id") Integer id) {
-        System.out.println("asasgasgasg");
         Point closestStation = driverService.findClosestTaxiStop(id);
         return new ResponseEntity<>(new PointDTO(closestStation), HttpStatus.OK);
     }

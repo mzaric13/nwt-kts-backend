@@ -114,6 +114,7 @@ public class DriverService {
 
     public Driver changeStatus(Driver driver) {
         driver.setAvailable(!driver.isAvailable());
+        // TODO: send websocket message to front map
         return driverRepository.save(driver);
     }
 

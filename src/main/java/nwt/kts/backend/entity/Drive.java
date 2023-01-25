@@ -128,4 +128,8 @@ public class Drive {
     public void setRoute(Route route) {
         this.route = route;
     }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
 }

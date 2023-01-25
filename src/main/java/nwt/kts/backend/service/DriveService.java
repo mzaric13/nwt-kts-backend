@@ -1,6 +1,9 @@
 package nwt.kts.backend.service;
 
+import nwt.kts.backend.dto.returnDTO.DriveDTO;
 import nwt.kts.backend.entity.*;
+import nwt.kts.backend.exceptions.DriverNotOnLocationException;
+import nwt.kts.backend.exceptions.NonExistingEntityException;
 import nwt.kts.backend.repository.DriveRepository;
 import nwt.kts.backend.repository.DriverRepository;
 import nwt.kts.backend.repository.PassengerRepository;
@@ -21,7 +24,7 @@ public class DriveService {
     private DriveRepository driveRepository;
 
     @Autowired
-    private DriverRepository driverRepository;
+    private DriverService driverService;
 
     @Autowired
     private PassengerRepository passengerRepository;
@@ -124,5 +127,27 @@ public class DriveService {
 
     public Drive getDriveForDriverByStatus(Driver driver, Status status) {
         return driveRepository.findDriveByDriverAndStatus(driver, status);
+    }
+
+    public Drive startDrive(DriveDTO driveDTO) {
+        Drive drive = driveRepository.findDriveById(driveDTO.getId());
+        if (drive == null) throw new NonExistingEntityException("Drive is not found");
+        if (checkDriverPositionToDrive(drive.getDriver(), drive.getRoute().getWaypoints().get(0))) throw new DriverNotOnLocationException("You can't start drive without being on location.");
+        drive.setStatus(Status.STARTED);
+        return driveRepository.save(drive);
+    }
+
+    public Drive endDrive(DriveDTO driveDTO) {
+        Drive drive = driveRepository.findDriveById(driveDTO.getId());
+        if (drive == null) throw new NonExistingEntityException("Drive is not found");
+        Driver driver = drive.getDriver();
+        if (checkDriverPositionToDrive(driver, drive.getRoute().getWaypoints().get(drive.getRoute().getWaypoints().size() - 1))) throw new DriverNotOnLocationException("You can't end drive without being on location.");
+        if (!driver.isHasFutureDrive()) driverService.changeStatus(driver);
+        drive.setStatus(Status.FINISHED);
+        return driveRepository.save(drive);
+    }
+
+    private boolean checkDriverPositionToDrive(Driver driver, Point point) {
+        return driver.getLocation().getLatitude() - point.getLatitude() < 10e-5 && driver.getLocation().getLongitude() - point.getLongitude() < 10e-5;
     }
 }

@@ -67,5 +67,7 @@ public class DriveDTO {
         this.route = new RouteDTO(drive.getRoute());
     }
 
-
+    public Integer getId() {
+        return id;
+    }
 }

@@ -255,6 +255,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return buildResponseEntity(apiError);
     }
 
+    @ExceptionHandler(DriverNotOnLocationException.class)
+    protected  ResponseEntity<Object> handleDriverNotOnLocationException(DriverNotOnLocationException ex) {
+        ApiError apiError = new ApiError(INTERNAL_SERVER_ERROR);
+        apiError.setMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
+
     /**
      * Handle Exception, handle generic Exception.class
      *

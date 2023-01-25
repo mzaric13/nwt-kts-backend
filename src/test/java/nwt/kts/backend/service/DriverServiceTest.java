@@ -48,7 +48,7 @@ public class DriverServiceTest {
         Driver driver = new Driver(1, "vozac@gmail.com", "0628885151",
                 "$2a$12$1YdTZA0jjbEM5Ey2piVIpuVvH9vYYvCW69Sau3lFSN7Hw.wscUhYy", "Pero", "Peric",
                 "Novi Sad", role, false, true, vehicle, location);
-        Set<Point> waypoints = new HashSet<>();
+        List<Point> waypoints = new ArrayList<>();
         waypoints.add(new Point(45.245, 13.23));
         waypoints.add(new Point(45.234, 11.234));
         Route route = new Route("Route name", 30.2, 1154, waypoints, 0);
@@ -76,7 +76,7 @@ public class DriverServiceTest {
         Driver driver2 = new Driver(2, "vozac2@gmail.com", "0628885151",
                 "$2a$12$1YdTZA0jjbEM5Ey2piVIpuVvH9vYYvCW69Sau3lFSN7Hw.wscUhYy", "Marko", "Markovic",
                 "Novi Sad", role, false, true, vehicle, new Point(45.244, 11.456));
-        Set<Point> waypoints = new LinkedHashSet<>();
+        List<Point> waypoints = new ArrayList<>();
         waypoints.add(new Point(45.245, 13.23));
         waypoints.add(new Point(45.234, 11.234));
         Route route = new Route("Route name", 30.2, 1154, waypoints, 0);
@@ -104,10 +104,10 @@ public class DriverServiceTest {
                 "Novi Sad", role, false, false, vehicle, new Point(45.212, 11.422));
         driver1.setTimeOfLogin(new Timestamp(new Date().getTime()));
         driver1.setHasFutureDrive(false);
-        Set<Point> waypoints1 = new LinkedHashSet<>();
+        List<Point> waypoints1 = new ArrayList<>();
         waypoints1.add(new Point(45.245, 13.23));
         waypoints1.add(new Point(45.234, 11.234));
-        Set<Point> waypoints2 = new LinkedHashSet<>();
+        List<Point> waypoints2 = new ArrayList<>();
         waypoints2.add(new Point(45.256, 12.234));
         waypoints2.add(new Point(45.234, 12.134));
         Route route1 = new Route("Route name", 30.2, 1154, waypoints1, 0);
@@ -142,7 +142,7 @@ public class DriverServiceTest {
                 "Novi Sad", role, false, false, vehicle2, new Point(45.244, 11.456));
         driver2.setTimeOfLogin(new Timestamp(new Date().getTime()));
         driver2.setHasFutureDrive(false);
-        Set<Point> waypoints1 = new LinkedHashSet<>();
+        List<Point> waypoints1 = new ArrayList<>();
         waypoints1.add(new Point(45.245, 13.23));
         waypoints1.add(new Point(45.234, 11.234));
         Route route1 = new Route("Route name", 30.2, 1154, waypoints1, 0);
