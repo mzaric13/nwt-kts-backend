@@ -10,6 +10,7 @@ import nwt.kts.backend.service.RatingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -29,6 +30,7 @@ public class RatingController {
 
 
     @PostMapping(value = "/create-rating", consumes = "application/json", produces = "application/json")
+    @PreAuthorize("hasRole('PASSENGER')")
     public ResponseEntity<RatingDTO> createRating(Principal principal, @RequestBody RatingCreationDTO ratingCreationDTO) {
         Passenger passenger = passengerService.findPassengerByEmail(principal.getName());
         Rating rating = ratingService.createRating(ratingCreationDTO, passenger);
@@ -36,6 +38,7 @@ public class RatingController {
     }
 
     @GetMapping(value="/get-drive-ratings/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DRIVER', 'PASSENGER')")
     public ResponseEntity<List<RatingDTO>> getDriveRatings(@PathVariable Integer id) {
         List<Rating> ratings = ratingService.getDriveRatings(id);
         List<RatingDTO> ratingDTOS = new ArrayList<>();
@@ -47,12 +50,14 @@ public class RatingController {
     }
 
     @GetMapping(value="/get-driver-and-vehicle-average-rating/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DRIVER', 'PASSENGER')")
     public ResponseEntity<List<Double>> getDriverAndVehicleAverageRating(@PathVariable Integer id) {
         List<Double> ratings = ratingService.getDriverAndVehicleAverageRating(id);
         return new ResponseEntity<>(ratings, HttpStatus.OK);
     }
 
     @GetMapping(value="/find-passengers-eligible-ratings")
+    @PreAuthorize("hasRole('PASSENGER')")
     public ResponseEntity<List<PassengerRatingDTO>> findPassengersEligibleRatings(Principal principal) {
         Passenger passenger = passengerService.findPassengerByEmail(principal.getName());
         List<PassengerRatingDTO> passengerCanRateDrive = ratingService.findPassengersEligibleRatings(passenger);

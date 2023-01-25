@@ -14,6 +14,7 @@ import nwt.kts.backend.service.RouteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
@@ -45,24 +46,28 @@ public class PassengerController {
     }
 
     @PutMapping(value = "/change-password")
+    @PreAuthorize("hasRole('PASSENGER')")
     public ResponseEntity<PassengerDTO> changePassword(@RequestBody PasswordChangeCreationDTO passwordChangeCreationDTO){
         Passenger passenger = passengerService.changePassword(passwordChangeCreationDTO);
         return new ResponseEntity<>(new PassengerDTO(passenger), HttpStatus.OK);
     }
 
     @PutMapping(value = "/change-profile-picture")
+    @PreAuthorize("hasRole('PASSENGER')")
     public ResponseEntity<PassengerDTO> changeProfilePicture(@RequestBody ProfilePictureCreationDTO profilePictureCreationDTO){
         Passenger passenger = passengerService.changeProfilePicture(profilePictureCreationDTO);
         return new ResponseEntity<>(new PassengerDTO(passenger), HttpStatus.OK);
     }
 
     @PutMapping(value = "/update-personal-info")
+    @PreAuthorize("hasRole('PASSENGER')")
     public ResponseEntity<PassengerDTO> changePersonalInfo(@RequestBody PassengerDTO passengerDTO){
         Passenger passenger = passengerService.changePersonalInfo(passengerDTO);
         return new ResponseEntity<>(new PassengerDTO(passenger), HttpStatus.OK);
     }
 
     @PutMapping(value = "/add-favorite-route")
+    @PreAuthorize("hasRole('PASSENGER')")
     public ResponseEntity<RouteDTO> addFavoriteRoute(Principal principal, @RequestBody RouteDTO routeDTO) {
         Passenger passenger = passengerService.findPassengerByEmail(principal.getName());
         Route favoriteRoute;
@@ -81,12 +86,14 @@ public class PassengerController {
     }
     
     @GetMapping(value = "/get-logged")
+    @PreAuthorize("hasRole('PASSENGER')")
     public ResponseEntity<PassengerDTO> getLoggedPassenger(Principal principal) {
         Passenger passenger = passengerService.findPassengerByEmail(principal.getName());
         return new ResponseEntity<>(new PassengerDTO(passenger), HttpStatus.OK);
     }
 
     @PutMapping(value = "/remove-favorite-route/{routeId}")
+    @PreAuthorize("hasRole('PASSENGER')")
     public ResponseEntity<Void> removeFavoriteRoute(Principal principal, @PathVariable Integer routeId) {
         Passenger passenger = passengerService.findPassengerByEmail(principal.getName());
         Route favoriteRoute = routeService.findRouteById(routeId);
@@ -101,6 +108,7 @@ public class PassengerController {
     }
 
     @PutMapping(value = "/add-tokens/{tokensToAdd}")
+    @PreAuthorize("hasRole('PASSENGER')")
     public ResponseEntity<PassengerDTO> addTokens(Principal principal, @PathVariable int tokensToAdd) {
         Passenger passenger = passengerService.findPassengerByEmail(principal.getName());
         passenger = passengerService.addTokens(passenger, tokensToAdd);
@@ -108,6 +116,7 @@ public class PassengerController {
     }
 
     @PostMapping(value= "/create-passenger-chart")
+    @PreAuthorize("hasRole('PASSENGER')")
     public ResponseEntity<ChartCreationDTO> createPassengerChart(Principal principal, @RequestBody DatesChartDTO datesChartDTO) {
         Passenger passenger = passengerService.findPassengerByEmail(principal.getName());
         ChartCreationDTO chartCreationDTO = passengerService.createPassengerChart(passenger, datesChartDTO);
@@ -115,6 +124,7 @@ public class PassengerController {
     }
 
     @GetMapping(value = "/activated-passengers")
+    // TODO: add authorization
     public ResponseEntity<List<PassengerDTO>> getAllActivatedPassengers() {
         List<Passenger> passengers = passengerService.getAllActivatedPassengers();
         List<PassengerDTO> passengerDTOs = passengers.stream().map(PassengerDTO::new).collect(Collectors.toList());

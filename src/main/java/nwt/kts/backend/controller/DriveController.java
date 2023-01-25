@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
@@ -39,12 +40,14 @@ public class DriveController {
     private TypeService typeService;
 
     @GetMapping("/get-drives")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Map<String, Object>> getDrives(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
         Page<Drive> drivePage = driveService.getDrives(page, size);
         return new ResponseEntity<>(createDrivesResponse(drivePage), HttpStatus.OK);
     }
 
     @GetMapping("/get-drives-for-driver")
+    @PreAuthorize("hasRole('DRIVER')")
     public ResponseEntity<Map<String, Object>> getDrivesForDriver(Principal principal, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
         Driver driver = driverService.findDriverByEmail(principal.getName());
         Page<Drive> drivePage = driveService.getDrivesByDriver(page, size, driver);
@@ -52,6 +55,7 @@ public class DriveController {
     }
 
     @GetMapping("/get-drives-for-passenger")
+    @PreAuthorize("hasRole('PASSENGER')")
     public ResponseEntity<Map<String, Object>> getDrivesForPassenger(Principal principal, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
         Passenger passenger = passengerService.findPassengerByEmail(principal.getName());
         Page<Drive> drivePage = driveService.getDrivesByPassenger(page, size, passenger);
@@ -59,6 +63,7 @@ public class DriveController {
     }
 
     @PostMapping("/create-temp-drive")
+    @PreAuthorize("hasRole('PASSENGER')")
     public ResponseEntity<Integer> createTempDrive(@RequestBody TempDriveDTO tempDriveDTO) {
         if (!passengerService.allPassengersExist(tempDriveDTO.getEmails()))
             throw new EntityNotFoundException("Not all passenger emails exist");
@@ -73,6 +78,7 @@ public class DriveController {
     }
 
     @GetMapping("/send-confirmation-email/{tempDriveId}")
+    @PreAuthorize("hasRole('PASSENGER')")
     public ResponseEntity<Void> sendConfirmationEmail(Principal principal, @PathVariable Integer tempDriveId) throws MessagingException {
         TempDrive tempDrive = driveService.getTempDriveById(tempDriveId);
         driveService.sendConfirmationEmail(tempDrive);
@@ -140,6 +146,7 @@ public class DriveController {
     }
 
     @PutMapping(value = "/start-drive", consumes = "application/json", produces = "application/json")
+    @PreAuthorize("hasRole('DRIVER')")
     public ResponseEntity<DriveDTO> startDrive(@RequestBody DriveDTO driveDTO) {
         Drive drive = driveService.startDrive(driveDTO);
         // TODO: socket call for passengers
@@ -147,6 +154,7 @@ public class DriveController {
     }
 
     @PutMapping(value = "/end-drive", consumes = "application/json", produces = "application/json")
+    @PreAuthorize("hasRole('DRIVER')")
     public ResponseEntity<DriveDTO> endDrive(@RequestBody DriveDTO driveDTO) {
         Drive drive = driveService.endDrive(driveDTO);
         // TODO: socket call for map update and for passenger to rate drive

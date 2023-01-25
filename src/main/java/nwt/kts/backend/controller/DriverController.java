@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -33,6 +34,7 @@ public class DriverController {
     private SimpMessagingTemplate simpMessagingTemplate;
 
     @PostMapping(value="/register")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<DriverDTO> registerDriver(@RequestBody DriverCreationDTO driverCreationDTO) {
         Driver driver = driverService.createDriver(driverCreationDTO);
         return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.CREATED);
@@ -46,30 +48,35 @@ public class DriverController {
     }
     
     @PostMapping(value="/send-update-request")
+    @PreAuthorize("hasRole('DRIVER')")
     public ResponseEntity<DriverDataDTO> sendUpdateRequest(@RequestBody UpdatedUserDataCreationDTO updatedUserDataCreationDTO){
         DriverData driverData = driverService.sendUpdateRequest(updatedUserDataCreationDTO);
         return new ResponseEntity<>(new DriverDataDTO(driverData), HttpStatus.CREATED);
     }
 
     @PutMapping(value="/change-password")
+    @PreAuthorize("hasRole('DRIVER')")
     public ResponseEntity<DriverDTO> changePassword(@RequestBody PasswordChangeCreationDTO passwordChangeCreationDTO){
         Driver driver = driverService.changePassword(passwordChangeCreationDTO);
         return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.OK);
     }
 
     @PutMapping(value="/change-profile-picture")
+    @PreAuthorize("hasRole('DRIVER')")
     public ResponseEntity<DriverDTO> changeProfilePicture(@RequestBody ProfilePictureCreationDTO profilePictureCreationDTO){
         Driver driver = driverService.changeProfilePicture(profilePictureCreationDTO);
         return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.OK);
     }
 
     @GetMapping(value = "/get-logged")
+    @PreAuthorize("hasRole('DRIVER')")
     public ResponseEntity<DriverDTO> getLoggedDriver(Principal principal) {
         Driver driver = driverService.findDriverByEmail(principal.getName());
         return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.OK);
     }
 
     @GetMapping(value="/is-unanswered-driver-data-present/{email}")
+    @PreAuthorize("hasRole('DRIVER')")
     public ResponseEntity<DriverDataAnsweredDTO> isUnansweredDriverDataPresent(@PathVariable String email) {
         DriverData driverData = driverService.findUnansweredDriverData(email);
         if (driverData != null) {
@@ -79,6 +86,7 @@ public class DriverController {
     }
 
     @PostMapping(value= "/create-driver-chart")
+    @PreAuthorize("hasRole('DRIVER')")
     public ResponseEntity<ChartCreationDTO> createDriverChart(Principal principal, @RequestBody DatesChartDTO datesChartDTO) {
         Driver driver = driverService.findDriverByEmail(principal.getName());
         ChartCreationDTO chartCreationDTO = driverService.createDriverChart(driver, datesChartDTO);
@@ -86,6 +94,7 @@ public class DriverController {
     }
 
     @GetMapping(value="/change-status")
+    @PreAuthorize("hasRole('DRIVER')")
     public ResponseEntity<DriverDTO> changeDriverStatus(Principal principal) {
         Driver driver = driverService.findDriverByEmail(principal.getName());
         Driver updatedDriver = driverService.changeStatus(driver);
