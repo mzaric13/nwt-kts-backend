@@ -2,8 +2,9 @@ package nwt.kts.backend.entity;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -27,8 +28,10 @@ public class Drive {
     @Column(name = "length", nullable = false)
     private double length;
 
+    @ElementCollection
+    @CollectionTable(name = "inconsistent_drive_reasonings", joinColumns = @JoinColumn(name = "id"))
     @Column(name = "inconsistent_drive_reasoning")
-    private String inconsistentDriveReasoning;
+    private List<String> inconsistentDriveReasoning = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "drive_tags", joinColumns = @JoinColumn(name = "drive_id", referencedColumnName = "id"),
@@ -56,7 +59,7 @@ public class Drive {
     }
 
     public Drive(Integer id, Timestamp startDate, Timestamp endDate, double price, double length,
-                 String inconsistentDriveReasoning, Set<Tag> tags, Status status, Driver driver, Set<Passenger> passengers, Route route) {
+                 List<String> inconsistentDriveReasoning, Set<Tag> tags, Status status, Driver driver, Set<Passenger> passengers, Route route) {
         this.id = id;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -101,7 +104,7 @@ public class Drive {
         return length;
     }
 
-    public String getInconsistentDriveReasoning() {
+    public List<String> getInconsistentDriveReasoning() {
         return inconsistentDriveReasoning;
     }
 
@@ -131,5 +134,9 @@ public class Drive {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public void setInconsistentDriveReasoning(List<String> inconsistentDriveReasoning) {
+        this.inconsistentDriveReasoning = inconsistentDriveReasoning;
     }
 }

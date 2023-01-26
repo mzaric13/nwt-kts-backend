@@ -9,6 +9,7 @@ import nwt.kts.backend.entity.Tag;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class DriveDTO {
 
@@ -28,7 +29,7 @@ public class DriveDTO {
     private double length;
 
     @JsonProperty("inconsistentDriveReasoning")
-    private String inconsistentDriveReasoning;
+    private List<String> inconsistentDriveReasoning;
 
     @JsonProperty("tags")
     private List<TagDTO> tags;
@@ -69,5 +70,9 @@ public class DriveDTO {
 
     public Integer getId() {
         return id;
+    }
+
+    public List<String> getInconsistentDriveReasoning() {
+        return inconsistentDriveReasoning;
     }
 }
