@@ -148,7 +148,7 @@ public class DriveService {
     public Drive startDrive(DriveDTO driveDTO) {
         Drive drive = driveRepository.findDriveById(driveDTO.getId());
         if (drive == null) throw new NonExistingEntityException("Drive is not found");
-        if (checkDriverPositionToDrive(drive.getDriver(), drive.getRoute().getWaypoints().get(0))) throw new DriverNotOnLocationException("You can't start drive without being on location.");
+        if (!checkDriverPositionToDrive(drive.getDriver(), drive.getRoute().getWaypoints().get(0))) throw new DriverNotOnLocationException("You can't start drive without being on location.");
         drive.setStatus(Status.STARTED);
         return driveRepository.save(drive);
     }
@@ -157,7 +157,7 @@ public class DriveService {
         Drive drive = driveRepository.findDriveById(driveDTO.getId());
         if (drive == null) throw new NonExistingEntityException("Drive is not found");
         Driver driver = drive.getDriver();
-        if (checkDriverPositionToDrive(driver, drive.getRoute().getWaypoints().get(drive.getRoute().getWaypoints().size() - 1))) throw new DriverNotOnLocationException("You can't end drive without being on location.");
+        if (!checkDriverPositionToDrive(driver, drive.getRoute().getWaypoints().get(drive.getRoute().getWaypoints().size() - 1))) throw new DriverNotOnLocationException("You can't end drive without being on location.");
         if (!driver.isHasFutureDrive()) driverService.changeStatus(driver);
         drive.setStatus(Status.FINISHED);
         return driveRepository.save(drive);
