@@ -37,7 +37,7 @@ public class User implements UserDetails {
     @Column(name = "picture")
     protected String picture;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")
     protected Role role;
 
