@@ -12,15 +12,17 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/chat").setAllowedOrigins("http://localhost:4200");
-        registry.addEndpoint("/chat").setAllowedOrigins("http://localhost:4200").withSockJS();
-        registry.addEndpoint("/map").setAllowedOrigins("http://localhost:4200");
-        registry.addEndpoint("/map").setAllowedOrigins("http://localhost:4200").withSockJS();
+        registry.addEndpoint("/secured/chat").setAllowedOrigins("http://localhost:4200");
+        registry.addEndpoint("/secured/chat").setAllowedOrigins("http://localhost:4200").withSockJS();
+        registry.addEndpoint("/secured/map").setAllowedOrigins("http://localhost:4200");
+        registry.addEndpoint("/secured/map").setAllowedOrigins("http://localhost:4200").withSockJS();
+        registry.addEndpoint("/secured/drive").setAllowedOrigins("http://localhost:4200");
+        registry.addEndpoint("/secured/drive").setAllowedOrigins("http://localhost:4200").withSockJS();
     }
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.setApplicationDestinationPrefixes("/app").enableSimpleBroker("/topic");
-        registry.setApplicationDestinationPrefixes("/app").enableSimpleBroker("/simulation");
+        registry.setApplicationDestinationPrefixes("/app");
+        registry.enableSimpleBroker("/secured/topic", "/secured/simulation", "/secured/update");
     }
 }

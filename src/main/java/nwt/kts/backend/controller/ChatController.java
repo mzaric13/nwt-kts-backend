@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,7 +23,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@PreAuthorize("hasAnyRole('ADMIN', 'PASSENGER', 'DRIVER')")
 public class ChatController {
 
     @Autowired
@@ -36,13 +34,13 @@ public class ChatController {
     @Autowired
     private MessageService messageService;
 
-    @MessageMapping("/chat/{to}")
+    @MessageMapping("/secured/chat/{to}")
     public void sendMessage(@DestinationVariable String to, MessageCreationDTO messageCreationDTO) {
         Message message = new Message(messageCreationDTO);
         message.setChat(chatService.getChat(to));
         message.setTimestamp(generateTimestamp());
         message = messageService.saveMessage(message);
-        simpMessagingTemplate.convertAndSend("/topic/messages/" + to, new MessageDTO(message));
+        simpMessagingTemplate.convertAndSend("/secured/topic/messages/" + to, new MessageDTO(message));
     }
 
     @GetMapping("/get-user-messages/{chatName}")

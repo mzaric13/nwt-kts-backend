@@ -63,8 +63,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/drivers/closest-stop/{id}").permitAll()
                 .antMatchers("/passengers/register").permitAll()
                 .antMatchers("/passengers/activate-account/{id}").permitAll()
-                .antMatchers("/tags/**").permitAll()
-                .antMatchers("/users/**").permitAll()
+                .antMatchers("/secured/**", "/secured/**/**", "/secured/**/**/**").permitAll()
                 .anyRequest().authenticated().and()
                 .cors().and()
                 .addFilterBefore(new TokenAuthenticationFilter(tokenUtils, customUserDetailsService), BasicAuthenticationFilter.class);
