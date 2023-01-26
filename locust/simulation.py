@@ -33,10 +33,6 @@ class QuickstartUser(HttpUser):
                 rand_idx_driver = drivers[randrange(0, len(drivers))]
             self.chosen_driver = rand_idx_driver
             self.departure = [self.chosen_driver["location"]["latitude"], self.chosen_driver["location"]["longitude"]]
-            self.client.put(f"/drivers/set-coordinates/{self.chosen_driver['id']}", json={
-                'latitude': self.departure[0],
-                'longitude': self.departure[1]
-            })
             given_drivers.append(self.chosen_driver["id"])
 
 
@@ -65,8 +61,8 @@ class QuickstartUser(HttpUser):
                     return
             new_coordinate = self.coordinates.pop(0)
             self.client.put(f"/drivers/update-coordinates/{self.chosen_driver['id']}", json={
-                'latitude': new_coordinate[0],
-                'longitude': new_coordinate[1]
+                'latitude': new_coordinate[1],
+                'longitude': new_coordinate[0]
             })
 
         elif len(self.coordinates) == 0 and self.driving_to_start_point:
