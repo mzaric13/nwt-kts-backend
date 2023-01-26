@@ -1,6 +1,7 @@
 package nwt.kts.backend.service;
 
 import nwt.kts.backend.dto.returnDTO.DriveDTO;
+import nwt.kts.backend.dto.returnDTO.MessageDTO;
 import nwt.kts.backend.entity.*;
 import nwt.kts.backend.exceptions.DriverNotOnLocationException;
 import nwt.kts.backend.exceptions.NonExistingEntityException;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
@@ -34,6 +36,20 @@ public class DriveService {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private ChatService chatService;
+
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
+
+    public Drive saveDrive(Drive drive) {
+        return driveRepository.save(drive);
+    }
+
+    public Drive getDriveById(int driveId) {
+        return driveRepository.findDriveById(driveId);
+    }
 
     public Page<Drive> getDrives(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -149,5 +165,17 @@ public class DriveService {
 
     private boolean checkDriverPositionToDrive(Driver driver, Point point) {
         return driver.getLocation().getLatitude() - point.getLatitude() < 10e-5 && driver.getLocation().getLongitude() - point.getLongitude() < 10e-5;
+    }
+
+    public Drive reportInconsistency(String email, DriveDTO driveDTO) {
+        Drive drive = driveRepository.findDriveById(driveDTO.getId());
+        if (drive == null) throw new NonExistingEntityException("Drive is not found");
+        drive.setInconsistentDriveReasoning(driveDTO.getInconsistentDriveReasoning());
+        String content = drive.getInconsistentDriveReasoning().get(drive.getInconsistentDriveReasoning().size() - 1);
+        String chatName = email + "&" + "admin";
+        Chat chat = chatService.getChat(chatName);
+        Message message = chatService.createMessage(content, chat, email);
+        simpMessagingTemplate.convertAndSend("/secured/topic/messages/" + chatName, new MessageDTO(message));
+        return drive;
     }
 }

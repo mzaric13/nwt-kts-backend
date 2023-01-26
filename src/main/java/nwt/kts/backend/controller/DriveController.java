@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,6 +39,9 @@ public class DriveController {
 
     @Autowired
     private TypeService typeService;
+
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     @GetMapping("/get-drives")
     @PreAuthorize("hasRole('ADMIN')")
@@ -112,18 +116,6 @@ public class DriveController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private Map<String, Object> createDrivesResponse(Page<Drive> drivePage) {
-        Map<String, Object> returnValue = new HashMap<>();
-        List<DriveDTO> driveDTOS = new ArrayList<>();
-        for (Drive drive: drivePage.getContent()) {
-            driveDTOS.add(new DriveDTO(drive));
-        }
-        returnValue.put("drives", driveDTOS);
-        returnValue.put("totalItems", drivePage.getTotalElements());
-        returnValue.put("totalPages", drivePage.getTotalPages());
-        return returnValue;
-    }
-
     @GetMapping(value = "/get-paid-drive", consumes = "application/json", produces = "application/json")
     public ResponseEntity<DriveDTO> getPaidDriveForDriver(@RequestBody DriverDTO driverDTO) {
         Driver driver = driverService.findDriverById(driverDTO.getId());
@@ -157,7 +149,35 @@ public class DriveController {
     @PreAuthorize("hasRole('DRIVER')")
     public ResponseEntity<DriveDTO> endDrive(@RequestBody DriveDTO driveDTO) {
         Drive drive = driveService.endDrive(driveDTO);
-        // TODO: socket call for map update and for passenger to rate drive
+        DriveDTO returnDrive = new DriveDTO(drive);
+        simpMessagingTemplate.convertAndSend("/secured/update/end-drive", returnDrive);
+        return new ResponseEntity<>(returnDrive, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/{driveId}", produces = "application/json")
+    @PreAuthorize("hasAnyRole('DRIVER', 'PASSENGER', 'ADMIN')")
+    public ResponseEntity<DriveDTO> getDrive(@PathVariable Integer driveId) {
+        Drive drive = driveService.getDriveById(driveId);
         return new ResponseEntity<>(new DriveDTO(drive), HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/report-inconsistency", consumes = "application/json", produces = "application/json")
+    @PreAuthorize("hasRole('PASSENGER')")
+    public ResponseEntity<Void> reportInconsistency(Principal principal, @RequestBody DriveDTO driveDTO) {
+        Drive drive = driveService.reportInconsistency(principal.getName(), driveDTO);
+        simpMessagingTemplate.convertAndSend("/secured/update/drive-inconsistency", new DriveDTO(drive));
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    private Map<String, Object> createDrivesResponse(Page<Drive> drivePage) {
+        Map<String, Object> returnValue = new HashMap<>();
+        List<DriveDTO> driveDTOS = new ArrayList<>();
+        for (Drive drive: drivePage.getContent()) {
+            driveDTOS.add(new DriveDTO(drive));
+        }
+        returnValue.put("drives", driveDTOS);
+        returnValue.put("totalItems", drivePage.getTotalElements());
+        returnValue.put("totalPages", drivePage.getTotalPages());
+        return returnValue;
     }
 }
