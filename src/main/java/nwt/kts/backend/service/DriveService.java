@@ -164,7 +164,7 @@ public class DriveService {
     }
 
     private boolean checkDriverPositionToDrive(Driver driver, Point point) {
-        return driver.getLocation().getLatitude() - point.getLatitude() < 10e-5 && driver.getLocation().getLongitude() - point.getLongitude() < 10e-5;
+        return Math.abs(driver.getLocation().getLatitude() - point.getLatitude()) < 10e-5 && Math.abs(driver.getLocation().getLongitude() - point.getLongitude()) < 10e-5;
     }
 
     public Drive reportInconsistency(String email, DriveDTO driveDTO) {
