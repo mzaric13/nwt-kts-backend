@@ -158,13 +158,13 @@ public class DriveService {
         if (drive == null) throw new NonExistingEntityException("Drive is not found");
         Driver driver = drive.getDriver();
         if (!checkDriverPositionToDrive(driver, drive.getRoute().getWaypoints().get(drive.getRoute().getWaypoints().size() - 1))) throw new DriverNotOnLocationException("You can't end drive without being on location.");
-        if (!driver.isHasFutureDrive()) driverService.changeStatus(driver);
+        if (!driver.isHasFutureDrive()) driver.setAvailable(true);
         drive.setStatus(Status.FINISHED);
         return driveRepository.save(drive);
     }
 
     private boolean checkDriverPositionToDrive(Driver driver, Point point) {
-        return Math.abs(driver.getLocation().getLatitude() - point.getLatitude()) < 10e-5 && Math.abs(driver.getLocation().getLongitude() - point.getLongitude()) < 10e-5;
+        return Math.abs(driver.getLocation().getLatitude() - point.getLatitude()) < 10e-4 && Math.abs(driver.getLocation().getLongitude() - point.getLongitude()) < 10e-4;
     }
 
     public Drive reportInconsistency(String email, DriveDTO driveDTO) {
