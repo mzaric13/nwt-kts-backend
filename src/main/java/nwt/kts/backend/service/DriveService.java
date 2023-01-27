@@ -98,7 +98,8 @@ public class DriveService {
                 Driver driver = driverService.selectDriverForDrive(tempDrive);
                 if (driver == null) throw new DriverNotFoundException("There are no available drivers right now!");
                 this.payDrive(tempDrive);
-                this.createDrive(tempDrive, driver);
+                Drive drive = this.createDrive(tempDrive, driver);
+                tempDrive.setDriveId(drive.getId());
             } else {
                 throw new NotEnoughTokensException("You don't have enough tokens to pay for the ride!");
             }
@@ -157,6 +158,10 @@ public class DriveService {
 
     private Drive createDrive(TempDrive tempDrive, Driver driver) {
         Drive drive = new Drive(tempDrive, driver);
+        if (driver.isAvailable()) {
+            drive.setStatus(Status.DRIVING_TO_START);
+            drive.getDriver().setAvailable(false);
+        }
         for (Passenger passenger: drive.getPassengers()) passenger.setHasDrive(true);
         return driveRepository.save(drive);
     }
@@ -199,6 +204,13 @@ public class DriveService {
         for (Passenger pas : drive.getPassengers()) pas.setHasDrive(false);
         drive.setStatus(Status.FINISHED);
         return driveRepository.save(drive);
+    }
+
+    public Drive startNewDrive(Driver driver) {
+        Drive newDrive = driveRepository.findDriveByDriverAndStatus(driver, Status.PAID);
+        newDrive.setStatus(Status.DRIVING_TO_START);
+        newDrive.getDriver().setHasFutureDrive(false);
+        return driveRepository.save(newDrive);
     }
 
     private boolean checkDriverPositionToDrive(Driver driver, Point point) {

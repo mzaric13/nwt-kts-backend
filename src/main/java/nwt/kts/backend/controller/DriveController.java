@@ -76,7 +76,13 @@ public class DriveController {
 
     @PutMapping("/accept-drive-consent")
     public ResponseEntity<Void> acceptDriveConsent(Principal principal, @RequestParam("tempDriveId") Integer tempDriveId) {
-        driveService.acceptDriveConsent(tempDriveId);
+        TempDrive tempDrive = driveService.acceptDriveConsent(tempDriveId);
+        if (tempDrive.getDriveId() != null) {
+            Drive drive = driveService.getDriveById(tempDrive.getDriveId());
+            if (drive.getStatus() == Status.DRIVING_TO_START) {
+                simpMessagingTemplate.convertAndSend("/secured/update/newDrive", new DriveDTO(drive));
+            }
+        }
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -124,6 +130,10 @@ public class DriveController {
         Drive drive = driveService.endDrive(driveDTO);
         DriveDTO returnDrive = new DriveDTO(drive);
         simpMessagingTemplate.convertAndSend("/secured/update/end-drive", returnDrive);
+        if (!drive.getDriver().isAvailable()) {
+            Drive newDrive = driveService.startNewDrive(drive.getDriver());
+            simpMessagingTemplate.convertAndSend("/secured/update/newDrive", new DriveDTO(newDrive));
+        }
         return new ResponseEntity<>(returnDrive, HttpStatus.OK);
     }
 

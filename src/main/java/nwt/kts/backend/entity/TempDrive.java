@@ -46,6 +46,9 @@ public class TempDrive {
     @Column(name="num_accepted_passengers")
     private int numAcceptedPassengers;
 
+    @Column(name = "drive_id", nullable = true)
+    private Integer driveId;
+
     public TempDrive() {
     }
 
@@ -142,5 +145,13 @@ public class TempDrive {
 
     public void addAcceptedPassenger() {
         numAcceptedPassengers += 1;
+    }
+
+    public Integer getDriveId() {
+        return driveId;
+    }
+
+    public void setDriveId(Integer driveId) {
+        this.driveId = driveId;
     }
 }
