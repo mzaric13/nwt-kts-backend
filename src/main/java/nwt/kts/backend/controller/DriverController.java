@@ -98,6 +98,7 @@ public class DriverController {
     public ResponseEntity<DriverDTO> changeDriverStatus(Principal principal) {
         Driver driver = driverService.findDriverByEmail(principal.getName());
         Driver updatedDriver = driverService.changeStatus(driver);
+        simpMessagingTemplate.convertAndSend("/secured/update/driverStatus", new DriverDTO(updatedDriver));
         return new ResponseEntity<>(new DriverDTO(updatedDriver), HttpStatus.OK);
     }
 

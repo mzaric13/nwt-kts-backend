@@ -7,7 +7,9 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import nwt.kts.backend.dto.login.EmailPasswordLoginDTO;
 import nwt.kts.backend.dto.login.FacebookLoginData;
 import nwt.kts.backend.dto.login.GoogleTokenDTO;
+import nwt.kts.backend.dto.returnDTO.DriverDTO;
 import nwt.kts.backend.dto.returnDTO.TokenDTO;
+import nwt.kts.backend.entity.Driver;
 import nwt.kts.backend.entity.Passenger;
 import nwt.kts.backend.entity.User;
 import nwt.kts.backend.repository.UserRepository;
@@ -20,6 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -62,6 +65,9 @@ public class AuthenticationController {
     @Autowired
     private PassengerService passengerService;
 
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
+
     @PostMapping("/login-credentials")
     public ResponseEntity<TokenDTO> createAuthenticationToken(
             @RequestBody EmailPasswordLoginDTO emailPasswordLoginDTO, HttpServletResponse response) {
@@ -70,7 +76,8 @@ public class AuthenticationController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         User user = (User) authentication.getPrincipal();
         if (user.getRole().getName().equals("ROLE_DRIVER")) {
-            driverService.setDriverLoginTime(user.getUsername());
+            Driver driver = driverService.setDriverLoginTime(user.getUsername());
+            simpMessagingTemplate.convertAndSend("/secured/update/driverStatus", new DriverDTO(driver));
         }
         String jwt = tokenUtils.generateToken(user.getUsername(), user.getRole().getName());
         int expiresIn = tokenUtils.getExpiredIn();

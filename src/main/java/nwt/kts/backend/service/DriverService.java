@@ -175,13 +175,13 @@ public class DriverService {
     }
 
     @Transactional
-    public void setDriverLoginTime(String email) {
+    public Driver setDriverLoginTime(String email) {
         Driver driver = driverRepository.findDriverByEmail(email);
         Date now = new Date();
         Timestamp timestampNow =new Timestamp(now.getTime());
         driver.setTimeOfLogin(timestampNow);
         driver.setAvailable(true);
-        driverRepository.save(driver);
+        return driverRepository.save(driver);
     }
 
     public Driver selectDriverForDrive(TempDrive tempDrive) {
