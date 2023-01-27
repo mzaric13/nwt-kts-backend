@@ -44,7 +44,7 @@ class QuickstartUser(HttpUser):
                 return
         self.chosen_driver = self.client.get(f'/drivers/get-by-id/{self.chosen_driver["id"]}').json()
         if self.on_station:
-            self.current_drive = self.client.get(f'/drives/get-paid-drive', json=self.chosen_driver).json()
+            self.current_drive = self.client.get(f'/drives/get-accepted-drive', json=self.chosen_driver).json()
             if self.current_drive.get('apierror') == None:
                 self.destination = [self.current_drive["route"]["waypoints"][0]['latitude'], self.current_drive["route"]["waypoints"][0]['longitude']]
                 self.get_new_coordinates() # poslati trenutnu i destinaciju
@@ -87,7 +87,7 @@ class QuickstartUser(HttpUser):
                     self.driving_to_taxi_stop = True
                     self.driving_the_route = False
                 else:
-                    self.current_drive = self.client.get(f'/drives/get-paid-drive', json=self.chosen_driver).json()
+                    self.current_drive = self.client.get(f'/drives/get-accepted-drive', json=self.chosen_driver).json()
                     if self.current_drive.get('apierror') == None:
                         self.departure = self.destination
                         self.destination = [self.current_drive["route"]["waypoints"][0]['latitude'], self.current_drive["route"]["waypoints"][0]['longitude']]

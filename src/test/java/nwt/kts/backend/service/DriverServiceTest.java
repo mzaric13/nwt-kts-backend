@@ -115,7 +115,7 @@ public class DriverServiceTest {
         TempDrive tempDrive = new TempDrive(new Timestamp(new Date().getTime()), 720, 1154,
                 new HashSet<>(), new HashSet<>(), route1, type);
         Drive drive1 = new Drive(1, new Timestamp(new Date().getTime()), new Timestamp(new Date().getTime()), 700,
-                1223, "", new HashSet<>(), Status.STARTED, driver1, new HashSet<>(), route2);
+                1223, new ArrayList<>(), new HashSet<>(), Status.STARTED, driver1, new HashSet<>(), route2);
 
         when(driverRepository.findDriversByIsAvailable(true)).thenReturn(new ArrayList<>());
         when(driverRepository.findDriversByIsAvailable(false)).thenReturn(Collections.singletonList(driver1));

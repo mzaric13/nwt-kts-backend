@@ -30,6 +30,8 @@ public class PassengerDTO {
 
     private double tokens;
 
+    private boolean hasDrive;
+
     public PassengerDTO() {
     }
 
@@ -45,6 +47,7 @@ public class PassengerDTO {
         this.isBlocked = passenger.isBlocked();
         this.favoriteRoutes = passenger.getFavouriteRoutes().stream().map(RouteDTO::new).collect(Collectors.toSet());
         this.tokens = passenger.getTokens();
+        this.hasDrive = passenger.getHasDrive();
     }
 
     public int getId() {
@@ -89,5 +92,9 @@ public class PassengerDTO {
 
     public double getTokens() {
         return tokens;
+    }
+
+    public boolean isHasDrive() {
+        return hasDrive;
     }
 }

@@ -18,6 +18,8 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
         registry.addEndpoint("/secured/map").setAllowedOrigins("http://localhost:4200").withSockJS();
         registry.addEndpoint("/secured/drive").setAllowedOrigins("http://localhost:4200");
         registry.addEndpoint("/secured/drive").setAllowedOrigins("http://localhost:4200").withSockJS();
+        registry.addEndpoint("/secured/driver").setAllowedOrigins("http://localhost:4200");
+        registry.addEndpoint("/secured/driver").setAllowedOrigins("http://localhost:4200").withSockJS();
     }
 
     @Override

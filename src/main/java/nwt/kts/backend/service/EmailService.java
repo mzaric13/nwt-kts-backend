@@ -1,5 +1,6 @@
 package nwt.kts.backend.service;
 
+import nwt.kts.backend.entity.Drive;
 import nwt.kts.backend.entity.Passenger;
 import nwt.kts.backend.entity.TempDrive;
 import nwt.kts.backend.entity.User;
@@ -126,6 +127,34 @@ public class EmailService {
                 .append(".")
                 .append(" rejected the ride.<br/>")
                 .append("You can still make another drive order and hope for the best!");
+        return builder.toString();
+    }
+
+    @Async
+    public void sendDriverRejectedDriveEmail(Drive drive, String rejectReason, Passenger passenger) throws MessagingException {
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+        helper.setTo(Objects.requireNonNull(env.getProperty(emailTo)));
+        helper.setFrom(emailFrom);
+        helper.setSubject("Driver rejected drive");
+        helper.setText(buildDriverRejectedDrive(drive, passenger, rejectReason), true);
+        javaMailSender.send(mimeMessage);
+    }
+
+    private String buildDriverRejectedDrive(Drive drive, Passenger passenger, String reasonOfCancellation) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Hello ")
+                .append(passenger.getName())
+                .append(" ")
+                .append(passenger.getSurname())
+                .append(",<br/>")
+                .append("We regret to inform you that the drive on route ")
+                .append(shortenRouteName(drive.getRoute().getRouteName()))
+                .append(" will not happen because driver cancelled drive. ")
+                .append("The reason of cancellation is next: <br/>")
+                .append(reasonOfCancellation)
+                .append(". <br/>")
+                .append("Your tokens will be added back. You can still make another drive order and hope for the best!");
         return builder.toString();
     }
 }

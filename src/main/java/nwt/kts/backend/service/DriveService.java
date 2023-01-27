@@ -1,10 +1,11 @@
 package nwt.kts.backend.service;
 
+import nwt.kts.backend.dto.creation.TempDriveDTO;
+import nwt.kts.backend.dto.returnDTO.DeclineDriveReasonDTO;
 import nwt.kts.backend.dto.returnDTO.DriveDTO;
 import nwt.kts.backend.dto.returnDTO.MessageDTO;
 import nwt.kts.backend.entity.*;
-import nwt.kts.backend.exceptions.DriverNotOnLocationException;
-import nwt.kts.backend.exceptions.NonExistingEntityException;
+import nwt.kts.backend.exceptions.*;
 import nwt.kts.backend.repository.DriveRepository;
 import nwt.kts.backend.repository.DriverRepository;
 import nwt.kts.backend.repository.PassengerRepository;
@@ -17,7 +18,9 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
+import javax.persistence.EntityNotFoundException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class DriveService {
@@ -26,10 +29,16 @@ public class DriveService {
     private DriveRepository driveRepository;
 
     @Autowired
+    private PassengerService passengerService;
+
+    @Autowired
     private DriverService driverService;
 
     @Autowired
-    private PassengerRepository passengerRepository;
+    private TypeService typeService;
+
+    @Autowired
+    private RouteService routeService;
 
     @Autowired
     private TempDriveRepository tempDriveRepository;
@@ -66,7 +75,34 @@ public class DriveService {
         return driveRepository.findAllByPassengersContainsAndStatusOrderByStartDateAsc(passenger, Status.FINISHED, pageable);
     }
 
-    public TempDrive saveTempDrive(TempDrive tempDrive) {
+    public TempDrive saveTempDrive(TempDriveDTO tempDriveDTO) {
+        if (!passengerService.allPassengersExist(tempDriveDTO.getEmails()))
+            throw new EntityNotFoundException("Not all passenger emails exist");
+        Set<Passenger> passengers = tempDriveDTO.getEmails().stream()
+                .map(email -> passengerService.findPassengerByEmail(email)).collect(Collectors.toSet());
+        for (Passenger passenger: passengers) {
+            if (passenger.getHasDrive()) throw new PassengerHasDriveException("One of selected passenger is currently on another drive");
+        }
+        Type type = typeService.findTypeByName(tempDriveDTO.getTypeDTO().getName());
+        TempDrive tempDrive = new TempDrive(tempDriveDTO, passengers, type);
+        Route route = routeService.saveRoute(tempDrive.getRoute());
+        tempDrive.setRoute(route);
+        return tempDriveRepository.save(tempDrive);
+    }
+
+    public TempDrive acceptDriveConsent(Integer tempDriveId) {
+        TempDrive tempDrive = tempDriveRepository.findTempDriveById(tempDriveId);
+        this.acceptDrive(tempDrive);
+        if (this.allPassengersAcceptedDrive(tempDrive)) {
+            if (this.passengersHaveTokens(tempDrive)) {
+                Driver driver = driverService.selectDriverForDrive(tempDrive);
+                if (driver == null) throw new DriverNotFoundException("There are no available drivers right now!");
+                this.payDrive(tempDrive);
+                this.createDrive(tempDrive, driver);
+            } else {
+                throw new NotEnoughTokensException("You don't have enough tokens to pay for the ride!");
+            }
+        }
         return tempDriveRepository.save(tempDrive);
     }
 
@@ -74,7 +110,7 @@ public class DriveService {
         return tempDriveRepository.findTempDriveById(id);
     }
 
-    public boolean passengersHaveTokens(TempDrive tempDrive) {
+    private boolean passengersHaveTokens(TempDrive tempDrive) {
         double costPerPerson = tempDrive.getPrice() / tempDrive.getPassengers().size();
         double residueCost = 0;
         List<Passenger> sortedPassengers = sortPassengersByTokenAmount(tempDrive.getPassengers());
@@ -111,20 +147,21 @@ public class DriveService {
         }
     }
 
-    public void acceptDrive(TempDrive tempDrive) {
+    private void acceptDrive(TempDrive tempDrive) {
         tempDrive.addAcceptedPassenger();
     }
 
-    public boolean allPassengersAcceptedDrive(TempDrive tempDrive) {
+    private boolean allPassengersAcceptedDrive(TempDrive tempDrive) {
         return tempDrive.getNumAcceptedPassengers() == tempDrive.getPassengers().size();
     }
 
-    public Drive createDrive(TempDrive tempDrive, Driver driver) {
+    private Drive createDrive(TempDrive tempDrive, Driver driver) {
         Drive drive = new Drive(tempDrive, driver);
+        for (Passenger passenger: drive.getPassengers()) passenger.setHasDrive(true);
         return driveRepository.save(drive);
     }
 
-    public void payDrive(TempDrive tempDrive) {
+    private void payDrive(TempDrive tempDrive) {
         double costPerPerson = tempDrive.getPrice() / tempDrive.getPassengers().size();
         double residueCost = 0;
         List<Passenger> sortedPassengers = sortPassengersByTokenAmount(tempDrive.getPassengers());
@@ -159,6 +196,7 @@ public class DriveService {
         Driver driver = drive.getDriver();
         if (!checkDriverPositionToDrive(driver, drive.getRoute().getWaypoints().get(drive.getRoute().getWaypoints().size() - 1))) throw new DriverNotOnLocationException("You can't end drive without being on location.");
         if (!driver.isHasFutureDrive()) driver.setAvailable(true);
+        for (Passenger pas : drive.getPassengers()) pas.setHasDrive(false);
         drive.setStatus(Status.FINISHED);
         return driveRepository.save(drive);
     }
@@ -177,5 +215,32 @@ public class DriveService {
         Message message = chatService.createMessage(content, chat, email);
         simpMessagingTemplate.convertAndSend("/secured/topic/messages/" + chatName, new MessageDTO(message));
         return drive;
+    }
+
+    public Drive driverAcceptDrive(Driver driver, DriveDTO driveDTO) {
+        Drive drive = driveRepository.findDriveById(driveDTO.getId());
+        if (driver.isAvailable()) {
+            driver.setAvailable(false);
+            drive.setStatus(Status.DRIVING_TO_START);
+            return driveRepository.save(drive);
+        }
+        return drive;
+    }
+
+    public Drive driverDeclineDrive(Driver driver, DeclineDriveReasonDTO declineDriveReasonDTO) throws MessagingException {
+        Drive drive = driveRepository.findDriveById(declineDriveReasonDTO.getDriveDTO().getId());
+        drive.setStatus(Status.CANCELLED);
+        if (!driver.isHasFutureDrive()) {
+            driver.setAvailable(true);
+        } else {
+            driver.setHasFutureDrive(false);
+        }
+        double tokensToReturn = drive.getPrice() / drive.getPassengers().size();
+        for (Passenger passenger: drive.getPassengers()) {
+            emailService.sendDriverRejectedDriveEmail(drive, declineDriveReasonDTO.getReasonOfDeclining(), passenger);
+            passenger.setHasDrive(false);
+            passenger.setTokens(passenger.getTokens() + tokensToReturn);
+        }
+        return driveRepository.save(drive);
     }
 }

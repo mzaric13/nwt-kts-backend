@@ -50,7 +50,7 @@ public class Driver extends User {
      * @param role      Role
      */
     public Driver(String email, String phoneNumber, String password, String name, String surname,
-                  String city, DriverCreationDTO driverCreationDTO, Role role, Type type, Provider provider){
+                  String city, DriverCreationDTO driverCreationDTO, Role role, Type type, Provider provider, Point location){
         super(email, phoneNumber, password, name,
                 surname, city, role);
         this.provider = provider;
@@ -58,6 +58,7 @@ public class Driver extends User {
         this.isAvailable = false;
         this.picture = "default.jpg";
         this.vehicle = new Vehicle(driverCreationDTO.getVehicleCreationDTO().getRegistrationNumber(), driverCreationDTO.getVehicleCreationDTO().getName(), type);
+        this.location = location;
     }
 
     public boolean isBlocked() {

@@ -77,7 +77,8 @@ public class DriverService {
         vehicleService.validateNewVehicle(driverCreationDTO.getVehicleCreationDTO());
         Role role = roleService.findRoleByName(DRIVER_NAME);
         Type type = typeService.findTypeByName(driverCreationDTO.getVehicleCreationDTO().getType());
-        return driverRepository.save(new Driver(driverCreationDTO.getEmail(), driverCreationDTO.getPhoneNumber(), passwordEncoder.encode(driverCreationDTO.getPassword()), driverCreationDTO.getName(), driverCreationDTO.getSurname(), driverCreationDTO.getCity(), driverCreationDTO, role, type, Provider.LOCAL));
+        Point location = pointRepository.getById(1);
+        return driverRepository.save(new Driver(driverCreationDTO.getEmail(), driverCreationDTO.getPhoneNumber(), passwordEncoder.encode(driverCreationDTO.getPassword()), driverCreationDTO.getName(), driverCreationDTO.getSurname(), driverCreationDTO.getCity(), driverCreationDTO, role, type, Provider.LOCAL, location));
     }
 
     public List<Driver> getAllDrivers() {

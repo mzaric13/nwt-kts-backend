@@ -124,7 +124,7 @@ public class PassengerController {
     }
 
     @GetMapping(value = "/activated-passengers")
-    // TODO: add authorization
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<PassengerDTO>> getAllActivatedPassengers() {
         List<Passenger> passengers = passengerService.getAllActivatedPassengers();
         List<PassengerDTO> passengerDTOs = passengers.stream().map(PassengerDTO::new).collect(Collectors.toList());

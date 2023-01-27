@@ -1,6 +1,7 @@
 package nwt.kts.backend.controller;
 
 import nwt.kts.backend.dto.creation.TempDriveDTO;
+import nwt.kts.backend.dto.returnDTO.DeclineDriveReasonDTO;
 import nwt.kts.backend.dto.returnDTO.DriveDTO;
 import nwt.kts.backend.dto.returnDTO.DriverDTO;
 import nwt.kts.backend.entity.*;
@@ -16,10 +17,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
-import javax.persistence.EntityNotFoundException;
 import java.security.Principal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value="/drives")
@@ -33,12 +32,6 @@ public class DriveController {
 
     @Autowired
     private PassengerService passengerService;
-
-    @Autowired
-    private RouteService routeService;
-
-    @Autowired
-    private TypeService typeService;
 
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
@@ -69,15 +62,7 @@ public class DriveController {
     @PostMapping("/create-temp-drive")
     @PreAuthorize("hasRole('PASSENGER')")
     public ResponseEntity<Integer> createTempDrive(@RequestBody TempDriveDTO tempDriveDTO) {
-        if (!passengerService.allPassengersExist(tempDriveDTO.getEmails()))
-            throw new EntityNotFoundException("Not all passenger emails exist");
-        Set<Passenger> passengers = tempDriveDTO.getEmails().stream()
-                .map(email -> passengerService.findPassengerByEmail(email)).collect(Collectors.toSet());
-        Type type = typeService.findTypeByName(tempDriveDTO.getTypeDTO().getName());
-        TempDrive tempDrive = new TempDrive(tempDriveDTO, passengers, type);
-        Route route = routeService.saveRoute(tempDrive.getRoute());
-        tempDrive.setRoute(route);
-        driveService.saveTempDrive(tempDrive);
+        TempDrive tempDrive = driveService.saveTempDrive(tempDriveDTO);
         return new ResponseEntity<>(tempDrive.getId(), HttpStatus.CREATED);
     }
 
@@ -91,19 +76,7 @@ public class DriveController {
 
     @PutMapping("/accept-drive-consent")
     public ResponseEntity<Void> acceptDriveConsent(Principal principal, @RequestParam("tempDriveId") Integer tempDriveId) {
-        TempDrive tempDrive = driveService.getTempDriveById(tempDriveId);
-        driveService.acceptDrive(tempDrive);
-        if (driveService.allPassengersAcceptedDrive(tempDrive)) {
-            if (driveService.passengersHaveTokens(tempDrive)) {
-                Driver driver = driverService.selectDriverForDrive(tempDrive);
-                if (driver == null) throw new DriverNotFoundException("There are no available drivers right now!");
-                driveService.payDrive(tempDrive);
-                driveService.createDrive(tempDrive, driver);
-            } else {
-                throw new NotEnoughTokensException("You don't have enough tokens to pay for the ride!");
-            }
-        }
-        driveService.saveTempDrive(tempDrive);
+        driveService.acceptDriveConsent(tempDriveId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -116,10 +89,10 @@ public class DriveController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping(value = "/get-paid-drive", consumes = "application/json", produces = "application/json")
+    @GetMapping(value = "/get-accepted-drive", consumes = "application/json", produces = "application/json")
     public ResponseEntity<DriveDTO> getPaidDriveForDriver(@RequestBody DriverDTO driverDTO) {
         Driver driver = driverService.findDriverById(driverDTO.getId());
-        Drive drive = driveService.getDriveForDriverByStatus(driver, Status.PAID);
+        Drive drive = driveService.getDriveForDriverByStatus(driver, Status.DRIVING_TO_START);
         return new ResponseEntity<>(new DriveDTO(drive), HttpStatus.OK);
     }
 
@@ -179,5 +152,27 @@ public class DriveController {
         returnValue.put("totalItems", drivePage.getTotalElements());
         returnValue.put("totalPages", drivePage.getTotalPages());
         return returnValue;
+    }
+
+    @PutMapping(value = "/accept-drive", consumes = "application/json", produces = "application/json")
+    @PreAuthorize("hasRole('DRIVER')")
+    public ResponseEntity<DriveDTO> acceptDrive(@RequestBody DriveDTO driveDTO, Principal principal) {
+        Driver driver = driverService.findDriverByEmail(principal.getName());
+        Drive drive = driveService.driverAcceptDrive(driver, driveDTO);
+        simpMessagingTemplate.convertAndSend("/secured/update/driverStatus", new DriverDTO(drive.getDriver()));
+        return new ResponseEntity<>(new DriveDTO(drive), HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/decline-drive", consumes = "application/json", produces = "application/json")
+    @PreAuthorize("hasRole('DRIVER')")
+    public ResponseEntity<DriveDTO> declineDrive(@RequestBody DeclineDriveReasonDTO declineDriveReasonDTO, Principal principal) throws MessagingException {
+        Driver driver = driverService.findDriverByEmail(principal.getName());
+        Drive drive = driveService.driverDeclineDrive(driver, declineDriveReasonDTO);
+        simpMessagingTemplate.convertAndSend("/secured/update/driverStatus", new DriverDTO(drive.getDriver()));
+        if (!drive.getDriver().isAvailable()) {
+            drive = driveService.getDriveForDriverByStatus(drive.getDriver(), Status.PAID);
+            // TODO: send for drive accept
+        }
+        return new ResponseEntity<>(new DriveDTO(drive), HttpStatus.OK);
     }
 }

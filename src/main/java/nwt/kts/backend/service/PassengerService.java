@@ -57,7 +57,7 @@ public class PassengerService {
         Passenger passenger = new Passenger(passengerCreationDTO.getEmail(), passengerCreationDTO.getPhoneNumber(), passwordEncoder.encode(passengerCreationDTO.getPassword()), passengerCreationDTO.getName(), passengerCreationDTO.getSurname(), passengerCreationDTO.getCity(), role, false, false, "default.jpg", Provider.LOCAL);
         passenger = passengerRepository.save(passenger);
         emailService.sendActivationEmail(passenger);
-        return passengerRepository.save(passenger);
+        return passenger;
     }
 
     public Passenger activateAccount(Integer id) {

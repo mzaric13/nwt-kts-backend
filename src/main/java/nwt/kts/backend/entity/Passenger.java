@@ -11,11 +11,6 @@ public class Passenger extends User {
     @Column(name="is_blocked", nullable=false)
     private boolean isBlocked;
 
-    //TODO
-    //paymentData - vrv tabela zasebn   a
-    //@Column(name="paymentData", nullable=false)
-    //private PaymentData paymentData
-
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "favourite_routes", joinColumns = @JoinColumn(name = "passenger_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "route_id", referencedColumnName = "id"))
@@ -26,6 +21,9 @@ public class Passenger extends User {
 
     @Column(name = "tokens", nullable = false)
     private double tokens;
+
+    @Column(name = "has_drive", columnDefinition = "boolean default false")
+    private Boolean hasDrive;
 
     public Passenger(){
         this.isBlocked = false;
@@ -57,6 +55,7 @@ public class Passenger extends User {
         this.picture = profilePicture;
         this.provider = provider;
         this.tokens = 0;
+        this.favouriteRoutes = new HashSet<>();
     }
 
     public Passenger(String email, String name, String surname, Role role, String profilePicture, Provider provider) {
@@ -69,6 +68,7 @@ public class Passenger extends User {
         this.isBlocked = false;
         this.activated = true;
         this.tokens = 0;
+        this.hasDrive = false;
     }
 
     public boolean isBlocked() {
@@ -113,5 +113,13 @@ public class Passenger extends User {
 
     public void payDrive(double price) {
         this.tokens -= price;
+    }
+
+    public Boolean getHasDrive() {
+        return hasDrive;
+    }
+
+    public void setHasDrive(Boolean hasDrive) {
+        this.hasDrive = hasDrive;
     }
 }
