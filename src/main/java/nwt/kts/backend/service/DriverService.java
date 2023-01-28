@@ -4,6 +4,7 @@ import nwt.kts.backend.dto.creation.*;
 import nwt.kts.backend.dto.returnDTO.DatesChartDTO;
 import nwt.kts.backend.dto.returnDTO.PointDTO;
 import nwt.kts.backend.entity.*;
+import nwt.kts.backend.exceptions.NonExistingEntityException;
 import nwt.kts.backend.repository.*;
 import nwt.kts.backend.validation.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -220,7 +221,7 @@ public class DriverService {
         double minDistance = Double.POSITIVE_INFINITY;
         for (Driver driver: nonAvailableDrivers) {
             if (driver.getTimeOfLogin() != null && !driver.isHasFutureDrive() && driver.getVehicle().getType().getId().equals(tempDrive.getVehicleType().getId())) {
-                Drive currentDrive = driveRepository.findFirstByDriverAndStatusOrderByIdDesc(driver, Status.STARTED);
+                Drive currentDrive = driveRepository.findFirstByDriverAndStatusOrderByIdDesc(driver, Status.STARTED).orElseThrow(() -> {throw new NonExistingEntityException("No current drive");});
                 ArrayList<Point> waypoints = new ArrayList<>(currentDrive.getRoute().getWaypoints());
                 double distance = Math.pow(driver.getLocation().getLatitude() - waypoints.get(0).getLatitude(), 2) + Math.pow(driver.getLocation().getLongitude() - waypoints.get(0).getLongitude(), 2);
                 distance = Math.sqrt(distance);

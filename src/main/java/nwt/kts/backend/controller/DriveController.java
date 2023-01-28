@@ -189,9 +189,9 @@ public class DriveController {
         return new ResponseEntity<>(new DriveDTO(drive), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/get-rejected-drive/{id}", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<DriveDTO> getRejectedDrive(@PathVariable("id") Integer id) {
-        Drive drive = driveService.getRejectedDrive(id);
+    @GetMapping(value = "/get-rejected-drive", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<DriveDTO> getRejectedDrive(@RequestBody DriverDTO driverDTO) {
+        Drive drive = driveService.getRejectedDrive(driverDTO);
         return new ResponseEntity<>(new DriveDTO(drive), HttpStatus.OK);
     }
 }

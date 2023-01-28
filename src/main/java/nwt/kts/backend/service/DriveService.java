@@ -3,6 +3,7 @@ package nwt.kts.backend.service;
 import nwt.kts.backend.dto.creation.TempDriveDTO;
 import nwt.kts.backend.dto.returnDTO.DeclineDriveReasonDTO;
 import nwt.kts.backend.dto.returnDTO.DriveDTO;
+import nwt.kts.backend.dto.returnDTO.DriverDTO;
 import nwt.kts.backend.dto.returnDTO.MessageDTO;
 import nwt.kts.backend.entity.*;
 import nwt.kts.backend.exceptions.*;
@@ -183,7 +184,7 @@ public class DriveService {
     }
 
     public Drive getDriveForDriverByStatus(Driver driver, Status status) {
-        return driveRepository.findFirstByDriverAndStatusOrderByIdDesc(driver, status);
+        return driveRepository.findFirstByDriverAndStatusOrderByIdDesc(driver, status).orElseThrow(() -> {throw new NonExistingEntityException("No drive");});
     }
 
     public Drive startDrive(DriveDTO driveDTO) {
@@ -207,7 +208,7 @@ public class DriveService {
     }
 
     public Drive startNewDrive(Driver driver) {
-        Drive newDrive = driveRepository.findFirstByDriverAndStatusOrderByIdDesc(driver, Status.PAID);
+        Drive newDrive = driveRepository.findFirstByDriverAndStatusOrderByIdDesc(driver, Status.PAID).orElseThrow(() -> {throw new NonExistingEntityException("There is not new drive");});
         newDrive.setStatus(Status.DRIVING_TO_START);
         newDrive.getDriver().setHasFutureDrive(false);
         return driveRepository.save(newDrive);
@@ -256,9 +257,11 @@ public class DriveService {
         return driveRepository.save(drive);
     }
 
-    public Drive getRejectedDrive(Integer id) {
-        Drive drive = driveRepository.findDriveById(id);
-        if (drive.getStatus() != Status.CANCELLED) throw new NonExistingEntityException("Drive is not cancelled.");
-        return drive;
+    public Drive getRejectedDrive(DriverDTO driverDTO) {
+        Driver driver = driverService.findDriverById(driverDTO.getId());
+        Drive lasDrive = driveRepository.findFirstByDriverOrderByIdDesc(driver).orElseThrow(() -> {throw new NonExistingEntityException("No drive for driver");});
+        Drive rejectedDrive = driveRepository.findFirstByDriverAndStatusOrderByIdDesc(driver, Status.CANCELLED).orElseThrow(() -> {throw new NonExistingEntityException("Drive is not cancelled.");});
+        if (!lasDrive.getId().equals(rejectedDrive.getId())) throw new NonExistingEntityException("No rejected drive");
+        return rejectedDrive;
     }
 }

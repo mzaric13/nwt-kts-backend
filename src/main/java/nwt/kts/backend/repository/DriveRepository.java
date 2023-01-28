@@ -4,6 +4,7 @@ import nwt.kts.backend.entity.Drive;
 import nwt.kts.backend.entity.Driver;
 import nwt.kts.backend.entity.Passenger;
 import nwt.kts.backend.entity.Status;
+import org.checkerframework.checker.nullness.Opt;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,6 +12,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Optional;
 
 public interface DriveRepository extends JpaRepository<Drive, Integer> {
 
@@ -30,7 +32,9 @@ public interface DriveRepository extends JpaRepository<Drive, Integer> {
 
     List<Drive> findAllByStartDateAfterAndEndDateBeforeOrderByStartDateAsc(Timestamp startDate, Timestamp endDate);
     
-    Drive findFirstByDriverAndStatusOrderByIdDesc(Driver driver, Status status);
+    Optional<Drive> findFirstByDriverAndStatusOrderByIdDesc(Driver driver, Status status);
 
     List<Drive> findAllByPassengersContains(Passenger passenger);
+
+    Optional<Drive> findFirstByDriverOrderByIdDesc(Driver driver);
 }
