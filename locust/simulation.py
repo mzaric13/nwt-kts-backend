@@ -61,7 +61,7 @@ class QuickstartUser(HttpUser):
                     self.driving_to_taxi_stop = False
                     self.current_drive = self.client.get(f'/drives/get-accepted-drive', json=self.chosen_driver).json()
                     self.departure = [self.chosen_driver['location']['latitude'], self.chosen_driver['location']['longitude']]
-                    self.destination = [self.current_drive["route"]["waypoints"][-1]['latitude'], self.current_drive["route"]["waypoints"][-1]['longitude']]
+                    self.destination = [self.current_drive["route"]["waypoints"][0]['latitude'], self.current_drive["route"]["waypoints"][0]['longitude']]
                     self.get_new_coordinates()
                     return
             new_coordinate = self.coordinates.pop(0)
