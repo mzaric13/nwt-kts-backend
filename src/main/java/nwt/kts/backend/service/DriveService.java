@@ -255,4 +255,10 @@ public class DriveService {
         }
         return driveRepository.save(drive);
     }
+
+    public Drive getRejectedDrive(Integer id) {
+        Drive drive = driveRepository.findDriveById(id);
+        if (drive.getStatus() != Status.CANCELLED) throw new NonExistingEntityException("Drive is not cancelled.");
+        return drive;
+    }
 }

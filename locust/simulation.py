@@ -52,6 +52,24 @@ class QuickstartUser(HttpUser):
                 self.on_station = False
 
         if len(self.coordinates) > 0:
+            if self.driving_to_start_point:
+                rejected_drive = self.client.get(f'/drives/get-rejected-drive/{self.current_drive["id"]}').json()
+                if rejected_drive.get('apierror') != None:
+                    self.chosen_driver = self.client.get(f"/drivers/get-by-id/{self.chosen_driver['id']}").json()
+                    if self.chosen_driver["available"]:
+                        closest_stop = self.client.get(f"/drivers/closest-stop/{self.chosen_driver['id']}").json()
+                        self.departure = self.destination
+                        self.destination = [closest_stop['latitude'], closest_stop['longitude']]
+                        self.get_new_coordinates() # pocetna i krajnja
+                        self.driving_to_taxi_stop = True
+                        self.driving_to_start_point = False
+                    else:
+                        self.current_drive = self.client.get(f'/drives/get-accepted-drive', json=self.chosen_driver).json()
+                        if self.current_drive.get('apierror') == None:
+                            self.departure = self.destination
+                            self.destination = [self.current_drive["route"]["waypoints"][0]['latitude'], self.current_drive["route"]["waypoints"][0]['longitude']]
+                            self.get_new_coordinates() # pocetna i krajnja
+                    return
             if self.driving_to_taxi_stop:
                 self.chosen_driver = self.client.get(f"/drivers/get-by-id/{self.chosen_driver['id']}").json()
                 if not self.chosen_driver['available']:

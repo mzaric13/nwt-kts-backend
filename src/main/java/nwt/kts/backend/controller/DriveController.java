@@ -184,8 +184,14 @@ public class DriveController {
         simpMessagingTemplate.convertAndSend("/secured/update/driverStatus", new DriverDTO(drive.getDriver()));
         if (!drive.getDriver().isAvailable()) {
             drive = driveService.getDriveForDriverByStatus(drive.getDriver(), Status.PAID);
-            // TODO: send for drive accept
+            simpMessagingTemplate.convertAndSend("/secured/update/newDrive", new DriveDTO(drive));
         }
+        return new ResponseEntity<>(new DriveDTO(drive), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/get-rejected-drive/{id}", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<DriveDTO> getRejectedDrive(@PathVariable("id") Integer id) {
+        Drive drive = driveService.getRejectedDrive(id);
         return new ResponseEntity<>(new DriveDTO(drive), HttpStatus.OK);
     }
 }

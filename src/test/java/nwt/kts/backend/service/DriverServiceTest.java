@@ -119,7 +119,7 @@ public class DriverServiceTest {
 
         when(driverRepository.findDriversByIsAvailable(true)).thenReturn(new ArrayList<>());
         when(driverRepository.findDriversByIsAvailable(false)).thenReturn(Collections.singletonList(driver1));
-        when(driveRepository.findDriveByDriverAndStatus(driver1, Status.STARTED)).thenReturn(drive1);
+        when(driveRepository.findFirstByDriverAndStatusOrderByIdDesc(driver1, Status.STARTED)).thenReturn(drive1);
         when(driverRepository.save(driver1)).thenReturn(driver1);
 
         Driver selected = driverService.selectDriverForDrive(tempDrive);
