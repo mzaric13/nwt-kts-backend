@@ -4,21 +4,21 @@ public class DeclineDriveReasonDTO {
 
     private DriveDTO driveDTO;
 
-    private String reasonOfDeclining;
+    private String reasonForDeclining;
 
     public DeclineDriveReasonDTO() {
     }
 
-    public DeclineDriveReasonDTO(DriveDTO driveDTO, String reasonOfDeclining) {
+    public DeclineDriveReasonDTO(DriveDTO driveDTO, String reasonForDeclining) {
         this.driveDTO = driveDTO;
-        this.reasonOfDeclining = reasonOfDeclining;
+        this.reasonForDeclining = reasonForDeclining;
     }
 
     public DriveDTO getDriveDTO() {
         return driveDTO;
     }
 
-    public String getReasonOfDeclining() {
-        return reasonOfDeclining;
+    public String getReasonForDeclining() {
+        return reasonForDeclining;
     }
 }

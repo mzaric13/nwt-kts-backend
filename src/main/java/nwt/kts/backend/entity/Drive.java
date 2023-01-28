@@ -139,4 +139,8 @@ public class Drive {
     public void setInconsistentDriveReasoning(List<String> inconsistentDriveReasoning) {
         this.inconsistentDriveReasoning = inconsistentDriveReasoning;
     }
+
+    public void setEndDate(Timestamp endDate) {
+        this.endDate = endDate;
+    }
 }

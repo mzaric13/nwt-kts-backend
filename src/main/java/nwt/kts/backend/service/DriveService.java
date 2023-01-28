@@ -7,8 +7,6 @@ import nwt.kts.backend.dto.returnDTO.MessageDTO;
 import nwt.kts.backend.entity.*;
 import nwt.kts.backend.exceptions.*;
 import nwt.kts.backend.repository.DriveRepository;
-import nwt.kts.backend.repository.DriverRepository;
-import nwt.kts.backend.repository.PassengerRepository;
 import nwt.kts.backend.repository.TempDriveRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
 import javax.persistence.EntityNotFoundException;
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -184,7 +183,7 @@ public class DriveService {
     }
 
     public Drive getDriveForDriverByStatus(Driver driver, Status status) {
-        return driveRepository.findDriveByDriverAndStatus(driver, status);
+        return driveRepository.findFirstByDriverAndStatusOrderByIdDesc(driver, status);
     }
 
     public Drive startDrive(DriveDTO driveDTO) {
@@ -203,11 +202,12 @@ public class DriveService {
         if (!driver.isHasFutureDrive()) driver.setAvailable(true);
         for (Passenger pas : drive.getPassengers()) pas.setHasDrive(false);
         drive.setStatus(Status.FINISHED);
+        drive.setEndDate(new Timestamp(new Date().getTime()));
         return driveRepository.save(drive);
     }
 
     public Drive startNewDrive(Driver driver) {
-        Drive newDrive = driveRepository.findDriveByDriverAndStatus(driver, Status.PAID);
+        Drive newDrive = driveRepository.findFirstByDriverAndStatusOrderByIdDesc(driver, Status.PAID);
         newDrive.setStatus(Status.DRIVING_TO_START);
         newDrive.getDriver().setHasFutureDrive(false);
         return driveRepository.save(newDrive);
@@ -249,7 +249,7 @@ public class DriveService {
         }
         double tokensToReturn = drive.getPrice() / drive.getPassengers().size();
         for (Passenger passenger: drive.getPassengers()) {
-            emailService.sendDriverRejectedDriveEmail(drive, declineDriveReasonDTO.getReasonOfDeclining(), passenger);
+            emailService.sendDriverRejectedDriveEmail(drive, declineDriveReasonDTO.getReasonForDeclining(), passenger);
             passenger.setHasDrive(false);
             passenger.setTokens(passenger.getTokens() + tokensToReturn);
         }

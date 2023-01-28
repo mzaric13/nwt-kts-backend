@@ -220,7 +220,7 @@ public class DriverService {
         double minDistance = Double.POSITIVE_INFINITY;
         for (Driver driver: nonAvailableDrivers) {
             if (driver.getTimeOfLogin() != null && !driver.isHasFutureDrive() && driver.getVehicle().getType().getId().equals(tempDrive.getVehicleType().getId())) {
-                Drive currentDrive = driveRepository.findDriveByDriverAndStatus(driver, Status.STARTED);
+                Drive currentDrive = driveRepository.findFirstByDriverAndStatusOrderByIdDesc(driver, Status.STARTED);
                 ArrayList<Point> waypoints = new ArrayList<>(currentDrive.getRoute().getWaypoints());
                 double distance = Math.pow(driver.getLocation().getLatitude() - waypoints.get(0).getLatitude(), 2) + Math.pow(driver.getLocation().getLongitude() - waypoints.get(0).getLongitude(), 2);
                 distance = Math.sqrt(distance);

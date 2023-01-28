@@ -120,7 +120,7 @@ public class DriveController {
     @PreAuthorize("hasRole('DRIVER')")
     public ResponseEntity<DriveDTO> startDrive(@RequestBody DriveDTO driveDTO) {
         Drive drive = driveService.startDrive(driveDTO);
-        // TODO: socket call for passengers
+        simpMessagingTemplate.convertAndSend("/secured/update/driveStatus", new DriveDTO(drive));
         return new ResponseEntity<>(new DriveDTO(drive), HttpStatus.OK);
     }
 
@@ -133,6 +133,8 @@ public class DriveController {
         if (!drive.getDriver().isAvailable()) {
             Drive newDrive = driveService.startNewDrive(drive.getDriver());
             simpMessagingTemplate.convertAndSend("/secured/update/newDrive", new DriveDTO(newDrive));
+        } else {
+            simpMessagingTemplate.convertAndSend("/secured/update/driverStatus", new DriverDTO(drive.getDriver()));
         }
         return new ResponseEntity<>(returnDrive, HttpStatus.OK);
     }
@@ -178,6 +180,7 @@ public class DriveController {
     public ResponseEntity<DriveDTO> declineDrive(@RequestBody DeclineDriveReasonDTO declineDriveReasonDTO, Principal principal) throws MessagingException {
         Driver driver = driverService.findDriverByEmail(principal.getName());
         Drive drive = driveService.driverDeclineDrive(driver, declineDriveReasonDTO);
+        simpMessagingTemplate.convertAndSend("/secured/update/driveStatus", new DriveDTO(drive));
         simpMessagingTemplate.convertAndSend("/secured/update/driverStatus", new DriverDTO(drive.getDriver()));
         if (!drive.getDriver().isAvailable()) {
             drive = driveService.getDriveForDriverByStatus(drive.getDriver(), Status.PAID);

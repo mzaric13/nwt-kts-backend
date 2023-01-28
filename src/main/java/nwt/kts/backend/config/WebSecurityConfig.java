@@ -53,7 +53,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests().antMatchers("/auth/**").permitAll()
                 .antMatchers("/drives/accept-drive-consent").permitAll()
                 .antMatchers("/drives/reject-drive-consent").permitAll()
-                .antMatchers("/drives/get-paid-drive").permitAll()
+                .antMatchers("/drives/get-accepted-drive").permitAll()
                 .antMatchers("/drives/get-started-drive").permitAll()
                 .antMatchers("/drives/get-ended-drive").permitAll()
                 .antMatchers("/drivers/").permitAll()
