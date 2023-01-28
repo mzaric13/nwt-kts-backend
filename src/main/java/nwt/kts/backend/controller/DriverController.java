@@ -37,6 +37,7 @@ public class DriverController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<DriverDTO> registerDriver(@RequestBody DriverCreationDTO driverCreationDTO) {
         Driver driver = driverService.createDriver(driverCreationDTO);
+        simpMessagingTemplate.convertAndSend("/secured/update/newDriver", new DriverDTO(driver));
         return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.CREATED);
     }
 
