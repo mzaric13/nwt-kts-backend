@@ -78,7 +78,8 @@ public class Drive {
         this.price = tempDrive.getPrice();
         this.length = tempDrive.getLength();
         this.tags = new HashSet<>(tempDrive.getTags());
-        this.status = Status.PAID;
+        if (tempDrive.getStatus() == Status.RESERVED) this.status = Status.PAID_RESERVED;
+        else this.status = Status.PAID;
         this.passengers = new HashSet<>(tempDrive.getPassengers());
         this.route = tempDrive.getRoute();
         this.driver = driver;

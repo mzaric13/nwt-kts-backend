@@ -1,10 +1,7 @@
 package nwt.kts.backend.service;
 
 import nwt.kts.backend.dto.creation.TempDriveDTO;
-import nwt.kts.backend.dto.returnDTO.DeclineDriveReasonDTO;
-import nwt.kts.backend.dto.returnDTO.DriveDTO;
-import nwt.kts.backend.dto.returnDTO.DriverDTO;
-import nwt.kts.backend.dto.returnDTO.MessageDTO;
+import nwt.kts.backend.dto.returnDTO.*;
 import nwt.kts.backend.entity.*;
 import nwt.kts.backend.exceptions.*;
 import nwt.kts.backend.repository.DriveRepository;
@@ -14,11 +11,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.mail.MessagingException;
 import javax.persistence.EntityNotFoundException;
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -272,6 +270,37 @@ public class DriveService {
         Drive rejectedDrive = driveRepository.findFirstByDriverAndStatusOrderByIdDesc(driver, Status.CANCELLED).orElseThrow(() -> {throw new NonExistingEntityException("Drive is not cancelled.");});
         if (!lasDrive.getId().equals(rejectedDrive.getId())) throw new NonExistingEntityException("No rejected drive");
         return rejectedDrive;
+    }
+
+    @Scheduled(fixedRate = 60000)
+    @Transactional(readOnly = false)
+    public void sendNotificationsForReservedDrives() throws MessagingException {
+        List<TempDrive> reservedDrives = tempDriveRepository.findAllByStatus(Status.RESERVED);
+        long currentMinutes = new Timestamp(new Date().getTime()).getTime() / 60000;
+        for (TempDrive reservedDrive : reservedDrives) {
+            long driveStartMinutes = reservedDrive.getStartDate().getTime() / 60000;
+            long difference = driveStartMinutes - currentMinutes;
+            if (difference == 15) {
+                reservedDrive.getPassengers().forEach(passenger -> {
+                    passenger.setHasDrive(true);
+                    simpMessagingTemplate.convertAndSend("/secured/update/passengerStatus", new PassengerDTO(passenger));
+                });
+            }
+            if (difference == 15 || difference == 10) {
+                List<Driver> drivers = driverService.getAllDrivers();
+                int numOfAvailableDrivers = (int) drivers.stream().filter(Driver::isAvailable).count();
+                simpMessagingTemplate.convertAndSend("/secured/update/updatePassenger",
+                        "Your drive is starting in " + difference + " minutes!\n" +
+                                "There are " + numOfAvailableDrivers + " available drivers");
+            } else if (difference == 5) {
+                simpMessagingTemplate.convertAndSend("/secured/update/updatePassenger",
+                        "You and other passengers will receive an email where you will give your consent for the ride!" +
+                                " Thank you for using our services!");
+                for (Passenger passenger : reservedDrive.getPassengers()) {
+                    emailService.sendDriveConfirmationEmail(reservedDrive, passenger);
+                }
+            }
+        }
     }
 
     private void checkIfTimeValid(Timestamp startTime) {
