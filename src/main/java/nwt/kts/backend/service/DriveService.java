@@ -87,6 +87,11 @@ public class DriveService {
         checkIfTimeValid(tempDriveDTO.getStartDate());
         Type type = typeService.findTypeByName(tempDriveDTO.getTypeDTO().getName());
         TempDrive tempDrive = new TempDrive(tempDriveDTO, passengers, type);
+        if (checkIfIsForReservation(tempDrive.getStartDate())) {
+            tempDrive.setStatus(Status.RESERVED);
+        } else {
+            tempDrive.setStatus(Status.PENDING);
+        }
         Route route = routeService.saveRoute(tempDrive.getRoute());
         tempDrive.setRoute(route);
         return tempDriveRepository.save(tempDrive);
@@ -142,6 +147,8 @@ public class DriveService {
                 emailService.sendDriveRejectedEmail(tempDrive, passenger, rejectPassenger);
             }
         }
+        tempDrive.setStatus(Status.CANCELLED);
+        tempDriveRepository.save(tempDrive);
     }
 
     public void sendConfirmationEmail(TempDrive tempDrive) throws MessagingException {
@@ -272,11 +279,18 @@ public class DriveService {
         long startTimeInMinutes = startTime.getTime() / 60000;
         long currentTimeInMinutes = currentTime.getTime() / 60000;
         long difference = startTimeInMinutes - currentTimeInMinutes;
-        System.out.println(difference);
         if (difference < 0) {
             throw new InvalidStartTimeException("Can't order drive for the past!");
         } else if (difference > 300) {
             throw new InvalidStartTimeException("Can't order drive more than 5 hours in advance!");
         }
+    }
+
+    private boolean checkIfIsForReservation(Timestamp startDate) {
+        Timestamp currentTime = new Timestamp(new Date().getTime());
+        long startTimeInMinutes = startDate.getTime() / 60000;
+        long currentTimeInMinutes = currentTime.getTime() / 60000;
+        long difference = startTimeInMinutes - currentTimeInMinutes;
+        return difference >= 20;
     }
 }

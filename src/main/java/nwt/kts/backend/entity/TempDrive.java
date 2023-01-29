@@ -49,6 +49,9 @@ public class TempDrive {
     @Column(name = "drive_id", nullable = true)
     private Integer driveId;
 
+    @Column(name = "status")
+    private Status status;
+
     public TempDrive() {
     }
 
@@ -153,5 +156,13 @@ public class TempDrive {
 
     public void setDriveId(Integer driveId) {
         this.driveId = driveId;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 }
