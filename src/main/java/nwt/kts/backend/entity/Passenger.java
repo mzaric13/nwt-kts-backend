@@ -56,6 +56,7 @@ public class Passenger extends User {
         this.provider = provider;
         this.tokens = 0;
         this.favouriteRoutes = new HashSet<>();
+        this.hasDrive = false;
     }
 
     public Passenger(String email, String name, String surname, Role role, String profilePicture, Provider provider) {
