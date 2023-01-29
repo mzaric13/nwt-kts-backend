@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
 import javax.persistence.EntityNotFoundException;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -83,6 +84,7 @@ public class DriveService {
         for (Passenger passenger: passengers) {
             if (passenger.getHasDrive()) throw new PassengerHasDriveException("One of selected passenger is currently on another drive");
         }
+        checkIfTimeValid(tempDriveDTO.getStartDate());
         Type type = typeService.findTypeByName(tempDriveDTO.getTypeDTO().getName());
         TempDrive tempDrive = new TempDrive(tempDriveDTO, passengers, type);
         Route route = routeService.saveRoute(tempDrive.getRoute());
@@ -263,5 +265,18 @@ public class DriveService {
         Drive rejectedDrive = driveRepository.findFirstByDriverAndStatusOrderByIdDesc(driver, Status.CANCELLED).orElseThrow(() -> {throw new NonExistingEntityException("Drive is not cancelled.");});
         if (!lasDrive.getId().equals(rejectedDrive.getId())) throw new NonExistingEntityException("No rejected drive");
         return rejectedDrive;
+    }
+
+    private void checkIfTimeValid(Timestamp startTime) {
+        Timestamp currentTime = new Timestamp(new Date().getTime());
+        long startTimeInMinutes = startTime.getTime() / 60000;
+        long currentTimeInMinutes = currentTime.getTime() / 60000;
+        long difference = startTimeInMinutes - currentTimeInMinutes;
+        System.out.println(difference);
+        if (difference < 0) {
+            throw new InvalidStartTimeException("Can't order drive for the past!");
+        } else if (difference > 300) {
+            throw new InvalidStartTimeException("Can't order drive more than 5 hours in advance!");
+        }
     }
 }
