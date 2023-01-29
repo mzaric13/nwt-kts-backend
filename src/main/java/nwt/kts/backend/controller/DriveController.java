@@ -81,6 +81,7 @@ public class DriveController {
             Drive drive = driveService.getDriveById(tempDrive.getDriveId());
             if (drive.getStatus() == Status.DRIVING_TO_START) {
                 simpMessagingTemplate.convertAndSend("/secured/update/newDrive", new DriveDTO(drive));
+                simpMessagingTemplate.convertAndSend("/secured/update/driverStatus", new DriverDTO(drive.getDriver()));
             }
         }
         return new ResponseEntity<>(HttpStatus.OK);
