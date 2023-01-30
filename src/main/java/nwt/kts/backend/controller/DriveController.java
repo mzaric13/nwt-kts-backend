@@ -62,9 +62,9 @@ public class DriveController {
 
     @PostMapping("/create-temp-drive")
     @PreAuthorize("hasRole('PASSENGER')")
-    public ResponseEntity<Integer> createTempDrive(@RequestBody TempDriveDTO tempDriveDTO) {
+    public ResponseEntity<TempDriveDTO> createTempDrive(@RequestBody TempDriveDTO tempDriveDTO) {
         TempDrive tempDrive = driveService.saveTempDrive(tempDriveDTO);
-        return new ResponseEntity<>(tempDrive.getId(), HttpStatus.CREATED);
+        return new ResponseEntity<>(new TempDriveDTO(tempDrive), HttpStatus.CREATED);
     }
 
     @GetMapping("/send-confirmation-email/{tempDriveId}")

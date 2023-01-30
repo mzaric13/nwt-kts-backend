@@ -58,8 +58,20 @@ public class DriveServiceTest {
     private DriveService driveService;
 
     @Test
+    @DisplayName("Should return NonExistingEntityException when there is no emails in the set")
+    public void testPassengerEmailsNotExistingNoEmails() {
+        TempDriveDTO tempDriveDTO = new TempDriveDTO();
+        tempDriveDTO.setEmails(new HashSet<>());
+
+        when(passengerService.allPassengersExist(tempDriveDTO.getEmails())).thenReturn(false);
+
+        assertThrows(NonExistingEntityException.class, () -> driveService.saveTempDrive(tempDriveDTO));
+        verify(passengerService, times(1)).allPassengersExist(tempDriveDTO.getEmails());
+    }
+
+    @Test
     @DisplayName("Should return NonExistingEntityException when there is an invalid email in the set")
-    public void testPassengerEmailsNotExisting() {
+    public void testPassengerEmailsNotExistingInvalidEmails() {
         TempDriveDTO tempDriveDTO = new TempDriveDTO();
         tempDriveDTO.setEmails(new HashSet<>());
         tempDriveDTO.getEmails().add("darko.darkovic@gmail.com");

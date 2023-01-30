@@ -129,6 +129,7 @@ public class PassengerService {
     }
 
     public boolean allPassengersExist(Set<String> emails) {
+        if (emails.size() == 0) return false;
         for (String email : emails) {
             if (passengerRepository.findPassengerByEmail(email) == null) {
                 return false;

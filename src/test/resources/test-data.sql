@@ -10,11 +10,25 @@ insert into vehicles (name, registration_number, type_id)
 values ('Audi SQ7', 'NS482AL', 1);
 
 insert into users (city, email, name, password, phone_number, surname, role_id, provider, picture)
-values ('Novi Sad', 'darko.darkovic@gmail.com', 'Darko', '$2a$12$1YdTZA0jjbEM5Ey2piVIpuVvH9vYYvCW69Sau3lFSN7Hw.wscUhYy', '+(381)-64-8475222', 'Darkovic', 2, 0, 'default.jpg'),
-       ('Novi Sad', 'mirko.ivanic@gmail.com', 'Mirko', '$2a$12$1YdTZA0jjbEM5Ey2piVIpuVvH9vYYvCW69Sau3lFSN7Hw.wscUhYy', '+(381)-64-5679210', 'Ivanic', 3, 0, 'default.jpg');
+values ('Novi Sad', 'darko.darkovic@gmail.com', 'Darko', '$2a$12$1YdTZA0jjbEM5Ey2piVIpuVvH9vYYvCW69Sau3lFSN7Hw.wscUhYy',
+        '+(381)-64-8475222', 'Darkovic', 2, 0, 'default.jpg'),
+       ('Novi Sad', 'mirko.ivanic@gmail.com', 'Mirko', '$2a$12$1YdTZA0jjbEM5Ey2piVIpuVvH9vYYvCW69Sau3lFSN7Hw.wscUhYy',
+        '+(381)-64-5679210', 'Ivanic', 3, 0, 'default.jpg');
 
 insert into drivers (is_available, is_blocked, id, vehicle_id, location_id)
 values (false, false, 2, 1, 1);
 
 insert into passengers (activated, is_blocked, id, tokens)
-values (true, false, 1, 100);
+values (true, false, 1, 500);
+
+insert into routes (route_name, route_idx, length, expected_time)
+values ('PUSKINOVA 27 - KISACKA 15', 0, 300.00, 1000.00);
+
+insert into route_waypoints (route_id, point_id)
+values (1, 1), (1, 2), (1, 3), (1, 4), (1, 5);
+
+insert into temp_drives (id, drive_id, length, num_accepted_passengers, price, start_date, status, route_id, vehicle_type_id)
+values (1, null, 3, 0, 300, '2023-01-31 14:00:00', 4, 1, 1);
+
+insert into temp_drive_passengers (temp_drive_id, passenger_id)
+values (1, 1);
