@@ -285,18 +285,22 @@ public class DriveService {
                 reservedDrive.getPassengers().forEach(passenger -> {
                     passenger.setHasDrive(true);
                     simpMessagingTemplate.convertAndSend("/secured/update/passengerStatus", new PassengerDTO(passenger));
+                    passengerService.savePassenger(passenger);
                 });
             }
             if (difference == 15 || difference == 10) {
                 List<Driver> drivers = driverService.getAllDrivers();
                 int numOfAvailableDrivers = (int) drivers.stream().filter(Driver::isAvailable).count();
-                simpMessagingTemplate.convertAndSend("/secured/update/updatePassenger",
-                        "Your drive is starting in " + difference + " minutes!\n" +
-                                "There are " + numOfAvailableDrivers + " available drivers");
+                reservedDrive.getPassengers().forEach(passenger -> {
+                    simpMessagingTemplate.convertAndSend("/secured/update/updatePassenger",
+                            new NotificationDTO(passenger.getId(),"Your drive is starting in " + difference + " minutes!\n" +
+                                    "There are " + numOfAvailableDrivers + " available drivers"));
+                });
             } else if (difference == 5) {
-                simpMessagingTemplate.convertAndSend("/secured/update/updatePassenger",
-                        "You and other passengers will receive an email where you will give your consent for the ride!" +
-                                " Thank you for using our services!");
+                reservedDrive.getPassengers().forEach(passenger -> {
+                    simpMessagingTemplate.convertAndSend("/secured/update/updatePassenger",
+                            new NotificationDTO(passenger.getId(),"You and other passengers will receive an email where you will give your consent for the ride!" + " Thank you for using our services!"));
+                });
                 for (Passenger passenger : reservedDrive.getPassengers()) {
                     emailService.sendDriveConfirmationEmail(reservedDrive, passenger);
                 }

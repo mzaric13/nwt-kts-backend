@@ -79,4 +79,8 @@ public class DriveDTO {
     public List<String> getInconsistentDriveReasoning() {
         return inconsistentDriveReasoning;
     }
+
+    public void setInconsistentDriveReasoning(List<String> inconsistentDriveReasoning) {
+        this.inconsistentDriveReasoning = inconsistentDriveReasoning;
+    }
 }
