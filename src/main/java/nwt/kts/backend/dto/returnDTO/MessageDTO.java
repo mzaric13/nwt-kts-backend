@@ -3,6 +3,7 @@ package nwt.kts.backend.dto.returnDTO;
 import nwt.kts.backend.entity.Message;
 
 import java.sql.Timestamp;
+import java.util.Objects;
 
 public class MessageDTO {
 
@@ -70,4 +71,13 @@ public class MessageDTO {
     public void setMessage(String message) {
         this.message = message;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MessageDTO that = (MessageDTO) o;
+        return id == that.id;
+    }
+
 }

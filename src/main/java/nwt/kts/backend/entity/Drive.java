@@ -144,4 +144,8 @@ public class Drive {
     public void setEndDate(Timestamp endDate) {
         this.endDate = endDate;
     }
+
+    public void setDriver(Driver driver) {
+        this.driver = driver;
+    }
 }

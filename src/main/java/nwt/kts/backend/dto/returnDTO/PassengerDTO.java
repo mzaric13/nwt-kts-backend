@@ -97,4 +97,12 @@ public class PassengerDTO {
     public boolean isHasDrive() {
         return hasDrive;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PassengerDTO that = (PassengerDTO) o;
+        return id == that.id;
+    }
 }
