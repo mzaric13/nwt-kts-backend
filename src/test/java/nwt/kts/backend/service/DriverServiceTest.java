@@ -1,4 +1,4 @@
-package service;
+package nwt.kts.backend.service;
 
 
 import nwt.kts.backend.entity.*;

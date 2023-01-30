@@ -76,7 +76,7 @@ public class DriveService {
 
     public TempDrive saveTempDrive(TempDriveDTO tempDriveDTO) {
         if (!passengerService.allPassengersExist(tempDriveDTO.getEmails()))
-            throw new EntityNotFoundException("Not all passenger emails exist");
+            throw new NonExistingEntityException("Not all passenger emails exist");
         Set<Passenger> passengers = tempDriveDTO.getEmails().stream()
                 .map(email -> passengerService.findPassengerByEmail(email)).collect(Collectors.toSet());
         for (Passenger passenger: passengers) {

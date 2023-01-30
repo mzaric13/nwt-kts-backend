@@ -1,4 +1,4 @@
-package service;
+package nwt.kts.backend.service;
 
 import nwt.kts.backend.dto.creation.TempDriveDTO;
 import nwt.kts.backend.dto.returnDTO.DeclineDriveReasonDTO;
@@ -13,7 +13,6 @@ import nwt.kts.backend.dto.returnDTO.NotificationDTO;
 import nwt.kts.backend.dto.returnDTO.PassengerDTO;
 import nwt.kts.backend.exceptions.NonExistingEntityException;
 import nwt.kts.backend.repository.TempDriveRepository;
-import nwt.kts.backend.service.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,7 +23,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.mail.MessagingException;
-import javax.persistence.EntityNotFoundException;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -60,7 +58,7 @@ public class DriveServiceTest {
     private DriveService driveService;
 
     @Test
-    @DisplayName("Should return EntityNotFoundException when there is an invalid email in the set")
+    @DisplayName("Should return NonExistingEntityException when there is an invalid email in the set")
     public void testPassengerEmailsNotExisting() {
         TempDriveDTO tempDriveDTO = new TempDriveDTO();
         tempDriveDTO.setEmails(new HashSet<>());
@@ -69,7 +67,7 @@ public class DriveServiceTest {
 
         when(passengerService.allPassengersExist(tempDriveDTO.getEmails())).thenReturn(false);
 
-        assertThrows(EntityNotFoundException.class, () -> driveService.saveTempDrive(tempDriveDTO));
+        assertThrows(NonExistingEntityException.class, () -> driveService.saveTempDrive(tempDriveDTO));
         verify(passengerService, times(1)).allPassengersExist(tempDriveDTO.getEmails());
     }
 
