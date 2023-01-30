@@ -2,9 +2,7 @@ package nwt.kts.backend.controller;
 
 import nwt.kts.backend.dto.creation.TempDriveDTO;
 import nwt.kts.backend.dto.login.EmailPasswordLoginDTO;
-import nwt.kts.backend.dto.returnDTO.RouteDTO;
-import nwt.kts.backend.dto.returnDTO.TokenDTO;
-import nwt.kts.backend.dto.returnDTO.TypeDTO;
+import nwt.kts.backend.dto.returnDTO.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -186,6 +184,129 @@ public class DriveControllerTest {
                 null, Void.class, 1, 1);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
+
+    @Test
+    @DisplayName("Send emails - Should return status code OK")
+    public void testSendEmailsReturnStatusCodeOK() {
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setBearerAuth(accessTokenPassenger);
+        HttpEntity<Object> httpEntity = new HttpEntity<>(httpHeaders);
+
+        ResponseEntity<Void> responseEntity = restTemplate.exchange("/drives/send-confirmation-email/{tempDriveId}", HttpMethod.GET, httpEntity, Void.class, 1);
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Send emails - Should return status code INTERNAL_SERVER_ERROR because there isn't a Tempdrive with given ID")
+    public void testSendEmailsReturnStatusInternalServerError() {
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setBearerAuth(accessTokenPassenger);
+        HttpEntity<Object> httpEntity = new HttpEntity<>(httpHeaders);
+
+        ResponseEntity<Void> responseEntity = restTemplate.exchange("/drives/send-confirmation-email/{tempDriveId}", HttpMethod.GET, httpEntity, Void.class, 1000);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Report inconsistency - Should return status code OK")
+    public void testReportInconsistencyReturnStatusOK() {
+
+        DriveDTO driveDTO = new DriveDTO();
+        driveDTO.setId(1);
+
+        ArrayList<String> inconsistentDriveReasonings = new ArrayList<>();
+        inconsistentDriveReasonings.add("Wasn't going the route he said he was going to go.");
+        inconsistentDriveReasonings.add("Drove much slower than he should of.");
+        inconsistentDriveReasonings.add("Stopped at the store to buy something for himself.");
+
+        driveDTO.setInconsistentDriveReasoning(inconsistentDriveReasonings);
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setBearerAuth(accessTokenPassenger);
+        HttpEntity<DriveDTO> httpEntity = new HttpEntity<>(driveDTO, httpHeaders);
+
+        ResponseEntity<Void> responseEntity = restTemplate.exchange("/drives/report-inconsistency", HttpMethod.PUT, httpEntity, Void.class);
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Report inconsistency - Should return status code INTERNAL_SERVER_ERROR because there isn't a Drive with given ID")
+    public void testReportInconsistencyReturnStatusInternalServerError() {
+
+        DriveDTO driveDTO = new DriveDTO();
+        driveDTO.setId(1000);
+
+        ArrayList<String> inconsistentDriveReasonings = new ArrayList<>();
+        inconsistentDriveReasonings.add("Wasn't going the route he said he was going to go.");
+        inconsistentDriveReasonings.add("Drove much slower than he should of.");
+        inconsistentDriveReasonings.add("Stopped at the store to buy something for himself.");
+
+        driveDTO.setInconsistentDriveReasoning(inconsistentDriveReasonings);
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setBearerAuth(accessTokenPassenger);
+        HttpEntity<DriveDTO> httpEntity = new HttpEntity<>(driveDTO, httpHeaders);
+
+        ResponseEntity<Void> responseEntity = restTemplate.exchange("/drives/report-inconsistency", HttpMethod.PUT, httpEntity, Void.class);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("End drive - Should return status code OK")
+    public void testEndDriveReturnStatusOK() {
+
+        DriveDTO driveDTO = new DriveDTO();
+        driveDTO.setId(1);
+
+        DeclineDriveReasonDTO declineDriveReasonDTO = new DeclineDriveReasonDTO(driveDTO, "I feel sick");
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setBearerAuth(accessTokenDriver);
+        HttpEntity<DeclineDriveReasonDTO> httpEntity = new HttpEntity<>(declineDriveReasonDTO, httpHeaders);
+
+        ResponseEntity<DriveDTO> responseEntity = restTemplate.exchange("/drives/decline-drive", HttpMethod.PUT, httpEntity, DriveDTO.class);
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(1, responseEntity.getBody().getId());
+    }
+
+    @Test
+    @DisplayName("End drive - Should return status code INTERNAL_SERVER_ERROR because there isn't a Drive with given ID")
+    public void testEndDriveReturnStatusInternalServerErrorNoDriverWithGivenID() {
+
+        DriveDTO driveDTO = new DriveDTO();
+        driveDTO.setId(1000);
+        DeclineDriveReasonDTO declineDriveReasonDTO = new DeclineDriveReasonDTO(driveDTO, "I feel sick");
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setBearerAuth(accessTokenDriver);
+        HttpEntity<DeclineDriveReasonDTO> httpEntity = new HttpEntity<>(declineDriveReasonDTO, httpHeaders);
+
+        ResponseEntity<DriveDTO> responseEntity = restTemplate.exchange("/drives/decline-drive", HttpMethod.PUT, httpEntity, DriveDTO.class);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("End drive - Should return status code INTERNAL_SERVER_ERROR because there isn't a Drive with given ID")
+    public void testEndDriveReturnStatusInternalServerErrorNoPaidDriveForDriver() {
+
+        DriveDTO driveDTO = new DriveDTO();
+        driveDTO.setId(1);
+        DeclineDriveReasonDTO declineDriveReasonDTO = new DeclineDriveReasonDTO(driveDTO, "I feel sick");
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setBearerAuth(accessTokenDriver);
+        HttpEntity<DeclineDriveReasonDTO> httpEntity = new HttpEntity<>(declineDriveReasonDTO, httpHeaders);
+        HttpEntity<Object> httpEntityGet = new HttpEntity<>(httpHeaders);
+
+        // Change driver availability to false, so that this case can be tested
+        ResponseEntity<DriverDTO> responseEntityDriver = restTemplate.exchange("/drivers/change-status", HttpMethod.GET, httpEntityGet, DriverDTO.class);
+
+        ResponseEntity<DriveDTO> responseEntity = restTemplate.exchange("/drives/decline-drive", HttpMethod.PUT, httpEntity, DriveDTO.class);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+    }
+
 
     private Timestamp createPastTime() {
         Calendar calendar = Calendar.getInstance();
