@@ -122,12 +122,12 @@ public class DriveService {
         List<Passenger> sortedPassengers = sortPassengersByTokenAmount(tempDrive.getPassengers());
         if (sortedPassengers.get(0).getTokens() >= tempDrive.getPrice()) return true;
         for (Passenger passenger : sortedPassengers) {
-            costPerPerson += residueCost;
-            if (passenger.getTokens() >= costPerPerson) {
+            double costPerPersonWithResidue = costPerPerson + residueCost;
+            if (passenger.getTokens() >= costPerPersonWithResidue) {
                 residueCost = 0;
             }
             else {
-                residueCost = costPerPerson - passenger.getTokens();
+                residueCost = costPerPersonWithResidue - passenger.getTokens();
             }
         }
         return residueCost == 0;
@@ -139,14 +139,14 @@ public class DriveService {
         return sortedPassengers;
     }
 
-    public void rejectDrive(TempDrive tempDrive, Integer passengerId, Passenger rejectPassenger) throws MessagingException {
+    public TempDrive rejectDrive(TempDrive tempDrive, Integer passengerId, Passenger rejectPassenger) throws MessagingException {
         for (Passenger passenger : tempDrive.getPassengers()) {
             if (!Objects.equals(passenger.getId(), passengerId)) {
                 emailService.sendDriveRejectedEmail(tempDrive, passenger, rejectPassenger);
             }
         }
         tempDrive.setStatus(Status.CANCELLED);
-        tempDriveRepository.save(tempDrive);
+        return tempDriveRepository.save(tempDrive);
     }
 
     public void sendConfirmationEmail(TempDrive tempDrive) throws MessagingException {
@@ -178,13 +178,13 @@ public class DriveService {
         double residueCost = 0;
         List<Passenger> sortedPassengers = sortPassengersByTokenAmount(tempDrive.getPassengers());
         for (Passenger passenger : sortedPassengers) {
-            costPerPerson += residueCost;
-            if (passenger.getTokens() >= costPerPerson) {
-                passenger.payDrive(costPerPerson);
+            double costPerPersonWithResidue = costPerPerson + residueCost;
+            if (passenger.getTokens() >= costPerPersonWithResidue) {
+                passenger.payDrive(costPerPersonWithResidue);
                 residueCost = 0;
             }
             else {
-                residueCost = costPerPerson - passenger.getTokens();
+                residueCost = costPerPersonWithResidue - passenger.getTokens();
                 passenger.setTokens(0);
             }
         }
