@@ -69,14 +69,14 @@ public class DriveController {
 
     @GetMapping("/send-confirmation-email/{tempDriveId}")
     @PreAuthorize("hasRole('PASSENGER')")
-    public ResponseEntity<Void> sendConfirmationEmail(Principal principal, @PathVariable Integer tempDriveId) throws MessagingException {
+    public ResponseEntity<Void> sendConfirmationEmail(@PathVariable Integer tempDriveId) throws MessagingException {
         TempDrive tempDrive = driveService.getTempDriveById(tempDriveId);
         driveService.sendConfirmationEmail(tempDrive);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PutMapping("/accept-drive-consent")
-    public ResponseEntity<Void> acceptDriveConsent(Principal principal, @RequestParam("tempDriveId") Integer tempDriveId) {
+    public ResponseEntity<Void> acceptDriveConsent(@RequestParam("tempDriveId") Integer tempDriveId) {
         TempDrive tempDrive = driveService.acceptDriveConsent(tempDriveId);
         if (tempDrive.getDriveId() != null) {
             Drive drive = driveService.getDriveById(tempDrive.getDriveId());
@@ -94,7 +94,7 @@ public class DriveController {
     }
 
     @PutMapping("/reject-drive-consent")
-    public ResponseEntity<Void> rejectDriveConsent(Principal principal, @RequestParam("tempDriveId") Integer tempDriveId,
+    public ResponseEntity<Void> rejectDriveConsent(@RequestParam("tempDriveId") Integer tempDriveId,
                                                    @RequestParam("passengerId") Integer passengerId) throws MessagingException {
         TempDrive tempDrive = driveService.getTempDriveById(tempDriveId);
         Passenger rejectPassenger = passengerService.findPassengerById(passengerId);

@@ -1,4 +1,4 @@
-package nwt.kts.backend.service;
+package service;
 
 import nwt.kts.backend.dto.creation.TempDriveDTO;
 import nwt.kts.backend.dto.returnDTO.DeclineDriveReasonDTO;
@@ -13,6 +13,7 @@ import nwt.kts.backend.dto.returnDTO.NotificationDTO;
 import nwt.kts.backend.dto.returnDTO.PassengerDTO;
 import nwt.kts.backend.exceptions.NonExistingEntityException;
 import nwt.kts.backend.repository.TempDriveRepository;
+import nwt.kts.backend.service.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
