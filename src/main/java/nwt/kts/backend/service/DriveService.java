@@ -322,4 +322,9 @@ public class DriveService {
         long difference = startTimeInMinutes - currentTimeInMinutes;
         return difference >= 20;
     }
+
+    public TempDrive setPassengersFalseHasDrive(TempDrive tempDrive) {
+        tempDrive.getPassengers().forEach(passenger -> passenger.setHasDrive(false));
+        return tempDriveRepository.save(tempDrive);
+    }
 }

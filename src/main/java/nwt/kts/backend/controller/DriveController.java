@@ -4,6 +4,7 @@ import nwt.kts.backend.dto.creation.TempDriveDTO;
 import nwt.kts.backend.dto.returnDTO.DeclineDriveReasonDTO;
 import nwt.kts.backend.dto.returnDTO.DriveDTO;
 import nwt.kts.backend.dto.returnDTO.DriverDTO;
+import nwt.kts.backend.dto.returnDTO.PassengerDTO;
 import nwt.kts.backend.entity.*;
 import nwt.kts.backend.exceptions.DriverNotFoundException;
 import nwt.kts.backend.exceptions.NotEnoughTokensException;
@@ -83,6 +84,11 @@ public class DriveController {
                 simpMessagingTemplate.convertAndSend("/secured/update/newDrive", new DriveDTO(drive));
                 simpMessagingTemplate.convertAndSend("/secured/update/driverStatus", new DriverDTO(drive.getDriver()));
             }
+        } else {
+            tempDrive = driveService.setPassengersFalseHasDrive(tempDrive);
+            tempDrive.getPassengers().forEach(passenger -> {
+                simpMessagingTemplate.convertAndSend("/secured/update/passengerStatus", new PassengerDTO(passenger));
+            });
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
