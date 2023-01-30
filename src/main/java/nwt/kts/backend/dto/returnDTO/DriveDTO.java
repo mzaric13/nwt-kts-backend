@@ -72,6 +72,10 @@ public class DriveDTO {
         return id;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public List<String> getInconsistentDriveReasoning() {
         return inconsistentDriveReasoning;
     }

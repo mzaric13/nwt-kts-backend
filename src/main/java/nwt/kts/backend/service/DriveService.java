@@ -208,6 +208,7 @@ public class DriveService {
         Driver driver = drive.getDriver();
         if (!checkDriverPositionToDrive(driver, drive.getRoute().getWaypoints().get(drive.getRoute().getWaypoints().size() - 1))) throw new DriverNotOnLocationException("You can't end drive without being on location.");
         if (!driver.isHasFutureDrive()) driver.setAvailable(true);
+        else driver.setHasFutureDrive(false);
         for (Passenger pas : drive.getPassengers()) pas.setHasDrive(false);
         drive.setStatus(Status.FINISHED);
         drive.setEndDate(new Timestamp(new Date().getTime()));

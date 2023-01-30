@@ -101,6 +101,10 @@ public class Drive {
         return price;
     }
 
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
     public double getLength() {
         return length;
     }
@@ -121,8 +125,16 @@ public class Drive {
         return driver;
     }
 
+    public void setDriver(Driver driver) {
+        this.driver = driver;
+    }
+
     public Set<Passenger> getPassengers() {
         return passengers;
+    }
+
+    public void setPassengers(Set<Passenger> passengers) {
+        this.passengers = passengers;
     }
 
     public Route getRoute() {
