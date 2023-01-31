@@ -449,6 +449,8 @@ public class DriveServiceTest {
         assertFalse(driver.isAvailable());
         assertFalse(driver.isHasFutureDrive());
         assertFalse(passenger.getHasDrive());
+        verify(driveRepository, times(1)).findDriveById(1);
+        verify(driveRepository, times(1)).save(drive);
     }
 
     @Test
@@ -477,6 +479,8 @@ public class DriveServiceTest {
         assertTrue(driver.isAvailable());
         assertFalse(driver.isHasFutureDrive());
         assertFalse(passenger.getHasDrive());
+        verify(driveRepository, times(1)).findDriveById(1);
+        verify(driveRepository, times(1)).save(drive);
     }
 
     @Test
@@ -506,6 +510,8 @@ public class DriveServiceTest {
         assertFalse(driver.isHasFutureDrive());
         assertFalse(passenger.getHasDrive());
         assertEquals(50, passenger.getTokens());
+        verify(driveRepository, times(1)).findDriveById(1);
+        verify(driveRepository, times(1)).save(drive);
     }
 
     @Test
@@ -540,6 +546,8 @@ public class DriveServiceTest {
         assertFalse(passenger2.getHasDrive());
         assertEquals(25, passenger1.getTokens());
         assertEquals(25, passenger2.getTokens());
+        verify(driveRepository, times(1)).findDriveById(1);
+        verify(driveRepository, times(1)).save(drive);
     }
 
     @Test
@@ -636,6 +644,8 @@ public class DriveServiceTest {
 
         Drive saved = driveService.startDrive(driveDTO);
         assertEquals(Status.STARTED, saved.getStatus());
+        verify(driveRepository, times(1)).findDriveById(1);
+        verify(driveRepository, times(1)).save(drive);
     }
 
     @Test
@@ -719,6 +729,8 @@ public class DriveServiceTest {
         assertFalse(driver.isHasFutureDrive());
         assertFalse(passenger.getHasDrive());
         assertNotNull(saved.getEndDate());
+        verify(driveRepository, times(1)).findDriveById(1);
+        verify(driveRepository, times(1)).save(drive);
     }
 
     @Test
@@ -752,6 +764,8 @@ public class DriveServiceTest {
         assertFalse(driver.isHasFutureDrive());
         assertFalse(passenger.getHasDrive());
         assertNotNull(saved.getEndDate());
+        verify(driveRepository, times(1)).findDriveById(1);
+        verify(driveRepository, times(1)).save(drive);
     }
 
 

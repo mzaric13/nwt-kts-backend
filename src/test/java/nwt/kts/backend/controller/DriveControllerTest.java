@@ -254,8 +254,8 @@ public class DriveControllerTest {
     }
 
     @Test
-    @DisplayName("End drive - Should return status code OK")
-    public void testEndDriveReturnStatusOK() {
+    @DisplayName("Reject drive - Should return status code OK")
+    public void testRejectDriveReturnStatusOK() {
 
         DriveDTO driveDTO = new DriveDTO();
         driveDTO.setId(1);
@@ -272,8 +272,8 @@ public class DriveControllerTest {
     }
 
     @Test
-    @DisplayName("End drive - Should return status code INTERNAL_SERVER_ERROR because there isn't a Drive with given ID")
-    public void testEndDriveReturnStatusInternalServerErrorNoDriverWithGivenID() {
+    @DisplayName("Reject drive - Should return status code INTERNAL_SERVER_ERROR because there isn't a Drive with given ID")
+    public void testRejectDriveReturnStatusInternalServerErrorNoDriverWithGivenID() {
 
         DriveDTO driveDTO = new DriveDTO();
         driveDTO.setId(1000);
@@ -288,8 +288,8 @@ public class DriveControllerTest {
     }
 
     @Test
-    @DisplayName("End drive - Should return status code INTERNAL_SERVER_ERROR because there isn't a Drive with given ID")
-    public void testEndDriveReturnStatusInternalServerErrorNoPaidDriveForDriver() {
+    @DisplayName("Reject drive - Should return status code INTERNAL_SERVER_ERROR because there isn't a Drive with given ID")
+    public void testRejectDriveReturnStatusInternalServerErrorNoPaidDriveForDriver() {
 
         DriveDTO driveDTO = new DriveDTO();
         driveDTO.setId(1);
@@ -304,6 +304,132 @@ public class DriveControllerTest {
         ResponseEntity<DriverDTO> responseEntityDriver = restTemplate.exchange("/drivers/change-status", HttpMethod.GET, httpEntityGet, DriverDTO.class);
 
         ResponseEntity<DriveDTO> responseEntity = restTemplate.exchange("/drives/decline-drive", HttpMethod.PUT, httpEntity, DriveDTO.class);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Start drive - Should return ok status")
+    public void testStartDriveShouldReturnOkStatus() {
+        ResponseEntity<TokenDTO> responseEntityTokenDTO =
+                restTemplate.postForEntity("/auth/login-credentials",
+                        new EmailPasswordLoginDTO("branko.lazic@gmail.com", "sifra123"),
+                        TokenDTO.class);
+        TokenDTO tokenDTO = responseEntityTokenDTO.getBody();
+        String accessToken = tokenDTO.getAccessToken();
+
+        DriveDTO driveDTO = new DriveDTO();
+        driveDTO.setId(2);
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setBearerAuth(accessToken);
+        HttpEntity<DriveDTO> httpEntity = new HttpEntity<>(driveDTO, httpHeaders);
+
+        ResponseEntity<DriveDTO> responseEntity = restTemplate.exchange("/drives/start-drive", HttpMethod.PUT, httpEntity, DriveDTO.class);
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Start drive - Should return INTERNAL_SERVER_ERROR status because drive with given id doesn't exist")
+    public void testStartDriveShouldReturnInternalServerErrorBecauseDriveDoesNotExist() {
+        ResponseEntity<TokenDTO> responseEntityTokenDTO =
+                restTemplate.postForEntity("/auth/login-credentials",
+                        new EmailPasswordLoginDTO("branko.lazic@gmail.com", "sifra123"),
+                        TokenDTO.class);
+        TokenDTO tokenDTO = responseEntityTokenDTO.getBody();
+        String accessToken = tokenDTO.getAccessToken();
+
+        DriveDTO driveDTO = new DriveDTO();
+        driveDTO.setId(5);
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setBearerAuth(accessToken);
+        HttpEntity<DriveDTO> httpEntity = new HttpEntity<>(driveDTO, httpHeaders);
+
+        ResponseEntity<DriveDTO> responseEntity = restTemplate.exchange("/drives/start-drive", HttpMethod.PUT, httpEntity, DriveDTO.class);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Start drive - Should return INTERNAL_SERVER_ERROR status because driver is not on location")
+    public void testStartDriveShouldReturnInternalServerErrorBecauseDriverIsNotOnLocation() {
+        ResponseEntity<TokenDTO> responseEntityTokenDTO =
+                restTemplate.postForEntity("/auth/login-credentials",
+                        new EmailPasswordLoginDTO("vujadin.savic@gmail.com", "sifra123"),
+                        TokenDTO.class);
+        TokenDTO tokenDTO = responseEntityTokenDTO.getBody();
+        String accessToken = tokenDTO.getAccessToken();
+
+        DriveDTO driveDTO = new DriveDTO();
+        driveDTO.setId(3);
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setBearerAuth(accessToken);
+        HttpEntity<DriveDTO> httpEntity = new HttpEntity<>(driveDTO, httpHeaders);
+
+        ResponseEntity<DriveDTO> responseEntity = restTemplate.exchange("/drives/start-drive", HttpMethod.PUT, httpEntity, DriveDTO.class);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("End drive - Should return OK status")
+    public void testEndDriveShouldReturnOkStatus() {
+        ResponseEntity<TokenDTO> responseEntityTokenDTO =
+                restTemplate.postForEntity("/auth/login-credentials",
+                        new EmailPasswordLoginDTO("vujadin.savic@gmail.com", "sifra123"),
+                        TokenDTO.class);
+        TokenDTO tokenDTO = responseEntityTokenDTO.getBody();
+        String accessToken = tokenDTO.getAccessToken();
+
+        DriveDTO driveDTO = new DriveDTO();
+        driveDTO.setId(3);
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setBearerAuth(accessToken);
+        HttpEntity<DriveDTO> httpEntity = new HttpEntity<>(driveDTO, httpHeaders);
+
+        ResponseEntity<DriveDTO> responseEntity = restTemplate.exchange("/drives/end-drive", HttpMethod.PUT, httpEntity, DriveDTO.class);
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("End drive - Should return INTERNAL_SERVER_ERROR status because drive doesn't exist")
+    public void testEndDriveShouldReturnInternalServerErrorStatusBecauseDriveDoesNotExist() {
+        ResponseEntity<TokenDTO> responseEntityTokenDTO =
+                restTemplate.postForEntity("/auth/login-credentials",
+                        new EmailPasswordLoginDTO("branko.lazic@gmail.com", "sifra123"),
+                        TokenDTO.class);
+        TokenDTO tokenDTO = responseEntityTokenDTO.getBody();
+        String accessToken = tokenDTO.getAccessToken();
+
+        DriveDTO driveDTO = new DriveDTO();
+        driveDTO.setId(5);
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setBearerAuth(accessToken);
+        HttpEntity<DriveDTO> httpEntity = new HttpEntity<>(driveDTO, httpHeaders);
+
+        ResponseEntity<DriveDTO> responseEntity = restTemplate.exchange("/drives/end-drive", HttpMethod.PUT, httpEntity, DriveDTO.class);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("End drive - Should return INTERNAL_SERVER_ERROR status because driver is not on location")
+    public void testEndDriveShouldReturnInternalServerErrorBecauseDriverIsNotOnLocation() {
+        ResponseEntity<TokenDTO> responseEntityTokenDTO =
+                restTemplate.postForEntity("/auth/login-credentials",
+                        new EmailPasswordLoginDTO("branko.lazic@gmail.com", "sifra123"),
+                        TokenDTO.class);
+        TokenDTO tokenDTO = responseEntityTokenDTO.getBody();
+        String accessToken = tokenDTO.getAccessToken();
+
+        DriveDTO driveDTO = new DriveDTO();
+        driveDTO.setId(4);
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setBearerAuth(accessToken);
+        HttpEntity<DriveDTO> httpEntity = new HttpEntity<>(driveDTO, httpHeaders);
+
+        ResponseEntity<DriveDTO> responseEntity = restTemplate.exchange("/drives/end-drive", HttpMethod.PUT, httpEntity, DriveDTO.class);
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
     }
 
