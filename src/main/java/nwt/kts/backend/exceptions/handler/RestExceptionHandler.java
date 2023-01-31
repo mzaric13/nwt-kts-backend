@@ -269,6 +269,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return buildResponseEntity(apiError);
     }
 
+    @ExceptionHandler(UserNotAuthenticatedException.class)
+    protected ResponseEntity<Object> handleUserNotAuthenticatedException(UserNotAuthenticatedException ex) {
+        ApiError apiError = new ApiError(BAD_REQUEST);
+        apiError.setMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
+
     /**
      * Handle Exception, handle generic Exception.class
      *

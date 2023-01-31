@@ -12,6 +12,7 @@ import nwt.kts.backend.dto.returnDTO.TokenDTO;
 import nwt.kts.backend.entity.Driver;
 import nwt.kts.backend.entity.Passenger;
 import nwt.kts.backend.entity.User;
+import nwt.kts.backend.exceptions.UserNotAuthenticatedException;
 import nwt.kts.backend.repository.UserRepository;
 import nwt.kts.backend.service.DriverService;
 import nwt.kts.backend.service.PassengerService;
@@ -23,16 +24,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.social.facebook.api.Facebook;
 import org.springframework.social.facebook.api.impl.FacebookTemplate;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.Console;
@@ -112,6 +111,20 @@ public class AuthenticationController {
         String jwt = tokenUtils.generateToken(passenger.getUsername(), passenger.getRole().getName());
         int expiresIn = tokenUtils.getExpiredIn();
         return ResponseEntity.ok(new TokenDTO(jwt, expiresIn));
+    }
+
+    @GetMapping(value = "/logout", produces = MediaType.TEXT_PLAIN_VALUE)
+    public ResponseEntity<String> logoutUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (!(auth instanceof AnonymousAuthenticationToken)){
+            SecurityContextHolder.clearContext();
+
+            return new ResponseEntity<>("You successfully logged out!", HttpStatus.OK);
+        } else {
+            throw new UserNotAuthenticatedException("WineUser is not authenticated!");
+        }
+
     }
 
 }
