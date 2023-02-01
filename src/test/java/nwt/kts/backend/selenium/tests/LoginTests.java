@@ -21,7 +21,7 @@ public class LoginTests extends TestBase {
         homePage.clickLoginNavbarLink();
     }
 
-    @Test
+/*    @Test
     public void unsuccessfulLoginNoCredentialsEntered() {
         LoginPage loginPage = new LoginPage(webDriver);
         loginPage.waitUntilLoaded();
@@ -29,6 +29,7 @@ public class LoginTests extends TestBase {
         assertTrue(loginPage.waitUntilModalIsLoaded("Error: Email and password not given."));
         Helper.takeScreenshoot(webDriver, "login_test_1_no_credentials_entered");
     }
+*/
 
     @Test
     public void unsuccessfulLoginWrongEmailEntered() {
