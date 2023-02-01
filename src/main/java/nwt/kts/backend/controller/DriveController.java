@@ -76,8 +76,9 @@ public class DriveController {
     }
 
     @PutMapping("/accept-drive-consent")
-    public ResponseEntity<Void> acceptDriveConsent(@RequestParam("tempDriveId") Integer tempDriveId) {
-        TempDrive tempDrive = driveService.acceptDriveConsent(tempDriveId);
+    public ResponseEntity<Void> acceptDriveConsent(@RequestParam("tempDriveId") Integer tempDriveId,
+                                                   @RequestParam("passengerId") Integer passengerId) {
+        TempDrive tempDrive = driveService.acceptDriveConsent(tempDriveId, passengerId);
         if (tempDrive.getDriveId() != null) {
             Drive drive = driveService.getDriveById(tempDrive.getDriveId());
             if (drive.getStatus() == Status.DRIVING_TO_START) {

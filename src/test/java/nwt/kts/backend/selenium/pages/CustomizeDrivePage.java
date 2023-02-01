@@ -18,7 +18,7 @@ public class CustomizeDrivePage {
     @FindBy(id = "selectType")
     private WebElement selectVehicleType;
 
-    @FindBy(id = "vehicle-type-2")
+    @FindBy(id = "vehicle-type-6")
     private WebElement specificVehicleType;
 
     @FindBy(id = "swal2-title")
@@ -106,9 +106,6 @@ public class CustomizeDrivePage {
 
     public void inputPerson(String email) {
         this.personInput.sendKeys(email);
-        this.personInput.sendKeys(Keys.ENTER);
-    }
-    public void clickInputPerson() {
         this.personInput.sendKeys(Keys.ENTER);
     }
 

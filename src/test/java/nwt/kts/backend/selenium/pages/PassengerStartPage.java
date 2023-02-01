@@ -30,6 +30,12 @@ public class PassengerStartPage {
     @FindBy(id = "swal2-title")
     private WebElement modalText;
 
+    @FindBy(className = "swal2-confirm")
+    private WebElement swalConfirmButton;
+
+    @FindBy(className = "swal2-deny")
+    private WebElement swalDenyButton;
+
     private WebDriver webDriver;
 
     public PassengerStartPage(WebDriver webDriver) {
@@ -65,5 +71,13 @@ public class PassengerStartPage {
     public void waitUntilModalIsLoaded(String message) {
         new WebDriverWait(webDriver, Duration.ofSeconds(10).getSeconds())
                 .until(ExpectedConditions.textToBePresentInElement(modalText, message));
+    }
+
+    public void clickSwalConfirm() {
+        this.swalConfirmButton.click();
+    }
+
+    public void clickSwalDeny() {
+        this.swalDenyButton.click();
     }
 }

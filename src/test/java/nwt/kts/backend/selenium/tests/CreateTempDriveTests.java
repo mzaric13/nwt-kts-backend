@@ -1,10 +1,11 @@
 package nwt.kts.backend.selenium.tests;
 
 import nwt.kts.backend.selenium.helper.Helper;
-import nwt.kts.backend.selenium.pages.CustomizeDrivePage;
-import nwt.kts.backend.selenium.pages.HomePage;
-import nwt.kts.backend.selenium.pages.LoginPage;
-import nwt.kts.backend.selenium.pages.PassengerStartPage;
+import nwt.kts.backend.selenium.pages.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.interactions.Actions;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -14,11 +15,23 @@ public class CreateTempDriveTests extends TestBase {
 
     @BeforeTest
     public void loadPassengerHomePage() {
-        HomePage homePage = new HomePage(webDriver);
-        homePage.waitUntilLoaded();
-        homePage.hoverLoginNavbarLink();
-        homePage.clickLoginNavbarLink();
+        HomePage homePageDriver = new HomePage(webDriver);
+        homePageDriver.waitUntilLoaded();
+        homePageDriver.hoverLoginNavbarLink();
+        homePageDriver.clickLoginNavbarLink();
         LoginPage loginPage = new LoginPage(webDriver);
+        loginPage.waitUntilLoaded();
+        loginPage.enterEmail("branko.lazic@gmail.com");
+        loginPage.enterPassword("sifra123");
+        loginPage.pressLoginButton();
+        ((JavascriptExecutor) webDriver).executeScript("window.open()");
+        String currentWindow = homePageDriver.getWindowHandle();
+        homePageDriver.checkoutToAnotherWindow(currentWindow);
+        HomePage homePagePassenger = new HomePage(webDriver);
+        homePagePassenger.waitUntilLoaded();
+        homePagePassenger.hoverLoginNavbarLink();
+        homePagePassenger.clickLoginNavbarLink();
+        loginPage = new LoginPage(webDriver);
         loginPage.waitUntilLoaded();
         loginPage.enterEmail("darko.darkovic@gmail.com");
         loginPage.enterPassword("sifra123");
@@ -62,7 +75,11 @@ public class CreateTempDriveTests extends TestBase {
         customizeDrivePage.clickSelectVehicleType();
         customizeDrivePage.clickSpecificVehicleType();
         customizeDrivePage.clickCreateRideBtn();
-        customizeDrivePage.waitUntilModalIsLoaded("Success!");
+        customizeDrivePage.waitUntilModalIsLoaded("Drive consent");
+        passengerStartPage.clickSwalConfirm();
+
+        DriveAcceptPage driveAcceptPage = new DriveAcceptPage(webDriver);
+        driveAcceptPage.waitUntilLoaded();
         Helper.takeScreenshoot(webDriver, "create_temp_drive_test_3_customize_ride");
     }
 

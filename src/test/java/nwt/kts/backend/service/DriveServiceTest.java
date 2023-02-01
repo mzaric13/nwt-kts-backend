@@ -273,7 +273,7 @@ public class DriveServiceTest {
         when(tempDriveRepository.findTempDriveById(1)).thenReturn(tempDrive);
 
         NotEnoughTokensException exception = assertThrows(NotEnoughTokensException.class,
-                () -> driveService.acceptDriveConsent(1));
+                () -> driveService.acceptDriveConsent(1, 0));
 
         assertEquals("You don't have enough tokens to pay for the ride!", exception.getMessage());
         verify(tempDriveRepository, times(1)).findTempDriveById(1);
@@ -299,7 +299,7 @@ public class DriveServiceTest {
         when(tempDriveRepository.findTempDriveById(1)).thenReturn(tempDrive);
 
         NotEnoughTokensException exception = assertThrows(NotEnoughTokensException.class,
-                () -> driveService.acceptDriveConsent(1));
+                () -> driveService.acceptDriveConsent(1, 0));
 
         assertEquals("You don't have enough tokens to pay for the ride!", exception.getMessage());
         verify(tempDriveRepository, times(1)).findTempDriveById(1);
@@ -319,7 +319,7 @@ public class DriveServiceTest {
         when(driverService.selectDriverForDrive(tempDrive)).thenReturn(null);
 
         DriverNotFoundException exception = assertThrows(DriverNotFoundException.class,
-                () -> driveService.acceptDriveConsent(1));
+                () -> driveService.acceptDriveConsent(1, 0));
 
         assertEquals("There are no available drivers right now!", exception.getMessage());
         verify(tempDriveRepository, times(1)).findTempDriveById(1);
@@ -345,7 +345,7 @@ public class DriveServiceTest {
         when(tempDriveRepository.findTempDriveById(1)).thenReturn(tempDrive);
         when(tempDriveRepository.save(Mockito.any(TempDrive.class))).thenAnswer(i -> i.getArguments()[0]);
 
-        TempDrive actual = driveService.acceptDriveConsent(1);
+        TempDrive actual = driveService.acceptDriveConsent(1, 0);
 
         int expected = tempDrive.getPassengers().size() - (tempDrive.getPassengers().size() - 1);
 
@@ -377,7 +377,7 @@ public class DriveServiceTest {
         when(driveRepository.save(Mockito.any(Drive.class))).thenAnswer(i -> i.getArguments()[0]);
         when(tempDriveRepository.save(Mockito.any(TempDrive.class))).thenAnswer(i -> i.getArguments()[0]);
 
-        TempDrive actual = driveService.acceptDriveConsent(1);
+        TempDrive actual = driveService.acceptDriveConsent(1, 0);
 
         assertEquals(tempDrive.getPassengers().size(), actual.getNumAcceptedPassengers());
         verify(tempDriveRepository, times(1)).findTempDriveById(1);

@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.mail.MessagingException;
-import javax.persistence.EntityNotFoundException;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -95,9 +94,9 @@ public class DriveService {
         return tempDriveRepository.save(tempDrive);
     }
 
-    public TempDrive acceptDriveConsent(Integer tempDriveId) {
+    public TempDrive acceptDriveConsent(Integer tempDriveId, Integer passengerId) {
         TempDrive tempDrive = tempDriveRepository.findTempDriveById(tempDriveId);
-        this.acceptDrive(tempDrive);
+        this.acceptDrive(tempDrive, passengerId);
         if (this.allPassengersAcceptedDrive(tempDrive)) {
             if (this.passengersHaveTokens(tempDrive)) {
                 Driver driver = driverService.selectDriverForDrive(tempDrive);
@@ -140,13 +139,17 @@ public class DriveService {
     }
 
     public TempDrive rejectDrive(TempDrive tempDrive, Integer passengerId, Passenger rejectPassenger) throws MessagingException {
-        for (Passenger passenger : tempDrive.getPassengers()) {
-            if (!Objects.equals(passenger.getId(), passengerId)) {
-                emailService.sendDriveRejectedEmail(tempDrive, passenger, rejectPassenger);
+        if (!tempDrive.getAnsweredPassengers().contains(passengerId)) {
+            tempDrive.getAnsweredPassengers().add(passengerId);
+            for (Passenger passenger : tempDrive.getPassengers()) {
+                if (!Objects.equals(passenger.getId(), passengerId)) {
+                    emailService.sendDriveRejectedEmail(tempDrive, passenger, rejectPassenger);
+                }
             }
+            tempDrive.setStatus(Status.CANCELLED);
+            return tempDriveRepository.save(tempDrive);
         }
-        tempDrive.setStatus(Status.CANCELLED);
-        return tempDriveRepository.save(tempDrive);
+        throw new PassengerAlreadyAnsweredException("You have already given/not given your consent for this drive!");
     }
 
     public void sendConfirmationEmail(TempDrive tempDrive) throws MessagingException {
@@ -155,8 +158,13 @@ public class DriveService {
         }
     }
 
-    private void acceptDrive(TempDrive tempDrive) {
-        tempDrive.addAcceptedPassenger();
+    private void acceptDrive(TempDrive tempDrive, int passengerId) {
+        if (!tempDrive.getAnsweredPassengers().contains(passengerId)) {
+            tempDrive.addAcceptedPassenger();
+            tempDrive.getAnsweredPassengers().add(passengerId);
+        } else {
+            throw new PassengerAlreadyAnsweredException("You have already given/not given your consent for this drive!");
+        }
     }
 
     private boolean allPassengersAcceptedDrive(TempDrive tempDrive) {

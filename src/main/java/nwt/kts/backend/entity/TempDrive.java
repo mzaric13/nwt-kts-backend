@@ -4,6 +4,8 @@ import nwt.kts.backend.dto.creation.TempDriveDTO;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -51,6 +53,11 @@ public class TempDrive {
 
     @Column(name = "status")
     private Status status;
+
+    @ElementCollection
+    @CollectionTable(name = "answered_passengers", joinColumns = @JoinColumn(name = "id"))
+    @Column(name = "answered_passenger")
+    private List<Integer> answeredPassengers = new ArrayList<>();
 
     public TempDrive() {
     }
@@ -164,5 +171,9 @@ public class TempDrive {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public List<Integer> getAnsweredPassengers() {
+        return answeredPassengers;
     }
 }

@@ -41,4 +41,15 @@ public class HomePage {
         new WebDriverWait(webDriver, Duration.ofSeconds(10).getSeconds()).until(ExpectedConditions.textToBePresentInElement(uberStrongTag, "UBER"));
     }
 
+    public String getWindowHandle() {
+        return webDriver.getWindowHandle();
+    }
+
+    public void checkoutToAnotherWindow(String mainWindowHandle) {
+        for (String windowHandle: webDriver.getWindowHandles()) {
+            if (!mainWindowHandle.equals(windowHandle)) {
+                webDriver.switchTo().window(windowHandle);
+            }
+        }
+    }
 }
