@@ -26,14 +26,17 @@ class QuickstartUser(HttpUser):
 
     def get_driver(self):
         response = self.client.get('/drivers/')
-        drivers = response.json()
-        if len(drivers) != len(given_drivers):
-            rand_idx_driver =  drivers[randrange(0, len(drivers))]
-            while rand_idx_driver['id'] in given_drivers:
-                rand_idx_driver = drivers[randrange(0, len(drivers))]
-            self.chosen_driver = rand_idx_driver
-            self.departure = [self.chosen_driver["location"]["latitude"], self.chosen_driver["location"]["longitude"]]
-            given_drivers.append(self.chosen_driver["id"])
+        try:
+            drivers = response.json()
+            if len(drivers) != len(given_drivers):
+                rand_idx_driver =  drivers[randrange(0, len(drivers))]
+                while rand_idx_driver['id'] in given_drivers:
+                    rand_idx_driver = drivers[randrange(0, len(drivers))]
+                self.chosen_driver = rand_idx_driver
+                self.departure = [self.chosen_driver["location"]["latitude"], self.chosen_driver["location"]["longitude"]]
+                given_drivers.append(self.chosen_driver["id"])
+        except:
+            print('Error')
 
 
     @task

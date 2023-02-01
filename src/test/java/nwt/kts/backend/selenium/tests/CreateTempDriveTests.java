@@ -9,7 +9,9 @@ import org.openqa.selenium.interactions.Actions;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 
 public class CreateTempDriveTests extends TestBase {
 
@@ -26,7 +28,7 @@ public class CreateTempDriveTests extends TestBase {
         loginPage.pressLoginButton();
         ((JavascriptExecutor) webDriver).executeScript("window.open()");
         String currentWindow = homePageDriver.getWindowHandle();
-        homePageDriver.checkoutToAnotherWindow(currentWindow);
+        homePageDriver.checkoutToAnotherWindow(Collections.singletonList(currentWindow));
         HomePage homePagePassenger = new HomePage(webDriver);
         homePagePassenger.waitUntilLoaded();
         homePagePassenger.hoverLoginNavbarLink();

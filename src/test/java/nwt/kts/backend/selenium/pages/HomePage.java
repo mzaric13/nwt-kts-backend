@@ -9,6 +9,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
+import java.util.List;
 
 public class HomePage {
 
@@ -45,9 +46,9 @@ public class HomePage {
         return webDriver.getWindowHandle();
     }
 
-    public void checkoutToAnotherWindow(String mainWindowHandle) {
+    public void checkoutToAnotherWindow(List<String> windowHandles) {
         for (String windowHandle: webDriver.getWindowHandles()) {
-            if (!mainWindowHandle.equals(windowHandle)) {
+            if (!windowHandles.contains(windowHandle)) {
                 webDriver.switchTo().window(windowHandle);
             }
         }

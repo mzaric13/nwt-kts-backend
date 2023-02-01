@@ -24,4 +24,9 @@ public class DriverStartPage {
     public void waitUntilLoaded() {
         new WebDriverWait(webDriver, Duration.ofSeconds(10).getSeconds()).until(ExpectedConditions.visibilityOf(uberDriverNavbarLink));
     }
+
+    public boolean isLoaded() {
+        return (new WebDriverWait(webDriver, 10))
+                .until(ExpectedConditions.textToBePresentInElement(uberDriverNavbarLink, "UBER-DRIVER"));
+    }
 }
