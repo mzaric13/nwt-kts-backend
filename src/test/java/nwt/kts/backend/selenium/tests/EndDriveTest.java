@@ -40,7 +40,7 @@ public class EndDriveTest extends TestBase {
         Helper.takeScreenshoot(webDriver, "ended-drive-screenshot");
 
         DriverStartPage driverStartPage = new DriverStartPage(webDriver);
-        isLoaded = driverStartPage.isLoaded();
+        isLoaded = driverStartPage.verifyPageIsLoaded("UBER-DRIVER");
         assertTrue(isLoaded);
 
     }

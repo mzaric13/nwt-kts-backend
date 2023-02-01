@@ -47,6 +47,10 @@ public class PassengerStartPage {
         new WebDriverWait(webDriver, Duration.ofSeconds(10).getSeconds()).until(ExpectedConditions.visibilityOf(uberPassengerNavbarLink));
     }
 
+    public boolean verifyPageIsLoaded(String text) {
+        return (new WebDriverWait(webDriver, Duration.ofSeconds(10).getSeconds()).until(ExpectedConditions.textToBePresentInElement(uberPassengerNavbarLink, text)));
+    }
+
     public void enterPickupLocation(String location) {
         this.pickupLocationInput.sendKeys(location);
     }

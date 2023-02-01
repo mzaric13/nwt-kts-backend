@@ -60,9 +60,9 @@ public class LoginPage {
         passwordInput.sendKeys(password);
     }
 
-    public void waitUntilModalIsLoaded(String message) {
-        new WebDriverWait(webDriver, Duration.ofSeconds(10).getSeconds())
-                .until(ExpectedConditions.textToBePresentInElement(modalText, message));
+    public boolean waitUntilModalIsLoaded(String message) {
+        return (new WebDriverWait(webDriver, Duration.ofSeconds(10).getSeconds())
+                .until(ExpectedConditions.textToBePresentInElement(modalText, message)));
     }
 
     public String getWindowHandle() {

@@ -15,11 +15,8 @@ public class TestBase {
 
     @BeforeSuite
     public void initializeWebDriver() {
-        //C:\Users\T\AppData\Local\Google\Chrome\User Data\Default
         System.setProperty("webdriver.chrome.driver", "chromedriver.exe");
-        //ChromeOptions options = new ChromeOptions();
-        //options.addArguments("user-data-dir=C:/Users/T/AppData/Local/Google/Chrome/User Data");
-        webDriver = new ChromeDriver(); //chrome
+        webDriver = new ChromeDriver();
         webDriver.manage().window().maximize();
         webDriver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
     }

@@ -8,6 +8,8 @@ import nwt.kts.backend.selenium.pages.login.GoogleLoginPage;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 public class LoginTests extends TestBase {
 
@@ -24,7 +26,7 @@ public class LoginTests extends TestBase {
         LoginPage loginPage = new LoginPage(webDriver);
         loginPage.waitUntilLoaded();
         loginPage.pressLoginButton();
-        loginPage.waitUntilModalIsLoaded("Error: Email and password not given.");
+        assertTrue(loginPage.waitUntilModalIsLoaded("Error: Email and password not given."));
         Helper.takeScreenshoot(webDriver, "login_test_1_no_credentials_entered");
     }
 
@@ -35,7 +37,7 @@ public class LoginTests extends TestBase {
         loginPage.enterEmail("wrong.email@gmail.com");
         loginPage.enterPassword("sifra123");
         loginPage.pressLoginButton();
-        loginPage.waitUntilModalIsLoaded("User with given credentials doesn't exist!");
+        assertTrue(loginPage.waitUntilModalIsLoaded("User with given credentials doesn't exist!"));
         Helper.takeScreenshoot(webDriver, "login_test_2_wrong_email_entered");
     }
 
@@ -46,7 +48,7 @@ public class LoginTests extends TestBase {
         loginPage.enterEmail("darko.darkovic@gmail.com");
         loginPage.enterPassword("losasifra123");
         loginPage.pressLoginButton();
-        loginPage.waitUntilModalIsLoaded("User with given credentials doesn't exist!");
+        assertTrue(loginPage.waitUntilModalIsLoaded("User with given credentials doesn't exist!"));
         Helper.takeScreenshoot(webDriver, "login_test_3_wrong_password_entered");
     }
 
@@ -59,7 +61,7 @@ public class LoginTests extends TestBase {
         loginPage.pressLoginButton();
 
         PassengerStartPage passengerStartPage = new PassengerStartPage(webDriver);
-        passengerStartPage.waitUntilLoaded();
+        assertTrue(passengerStartPage.verifyPageIsLoaded("UBER-PASSENGER"));
         Helper.takeScreenshoot(webDriver, "login_test_4_successful_login_passenger");
     }
 
@@ -72,7 +74,7 @@ public class LoginTests extends TestBase {
         loginPage.pressLoginButton();
 
         DriverStartPage driverStartPage = new DriverStartPage(webDriver);
-        driverStartPage.waitUntilLoaded();
+        assertTrue(driverStartPage.verifyPageIsLoaded("UBER-DRIVER"));
         Helper.takeScreenshoot(webDriver, "login_test_5_successful_login_driver");
     }
 
@@ -85,14 +87,14 @@ public class LoginTests extends TestBase {
         loginPage.pressLoginButton();
 
         AdminStartPage adminStartPage = new AdminStartPage(webDriver);
-        adminStartPage.waitUntilLoaded();
+        assertTrue(adminStartPage.verifyPageIsLoaded("UBER-ADMIN"));
         Helper.takeScreenshoot(webDriver, "login_test_6_successful_login_administrator");
     }
 
     //Doesn't work because of google authorization
-    //googleSeleniumTest.ipynb(.py) script
-    //add email and password afterwards, so fb doesn't get hacked :)
-    @Test
+    //googleSeleniumTest.ipynb(.py) script - working selenium test
+    //add email and password afterwards, so gmail doesn't get hacked :)
+    /*@Test
     public void googleLogin() {
 
         LoginPage loginPage = new LoginPage(webDriver);
@@ -108,10 +110,10 @@ public class LoginTests extends TestBase {
         googleLoginPage.pressNextButton();
 
         PassengerStartPage passengerStartPage = new PassengerStartPage(webDriver);
-        passengerStartPage.waitUntilLoaded();
+        assertTrue(passengerStartPage.verifyPageIsLoaded("UBER-PASSENGER"));
         Helper.takeScreenshoot(webDriver, "login_test_8_successful_google_passenger");
 
-    }
+    }*/
 
     @Test
     //add email and password afterwards, so fb doesn't get hacked :)
@@ -132,7 +134,7 @@ public class LoginTests extends TestBase {
         loginPage.checkoutToMainWindow(mainWindow);
 
         PassengerStartPage passengerStartPage = new PassengerStartPage(webDriver);
-        passengerStartPage.waitUntilLoaded();
+        assertTrue(passengerStartPage.verifyPageIsLoaded("UBER-PASSENGER"));
         Helper.takeScreenshoot(webDriver, "login_test_7_successful_facebook_passenger");
 
     }

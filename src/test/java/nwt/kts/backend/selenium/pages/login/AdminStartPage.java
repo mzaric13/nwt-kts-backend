@@ -21,7 +21,8 @@ public class AdminStartPage {
     @FindBy(id = "uber-admin")
     private WebElement uberAdminNavbarLink;
 
-    public void waitUntilLoaded() {
-        new WebDriverWait(webDriver, Duration.ofSeconds(10).getSeconds()).until(ExpectedConditions.visibilityOf(uberAdminNavbarLink));
+    public boolean verifyPageIsLoaded(String text) {
+        return (new WebDriverWait(webDriver, Duration.ofSeconds(10).getSeconds()).until(ExpectedConditions.textToBePresentInElement(uberAdminNavbarLink, text)));
     }
+
 }
