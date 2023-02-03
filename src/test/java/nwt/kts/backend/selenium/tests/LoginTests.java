@@ -21,7 +21,7 @@ public class LoginTests extends TestBase {
         homePage.clickLoginNavbarLink();
     }
 
-/*    @Test
+    @Test(enabled = false)
     public void unsuccessfulLoginNoCredentialsEntered() {
         LoginPage loginPage = new LoginPage(webDriver);
         loginPage.waitUntilLoaded();
@@ -29,7 +29,6 @@ public class LoginTests extends TestBase {
         assertTrue(loginPage.waitUntilModalIsLoaded("Error: Email and password not given."));
         Helper.takeScreenshoot(webDriver, "login_test_1_no_credentials_entered");
     }
-*/
 
     @Test
     public void unsuccessfulLoginWrongEmailEntered() {
@@ -95,7 +94,7 @@ public class LoginTests extends TestBase {
     //Doesn't work because of google authorization
     //googleSeleniumTest.ipynb(.py) script - working selenium test
     //add email and password afterwards, so gmail doesn't get hacked :)
-    /*@Test
+    @Test(enabled = false)
     public void googleLogin() {
 
         LoginPage loginPage = new LoginPage(webDriver);
@@ -114,7 +113,7 @@ public class LoginTests extends TestBase {
         assertTrue(passengerStartPage.verifyPageIsLoaded("UBER-PASSENGER"));
         Helper.takeScreenshoot(webDriver, "login_test_8_successful_google_passenger");
 
-    }*/
+    }
 
     @Test
     //add email and password afterwards, so fb doesn't get hacked :)
