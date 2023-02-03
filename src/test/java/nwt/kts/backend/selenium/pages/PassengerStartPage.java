@@ -1,6 +1,5 @@
 package nwt.kts.backend.selenium.pages;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -72,9 +71,9 @@ public class PassengerStartPage {
                 Duration.ofSeconds(10).getSeconds()).until(ExpectedConditions.elementToBeClickable(customizeDriveBtn)).isEnabled();
     }
 
-    public void waitUntilModalIsLoaded(String message) {
-        new WebDriverWait(webDriver, Duration.ofSeconds(10).getSeconds())
-                .until(ExpectedConditions.textToBePresentInElement(modalText, message));
+    public boolean verifyModalIsLoaded(String message) {
+        return (new WebDriverWait(webDriver, Duration.ofSeconds(10).getSeconds())
+                .until(ExpectedConditions.textToBePresentInElement(modalText, message)));
     }
 
     public void clickSwalConfirm() {

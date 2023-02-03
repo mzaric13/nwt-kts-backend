@@ -84,11 +84,11 @@ public class EndDriveTest extends TestBase {
         customizeDrivePage.clickSelectVehicleType();
         customizeDrivePage.clickSpecificVehicleType();
         customizeDrivePage.clickCreateRideBtn();
-        customizeDrivePage.waitUntilModalIsLoaded("Drive consent");
+        customizeDrivePage.verifyModalIsLoaded("Drive consent");
         passengerStartPage.clickSwalConfirm();
 
-        DriveAcceptPage driveAcceptPage = new DriveAcceptPage(webDriver);
-        driveAcceptPage.waitUntilLoaded();
+        GiveConsentPage giveConsentPage = new GiveConsentPage(webDriver);
+        giveConsentPage.verifyDriveAccepted();
     }
 
     private void checkoutToMainWindow(String mainWindowHandle) {

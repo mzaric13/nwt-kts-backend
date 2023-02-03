@@ -2,16 +2,14 @@ package nwt.kts.backend.selenium.tests;
 
 import nwt.kts.backend.selenium.helper.Helper;
 import nwt.kts.backend.selenium.pages.*;
-import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.interactions.Actions;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
+
+import static org.testng.Assert.assertTrue;
 
 public class CreateTempDriveTests extends TestBase {
 
@@ -47,7 +45,7 @@ public class CreateTempDriveTests extends TestBase {
         passengerStartPage.enterPickupLocation("I DO NOT EXIST");
         passengerStartPage.enterDestinationLocation("PUSKINOVA 27, NOVI SAD, NOVI SAD");
         passengerStartPage.clickSearchRoutesBtn();
-        passengerStartPage.waitUntilModalIsLoaded("Oops...");
+        assertTrue(passengerStartPage.verifyModalIsLoaded("Oops..."));
         Helper.takeScreenshoot(webDriver, "create_temp_drive_test_1_pickup_location_doesnt_exist");
     }
 
@@ -58,7 +56,7 @@ public class CreateTempDriveTests extends TestBase {
         passengerStartPage.enterPickupLocation("KISACKA 44, NOVI SAD, NOVI SAD");
         passengerStartPage.enterDestinationLocation("I DO NOT EXIST");
         passengerStartPage.clickSearchRoutesBtn();
-        passengerStartPage.waitUntilModalIsLoaded("Oops...");
+        assertTrue(passengerStartPage.verifyModalIsLoaded("Oops..."));
         Helper.takeScreenshoot(webDriver, "create_temp_drive_test_2_destination_location_doesnt_exist");
     }
 
@@ -77,12 +75,34 @@ public class CreateTempDriveTests extends TestBase {
         customizeDrivePage.clickSelectVehicleType();
         customizeDrivePage.clickSpecificVehicleType();
         customizeDrivePage.clickCreateRideBtn();
-        customizeDrivePage.waitUntilModalIsLoaded("Drive consent");
+        customizeDrivePage.verifyModalIsLoaded("Drive consent");
         passengerStartPage.clickSwalConfirm();
 
-        DriveAcceptPage driveAcceptPage = new DriveAcceptPage(webDriver);
-        driveAcceptPage.waitUntilLoaded();
+        GiveConsentPage giveConsentPage = new GiveConsentPage(webDriver);
+        assertTrue(giveConsentPage.verifyDriveAccepted());
         Helper.takeScreenshoot(webDriver, "create_temp_drive_test_3_customize_ride");
+    }
+
+    @Test
+    public void declineDrive() {
+        PassengerStartPage passengerStartPage = new PassengerStartPage(webDriver);
+        passengerStartPage.waitUntilLoaded();
+        passengerStartPage.enterPickupLocation("KISACKA 44, NOVI SAD, NOVI SAD");
+        passengerStartPage.enterDestinationLocation("PUSKINOVA 27, NOVI SAD, NOVI SAD");
+        passengerStartPage.clickSearchRoutesBtn();
+        passengerStartPage.waitUntilCustomizeDriveBtnLoaded();
+        passengerStartPage.clickCustomizeDriveBtn();
+
+        CustomizeDrivePage customizeDrivePage = new CustomizeDrivePage(webDriver);
+        customizeDrivePage.waitUntilLoaded();
+        customizeDrivePage.clickSelectVehicleType();
+        customizeDrivePage.clickSpecificVehicleType();
+        customizeDrivePage.clickCreateRideBtn();
+        customizeDrivePage.verifyModalIsLoaded("Drive consent");
+        passengerStartPage.clickSwalDeny();
+        GiveConsentPage giveConsentPage = new GiveConsentPage(webDriver);
+        assertTrue(giveConsentPage.verifyDriveRejected());
+        Helper.takeScreenshoot(webDriver, "create_temp_drive_test_4_decline_drive");
     }
 
     @Test
@@ -106,8 +126,8 @@ public class CreateTempDriveTests extends TestBase {
         customizeDrivePage.chooseMinute(calendar.get(Calendar.MINUTE) - 10);
         customizeDrivePage.clickTimePickerButton();
         customizeDrivePage.clickCreateRideBtn();
-        customizeDrivePage.waitUntilModalIsLoaded("Error!");
-        Helper.takeScreenshoot(webDriver, "create_temp_drive_test_4_invalid_start_time_past");
+        assertTrue(customizeDrivePage.verifyModalIsLoaded("Error!"));
+        Helper.takeScreenshoot(webDriver, "create_temp_drive_test_5_invalid_start_time_past");
     }
 
     @Test
@@ -131,8 +151,8 @@ public class CreateTempDriveTests extends TestBase {
         customizeDrivePage.chooseMinute(calendar.get(Calendar.MINUTE) + 10);
         customizeDrivePage.clickTimePickerButton();
         customizeDrivePage.clickCreateRideBtn();
-        customizeDrivePage.waitUntilModalIsLoaded("Error!");
-        Helper.takeScreenshoot(webDriver, "create_temp_drive_test_5_invalid_start_time_future");
+        assertTrue(customizeDrivePage.verifyModalIsLoaded("Error!"));
+        Helper.takeScreenshoot(webDriver, "create_temp_drive_test_6_invalid_start_time_future");
     }
 
     @Test
@@ -151,8 +171,8 @@ public class CreateTempDriveTests extends TestBase {
         customizeDrivePage.clickSpecificVehicleType();
         customizeDrivePage.inputPerson("dsdasdsadas@gmail.com");
         customizeDrivePage.clickCreateRideBtn();
-        customizeDrivePage.waitUntilModalIsLoaded("Error!");
-        Helper.takeScreenshoot(webDriver, "create_temp_drive_test_6_invalid_passenger_email");
+        assertTrue(customizeDrivePage.verifyModalIsLoaded("Error!"));
+        Helper.takeScreenshoot(webDriver, "create_temp_drive_test_7_invalid_passenger_email");
     }
 
 }

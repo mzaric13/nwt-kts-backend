@@ -8,7 +8,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
-import java.util.List;
 
 public class CustomizeDrivePage {
 
@@ -73,9 +72,9 @@ public class CustomizeDrivePage {
         this.startTimeInput.click();
     }
 
-    public void waitUntilModalIsLoaded(String message) {
-        new WebDriverWait(webDriver, Duration.ofSeconds(10).getSeconds())
-                .until(ExpectedConditions.textToBePresentInElement(modalText, message));
+    public boolean verifyModalIsLoaded(String message) {
+        return (new WebDriverWait(webDriver, Duration.ofSeconds(10).getSeconds())
+                .until(ExpectedConditions.textToBePresentInElement(modalText, message)));
     }
 
     public void chooseHour(int hour) {
