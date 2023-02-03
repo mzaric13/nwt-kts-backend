@@ -32,6 +32,8 @@ public class PassengerDTO {
 
     private boolean hasDrive;
 
+    private ImageDataDTO imageData;
+
     public PassengerDTO() {
     }
 
@@ -48,6 +50,22 @@ public class PassengerDTO {
         this.favoriteRoutes = passenger.getFavouriteRoutes().stream().map(RouteDTO::new).collect(Collectors.toSet());
         this.tokens = passenger.getTokens();
         this.hasDrive = passenger.getHasDrive();
+    }
+
+    public PassengerDTO(Passenger passenger, ImageDataDTO imageDataDTO) {
+        this.id = passenger.getId();
+        this.email = passenger.getEmail();
+        this.phoneNumber = passenger.getPhoneNumber();
+        this.name = passenger.getName();
+        this.surname = passenger.getSurname();
+        this.city = passenger.getCity();
+        this.profilePicture = passenger.getPicture();
+        this.activated = passenger.isActivated();
+        this.isBlocked = passenger.isBlocked();
+        this.favoriteRoutes = passenger.getFavouriteRoutes().stream().map(RouteDTO::new).collect(Collectors.toSet());
+        this.tokens = passenger.getTokens();
+        this.hasDrive = passenger.getHasDrive();
+        this.imageData = imageDataDTO;
     }
 
     public int getId() {
@@ -96,6 +114,10 @@ public class PassengerDTO {
 
     public boolean isHasDrive() {
         return hasDrive;
+    }
+
+    public ImageDataDTO getImageData() {
+        return imageData;
     }
 
     @Override

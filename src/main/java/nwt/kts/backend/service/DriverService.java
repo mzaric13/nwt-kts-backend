@@ -2,10 +2,12 @@ package nwt.kts.backend.service;
 
 import nwt.kts.backend.dto.creation.*;
 import nwt.kts.backend.dto.returnDTO.DatesChartDTO;
+import nwt.kts.backend.dto.returnDTO.ImageDataDTO;
 import nwt.kts.backend.dto.returnDTO.PointDTO;
 import nwt.kts.backend.entity.*;
 import nwt.kts.backend.exceptions.NonExistingEntityException;
 import nwt.kts.backend.repository.*;
+import nwt.kts.backend.util.ImageUtil;
 import nwt.kts.backend.validation.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,7 +17,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -92,8 +96,8 @@ public class DriverService {
         return driverRepository.findDriverByEmail(user.getEmail());
     }
 
-    public Driver changeProfilePicture(ProfilePictureCreationDTO profilePictureCreationDTO) {
-        User user = userService.changeProfilePicture(profilePictureCreationDTO);
+    public Driver changeProfilePicture(String email, MultipartFile file) throws IOException {
+        User user = userService.changeProfilePicture(email, file);
         return driverRepository.findDriverByEmail(user.getEmail());
     }
 
@@ -260,5 +264,13 @@ public class DriverService {
             }
         }
         return station;
+    }
+
+    public ImageDataDTO getImageDataForDriver(Driver driver) {
+        if (driver.getProfilePictureData() != null) return new ImageDataDTO(ImageData.builder()
+                                    .name(driver.getProfilePictureData().getName())
+                                    .type(driver.getProfilePictureData().getType())
+                                    .imageData(ImageUtil.decompressImage(driver.getProfilePictureData().getImageData())).build());
+        return null;
     }
 }

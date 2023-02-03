@@ -44,6 +44,10 @@ public class User implements UserDetails {
     @Column(name = "provider", nullable = false)
     protected Provider provider;
 
+    @ManyToOne
+    @JoinColumn(name = "profile_picture_data_id")
+    private ImageData profilePictureData;
+
     public User() {
 
     }
@@ -179,5 +183,13 @@ public class User implements UserDetails {
 
     public void setProvider(Provider provider) {
         this.provider = provider;
+    }
+
+    public ImageData getProfilePictureData() {
+        return profilePictureData;
+    }
+
+    public void setProfilePictureData(ImageData profilePictureData) {
+        this.profilePictureData = profilePictureData;
     }
 }

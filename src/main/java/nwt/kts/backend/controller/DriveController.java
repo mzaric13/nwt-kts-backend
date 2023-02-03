@@ -1,10 +1,7 @@
 package nwt.kts.backend.controller;
 
 import nwt.kts.backend.dto.creation.TempDriveDTO;
-import nwt.kts.backend.dto.returnDTO.DeclineDriveReasonDTO;
-import nwt.kts.backend.dto.returnDTO.DriveDTO;
-import nwt.kts.backend.dto.returnDTO.DriverDTO;
-import nwt.kts.backend.dto.returnDTO.PassengerDTO;
+import nwt.kts.backend.dto.returnDTO.*;
 import nwt.kts.backend.entity.*;
 import nwt.kts.backend.exceptions.DriverNotFoundException;
 import nwt.kts.backend.exceptions.NotEnoughTokensException;
@@ -166,12 +163,41 @@ public class DriveController {
         Map<String, Object> returnValue = new HashMap<>();
         List<DriveDTO> driveDTOS = new ArrayList<>();
         for (Drive drive: drivePage.getContent()) {
-            driveDTOS.add(new DriveDTO(drive));
+            DriverDTO driverDTO = createDriverDTO(drive);
+            List<PassengerDTO> passengerDTOS = createPassengersListDTO(drive);
+            driveDTOS.add(new DriveDTO(drive, driverDTO, passengerDTOS));
         }
         returnValue.put("drives", driveDTOS);
         returnValue.put("totalItems", drivePage.getTotalElements());
         returnValue.put("totalPages", drivePage.getTotalPages());
         return returnValue;
+    }
+
+    private DriverDTO createDriverDTO(Drive drive) {
+        DriverDTO driverDTO;
+        ImageDataDTO driverImageDTO = driverService.getImageDataForDriver(drive.getDriver());
+        if (driverImageDTO != null) {
+            driverDTO = new DriverDTO(drive.getDriver(), driverImageDTO);
+        }else {
+            driverDTO = new DriverDTO(drive.getDriver());
+        }
+        return driverDTO;
+    }
+
+    private List<PassengerDTO> createPassengersListDTO(Drive drive) {
+        List<PassengerDTO> passengerDTOS = new ArrayList<>();
+        for (Passenger passenger: drive.getPassengers()) {
+            ImageDataDTO passengerImageData = passengerService.createImageDataForPassenger(passenger);
+            PassengerDTO passengerDTO;
+            if (passengerImageData != null) {
+                passengerDTO = new PassengerDTO(passenger, passengerImageData);
+            }
+            else {
+                passengerDTO = new PassengerDTO(passenger);
+            }
+            passengerDTOS.add(passengerDTO);
+        }
+        return passengerDTOS;
     }
 
     @PutMapping(value = "/accept-drive", consumes = "application/json", produces = "application/json")

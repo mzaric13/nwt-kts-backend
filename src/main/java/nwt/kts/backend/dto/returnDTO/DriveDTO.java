@@ -68,6 +68,23 @@ public class DriveDTO {
         this.route = new RouteDTO(drive.getRoute());
     }
 
+    public DriveDTO(Drive drive, DriverDTO driverDTO, List<PassengerDTO> passengerDTOS) {
+        this.id = drive.getId();
+        this.startDate = drive.getStartDate();
+        this.endDate = drive.getEndDate();
+        this.price = drive.getPrice();
+        this.length = drive.getLength();
+        this.inconsistentDriveReasoning = drive.getInconsistentDriveReasoning();
+        this.tags = new ArrayList<>();
+        for (Tag tag: drive.getTags()) {
+            tags.add(new TagDTO(tag));
+        }
+        this.status = drive.getStatus();
+        this.driver = driverDTO;
+        this.passengers = passengerDTOS;
+        this.route = new RouteDTO(drive.getRoute());
+    }
+
     public Integer getId() {
         return id;
     }

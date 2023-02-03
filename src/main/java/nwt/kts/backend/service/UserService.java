@@ -3,13 +3,19 @@ package nwt.kts.backend.service;
 import nwt.kts.backend.dto.creation.PasswordChangeCreationDTO;
 import nwt.kts.backend.dto.creation.ProfilePictureCreationDTO;
 import nwt.kts.backend.dto.returnDTO.PasswordResetDTO;
+import nwt.kts.backend.entity.ImageData;
 import nwt.kts.backend.entity.User;
+import nwt.kts.backend.repository.ImageDataRepository;
 import nwt.kts.backend.repository.UserRepository;
+import nwt.kts.backend.util.ImageUtil;
 import nwt.kts.backend.validation.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @Service
 @Transactional
@@ -23,6 +29,9 @@ public class UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private ImageDataRepository imageDataRepository;
 
     /**
      * Validators
@@ -42,9 +51,13 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User changeProfilePicture(ProfilePictureCreationDTO profilePictureCreationDTO){
-        User user = userRepository.findUserByEmail(profilePictureCreationDTO.getEmail());
-        user.setPicture(profilePictureCreationDTO.getProfilePicturePath());
+    public User changeProfilePicture(String email, MultipartFile file) throws IOException {
+        User user = userRepository.findUserByEmail(email);
+        ImageData imageData = imageDataRepository.save(ImageData.builder()
+                .name(file.getOriginalFilename())
+                .type(file.getContentType())
+                .imageData(ImageUtil.compressImage(file.getBytes())).build());
+        user.setProfilePictureData(imageData);
         return userRepository.save(user);
     }
 

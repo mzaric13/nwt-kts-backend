@@ -12,6 +12,7 @@ public class AdminDTO {
     private String surname;
     private String city;
     private String profilePicture;
+    private ImageDataDTO imageData;
 
     public AdminDTO() {
 
@@ -37,6 +38,18 @@ public class AdminDTO {
         this.surname = user.getSurname();
         this.city = user.getCity();
         this.profilePicture = user.getPicture();
+    }
+
+    public AdminDTO(User administrator, ImageDataDTO imageDataDTO) {
+        this.id = administrator.getId();
+        this.email = administrator.getEmail();
+        this.phoneNumber = administrator.getPhoneNumber();
+        this.password = administrator.getPassword();
+        this.name = administrator.getName();
+        this.surname = administrator.getSurname();
+        this.city = administrator.getCity();
+        this.profilePicture = administrator.getPicture();
+        this.imageData = imageDataDTO;
     }
 
     public Integer getId() {
@@ -101,5 +114,13 @@ public class AdminDTO {
 
     public void setProfilePicture(String profilePicture) {
         this.profilePicture = profilePicture;
+    }
+
+    public ImageDataDTO getImageData() {
+        return imageData;
+    }
+
+    public void setImageData(ImageDataDTO imageData) {
+        this.imageData = imageData;
     }
 }
