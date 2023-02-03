@@ -78,14 +78,16 @@ public class EmailService {
                 .append(". The time this drive will start is at ")
                 .append(tempDrive.getStartDate())
                 .append(".<br/>Do you consent to this drive?<br/>")
-                .append("<a href=\"http://localhost:4200/user/drive-accepted?tempDriveId=")
+                .append("<a href=\"http://localhost:4200/user/give-consent?tempDriveId=")
                 .append(tempDrive.getId())
                 .append("&passengerId=")
                 .append(passenger.getId())
-                .append("\">Yes</a>  |  <a href=\"http://localhost:4200/user/drive-rejected?tempDriveId=")
+                .append("&driveAccepted=true")
+                .append("\">Yes</a>  |  <a href=\"http://localhost:4200/user/give-consent?tempDriveId=")
                 .append(tempDrive.getId())
                 .append("&passengerId=")
                 .append(passenger.getId())
+                .append("&driveAccepted=false")
                 .append("\">No</a>");
         return builder.toString();
     }
