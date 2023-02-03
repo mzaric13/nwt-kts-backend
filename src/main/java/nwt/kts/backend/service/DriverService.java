@@ -17,11 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @Transactional
@@ -221,7 +217,9 @@ public class DriverService {
         double minDistance = Double.POSITIVE_INFINITY;
         for (Driver driver: nonAvailableDrivers) {
             if (driver.getTimeOfLogin() != null && !driver.isHasFutureDrive() && driver.getVehicle().getType().getId().equals(tempDrive.getVehicleType().getId())) {
-                Drive currentDrive = driveRepository.findFirstByDriverAndStatusOrderByIdDesc(driver, Status.STARTED).orElseThrow(() -> {throw new NonExistingEntityException("No current drive");});
+                Optional<Drive> optionalCurrentDrive = driveRepository.findFirstByDriverAndStatusOrderByIdDesc(driver, Status.STARTED);
+                if (!optionalCurrentDrive.isPresent()) continue;
+                Drive currentDrive = optionalCurrentDrive.get();
                 ArrayList<Point> waypoints = new ArrayList<>(currentDrive.getRoute().getWaypoints());
                 double distance = Math.pow(driver.getLocation().getLatitude() - waypoints.get(0).getLatitude(), 2) + Math.pow(driver.getLocation().getLongitude() - waypoints.get(0).getLongitude(), 2);
                 distance = Math.sqrt(distance);
