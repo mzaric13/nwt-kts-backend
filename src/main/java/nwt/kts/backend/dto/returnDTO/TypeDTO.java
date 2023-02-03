@@ -6,19 +6,22 @@ public class TypeDTO {
 
     private Integer id;
     private String name;
+    private double multiplier;
 
     public TypeDTO() {
 
     }
 
-    public TypeDTO(Integer id, String name) {
+    public TypeDTO(Integer id, String name, double multiplier) {
         this.id = id;
         this.name = name;
+        this.multiplier = multiplier;
     }
 
     public TypeDTO(Type type) {
         this.id = type.getId();
         this.name = type.getName();
+        this.multiplier = type.getMultiplier();
     }
 
     public Integer getId() {
@@ -35,5 +38,13 @@ public class TypeDTO {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public double getMultiplier() {
+        return multiplier;
+    }
+
+    public void setMultiplier(double multiplier) {
+        this.multiplier = multiplier;
     }
 }

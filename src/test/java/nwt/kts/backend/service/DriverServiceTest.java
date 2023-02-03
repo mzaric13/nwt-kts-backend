@@ -43,7 +43,7 @@ public class DriverServiceTest {
     @DisplayName("Should return available driver")
     public void testFindDriverAvailable() {
         Role role = new Role(1, "ROLE_DRIVER");
-        Type type = new Type(1, "Sedan");
+        Type type = new Type(1, "Sedan", 1.35);
         Vehicle vehicle = new Vehicle(1, "NS123PO", "Audi A4", type);
         Point location = new Point(45.123, 12.123);
         Driver driver = new Driver(1, "vozac@gmail.com", "0628885151",
@@ -57,18 +57,18 @@ public class DriverServiceTest {
                 new HashSet<>(), new HashSet<>(), route, type);
         List<Driver> drivers = Collections.singletonList(driver);
 
-        when(driverRepository.findDriversByIsAvailable(true)).thenReturn(drivers);
+        when(driverRepository.findDriversByIsAvailableAndIsBlocked(true, false)).thenReturn(drivers);
 
         Driver selected = driverService.selectDriverForDrive(tempDrive);
         assertEquals(selected.getId(), 1);
-        verify(driverRepository, times(1)).findDriversByIsAvailable(true);
+        verify(driverRepository, times(1)).findDriversByIsAvailableAndIsBlocked(true, false);
     }
 
     @Test
     @DisplayName("Find available with lower distance")
     public void testFindDriverAvailableLowerDistance() {
         Role role = new Role(1, "ROLE_DRIVER");
-        Type type = new Type(1, "Sedan");
+        Type type = new Type(1, "Sedan", 1.35);
         Vehicle vehicle = new Vehicle(1, "NS123PO", "Audi A4", type);
         Point location = new Point(45.123, 12.123);
         Driver driver1 = new Driver(1, "vozac1@gmail.com", "0628885151",
@@ -87,18 +87,18 @@ public class DriverServiceTest {
         drivers.add(driver1);
         drivers.add(driver2);
 
-        when(driverRepository.findDriversByIsAvailable(true)).thenReturn(drivers);
+        when(driverRepository.findDriversByIsAvailableAndIsBlocked(true, false)).thenReturn(drivers);
 
         Driver selected = driverService.selectDriverForDrive(tempDrive);
         assertEquals(2, selected.getId());
-        verify(driverRepository, times(1)).findDriversByIsAvailable(true);
+        verify(driverRepository, times(1)).findDriversByIsAvailableAndIsBlocked(true, false);
     }
 
     @Test
     @DisplayName("Find non-available driver")
     public void testFindNonAvailableClosestToRouteEnd() {
         Role role = new Role(1, "ROLE_DRIVER");
-        Type type = new Type(1, "Sedan");
+        Type type = new Type(1, "Sedan", 1.35);
         Vehicle vehicle = new Vehicle(1, "NS123TX", "Audi A4", type);
         Driver driver1 = new Driver(1, "vozac1@gmail.com", "0628885151",
                 "$2a$12$1YdTZA0jjbEM5Ey2piVIpuVvH9vYYvCW69Sau3lFSN7Hw.wscUhYy", "Pero", "Peric",
@@ -118,23 +118,23 @@ public class DriverServiceTest {
         Drive drive1 = new Drive(1, new Timestamp(new Date().getTime()), new Timestamp(new Date().getTime()), 700,
                 1223, new ArrayList<>(), new HashSet<>(), Status.STARTED, driver1, new HashSet<>(), route2);
 
-        when(driverRepository.findDriversByIsAvailable(true)).thenReturn(new ArrayList<>());
-        when(driverRepository.findDriversByIsAvailable(false)).thenReturn(Collections.singletonList(driver1));
+        when(driverRepository.findDriversByIsAvailableAndIsBlocked(true, false)).thenReturn(new ArrayList<>());
+        when(driverRepository.findDriversByIsAvailableAndIsBlocked(false, false)).thenReturn(Collections.singletonList(driver1));
         when(driveRepository.findFirstByDriverAndStatusOrderByIdDesc(driver1, Status.STARTED)).thenReturn(Optional.of(drive1));
         when(driverRepository.save(driver1)).thenReturn(driver1);
 
         Driver selected = driverService.selectDriverForDrive(tempDrive);
         assertEquals(1, selected.getId());
         assertTrue(selected.isHasFutureDrive());
-        verify(driverRepository, times(1)).findDriversByIsAvailable(false);
+        verify(driverRepository, times(1)).findDriversByIsAvailableAndIsBlocked(false, false);
     }
 
     @Test
     @DisplayName("No available drivers due to no drivers with given vehicle type")
     public void testNoAvailableDriversWithGivenVehicleType() {
         Role role = new Role(1, "ROLE_DRIVER");
-        Vehicle vehicle1 = new Vehicle(1, "NS123PO", "Audi A4", new Type(1, "Sedan"));
-        Vehicle vehicle2 = new Vehicle(2, "NS124PO", "Audi Q5", new Type(2, "SUV"));
+        Vehicle vehicle1 = new Vehicle(1, "NS123PO", "Audi A4", new Type(1, "Sedan", 1.35));
+        Vehicle vehicle2 = new Vehicle(2, "NS124PO", "Audi Q5", new Type(2, "SUV", 2));
         Driver driver1 = new Driver(1, "vozac1@gmail.com", "0628885151",
                 "$2a$12$1YdTZA0jjbEM5Ey2piVIpuVvH9vYYvCW69Sau3lFSN7Hw.wscUhYy", "Pero", "Peric",
                 "Novi Sad", role, false, true, vehicle1, new Point(45.123, 12.123));
@@ -148,22 +148,22 @@ public class DriverServiceTest {
         waypoints1.add(new Point(45.234, 11.234));
         Route route1 = new Route("Route name", 30.2, 1154, waypoints1, 0);
         TempDrive tempDrive = new TempDrive(new Timestamp(new Date().getTime()), 720, 1154,
-                new HashSet<>(), new HashSet<>(), route1, new Type(3, "Hatchback"));
+                new HashSet<>(), new HashSet<>(), route1, new Type(3, "Hatchback", 1.75));
 
-        when(driverRepository.findDriversByIsAvailable(true)).thenReturn(Collections.singletonList(driver1));
-        when(driverRepository.findDriversByIsAvailable(false)).thenReturn(Collections.singletonList(driver2));
+        when(driverRepository.findDriversByIsAvailableAndIsBlocked(true, false)).thenReturn(Collections.singletonList(driver1));
+        when(driverRepository.findDriversByIsAvailableAndIsBlocked(false, false)).thenReturn(Collections.singletonList(driver2));
 
         Driver selected = driverService.selectDriverForDrive(tempDrive);
         assertNull(selected);
-        verify(driverRepository, times(1)).findDriversByIsAvailable(true);
-        verify(driverRepository, times(1)).findDriversByIsAvailable(false);
+        verify(driverRepository, times(1)).findDriversByIsAvailableAndIsBlocked(true, false);
+        verify(driverRepository, times(1)).findDriversByIsAvailableAndIsBlocked(false, false);
     }
 
     @Test
     @DisplayName("No available drivers because they are not logged in")
     public void testNoDriverBecauseOfNoOneIsLoggedIn() {
         Role role = new Role(1, "ROLE_DRIVER");
-        Type type = new Type(1, "Sedan");
+        Type type = new Type(1, "Sedan", 1.35);
         Vehicle vehicle1 = new Vehicle(1, "NS123PO", "Audi A4", type);
         Driver driver1 = new Driver(1, "vozac1@gmail.com", "0628885151",
                 "$2a$12$1YdTZA0jjbEM5Ey2piVIpuVvH9vYYvCW69Sau3lFSN7Hw.wscUhYy", "Pero", "Peric",
@@ -171,20 +171,20 @@ public class DriverServiceTest {
         TempDrive tempDrive = new TempDrive(new Timestamp(new Date().getTime()), 720, 1154,
                 new HashSet<>(), new HashSet<>(), new Route(), type);
 
-        when(driverRepository.findDriversByIsAvailable(true)).thenReturn(new ArrayList<>());
-        when(driverRepository.findDriversByIsAvailable(false)).thenReturn(Collections.singletonList(driver1));
+        when(driverRepository.findDriversByIsAvailableAndIsBlocked(true, false)).thenReturn(new ArrayList<>());
+        when(driverRepository.findDriversByIsAvailableAndIsBlocked(false, false)).thenReturn(Collections.singletonList(driver1));
 
         Driver selected = driverService.selectDriverForDrive(tempDrive);
         assertNull(selected);
-        verify(driverRepository, times(1)).findDriversByIsAvailable(true);
-        verify(driverRepository, times(1)).findDriversByIsAvailable(false);
+        verify(driverRepository, times(1)).findDriversByIsAvailableAndIsBlocked(true, false);
+        verify(driverRepository, times(1)).findDriversByIsAvailableAndIsBlocked(false, false);
     }
 
     @Test
     @DisplayName("No available drivers because they have next drive")
     public void testNoAvailableDriversBecauseEveryoneHasNextDrive() {
         Role role = new Role(1, "ROLE_DRIVER");
-        Type type = new Type(1, "Sedan");
+        Type type = new Type(1, "Sedan", 1.35);
         Vehicle vehicle1 = new Vehicle(1, "NS123PO", "Audi A4", type);
         Driver driver1 = new Driver(1, "vozac1@gmail.com", "0628885151",
                 "$2a$12$1YdTZA0jjbEM5Ey2piVIpuVvH9vYYvCW69Sau3lFSN7Hw.wscUhYy", "Pero", "Peric",
@@ -194,13 +194,13 @@ public class DriverServiceTest {
         TempDrive tempDrive = new TempDrive(new Timestamp(new Date().getTime()), 720, 1154,
                 new HashSet<>(), new HashSet<>(), new Route(), type);
 
-        when(driverRepository.findDriversByIsAvailable(true)).thenReturn(new ArrayList<>());
-        when(driverRepository.findDriversByIsAvailable(false)).thenReturn(Collections.singletonList(driver1));
+        when(driverRepository.findDriversByIsAvailableAndIsBlocked(true, false)).thenReturn(new ArrayList<>());
+        when(driverRepository.findDriversByIsAvailableAndIsBlocked(false, false)).thenReturn(Collections.singletonList(driver1));
 
         Driver selected = driverService.selectDriverForDrive(tempDrive);
         assertNull(selected);
-        verify(driverRepository, times(1)).findDriversByIsAvailable(true);
-        verify(driverRepository, times(1)).findDriversByIsAvailable(false);
+        verify(driverRepository, times(1)).findDriversByIsAvailableAndIsBlocked(true, false);
+        verify(driverRepository, times(1)).findDriversByIsAvailableAndIsBlocked(false, false);
     }
 
     @Test

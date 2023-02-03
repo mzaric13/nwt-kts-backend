@@ -67,7 +67,7 @@ public class DriveControllerTest {
         tempDriveDTO.setTags(new HashSet<>());
         tempDriveDTO.getEmails().add("darko.darkovic@gmail.com");
         tempDriveDTO.setStartDate(createTimeJustInTimeForReservationTime());
-        tempDriveDTO.setTypeDTO(new TypeDTO(1, "SUV"));
+        tempDriveDTO.setTypeDTO(new TypeDTO(1, "SUV", 1.5));
         RouteDTO routeDTO = new RouteDTO();
         tempDriveDTO.setRouteDTO(routeDTO);
         tempDriveDTO.getRouteDTO().setWaypoints(new ArrayList<>());
@@ -88,7 +88,7 @@ public class DriveControllerTest {
         tempDriveDTO.setEmails(new HashSet<>());
         tempDriveDTO.setTags(new HashSet<>());
         tempDriveDTO.setStartDate(createTimeJustInTimeForReservationTime());
-        tempDriveDTO.setTypeDTO(new TypeDTO(1, "SUV"));
+        tempDriveDTO.setTypeDTO(new TypeDTO(1, "SUV", 1.5));
         RouteDTO routeDTO = new RouteDTO();
         tempDriveDTO.setRouteDTO(routeDTO);
         tempDriveDTO.getRouteDTO().setWaypoints(new ArrayList<>());
@@ -110,7 +110,7 @@ public class DriveControllerTest {
         tempDriveDTO.getEmails().add("ne.postojim@gmail.com");
         tempDriveDTO.setTags(new HashSet<>());
         tempDriveDTO.setStartDate(createTimeJustInTimeForReservationTime());
-        tempDriveDTO.setTypeDTO(new TypeDTO(1, "SUV"));
+        tempDriveDTO.setTypeDTO(new TypeDTO(1, "SUV", 1.5));
         RouteDTO routeDTO = new RouteDTO();
         tempDriveDTO.setRouteDTO(routeDTO);
         tempDriveDTO.getRouteDTO().setWaypoints(new ArrayList<>());
@@ -132,7 +132,7 @@ public class DriveControllerTest {
         tempDriveDTO.getEmails().add("darko.darkovic@gmail.com");
         tempDriveDTO.setTags(new HashSet<>());
         tempDriveDTO.setStartDate(createPastTime());
-        tempDriveDTO.setTypeDTO(new TypeDTO(1, "SUV"));
+        tempDriveDTO.setTypeDTO(new TypeDTO(1, "SUV", 1.5));
         RouteDTO routeDTO = new RouteDTO();
         tempDriveDTO.setRouteDTO(routeDTO);
         tempDriveDTO.getRouteDTO().setWaypoints(new ArrayList<>());
@@ -154,7 +154,7 @@ public class DriveControllerTest {
         tempDriveDTO.getEmails().add("darko.darkovic@gmail.com");
         tempDriveDTO.setTags(new HashSet<>());
         tempDriveDTO.setStartDate(createMoreThanFiveHourTime());
-        tempDriveDTO.setTypeDTO(new TypeDTO(1, "SUV"));
+        tempDriveDTO.setTypeDTO(new TypeDTO(1, "SUV", 1.5));
         RouteDTO routeDTO = new RouteDTO();
         tempDriveDTO.setRouteDTO(routeDTO);
         tempDriveDTO.getRouteDTO().setWaypoints(new ArrayList<>());

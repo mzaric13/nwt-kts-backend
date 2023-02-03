@@ -79,6 +79,7 @@ public class DriveController {
         if (tempDrive.getDriveId() != null) {
             Drive drive = driveService.getDriveById(tempDrive.getDriveId());
             if (drive.getStatus() == Status.DRIVING_TO_START) {
+                drive.getPassengers().forEach(passenger -> simpMessagingTemplate.convertAndSend("/secured/update/tokens", new PassengerDTO(passenger)));
                 simpMessagingTemplate.convertAndSend("/secured/update/newDrive", new DriveDTO(drive));
                 simpMessagingTemplate.convertAndSend("/secured/update/driverStatus", new DriverDTO(drive.getDriver()));
             }

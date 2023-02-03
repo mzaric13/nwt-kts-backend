@@ -1,7 +1,7 @@
 insert into roles (name) values ('ROLE_ADMIN'), ('ROLE_PASSENGER'), ('ROLE_DRIVER');
 
-insert into vehicle_types (name) values ('SUV'), ('Crossover'), ('Sedan'), ('Truck'), ('Hatchback'), ('Minivan'),
-                                        ('Hybrid');
+insert into vehicle_types (name, multiplier) values ('SUV', 1.5), ('Crossover', 1.4), ('Sedan', 1.35), ('Truck', 3), ('Hatchback', 1.25), ('Minivan', 2.3),
+                                                    ('Hybrid', 1.7);
 
 insert into points (latitude, longitude) values (45.238548, 19.848225), (45.243097, 19.836284), (45.256863, 19.844129),
                                                 (45.255055, 19.810161), (45.246540, 19.849282);

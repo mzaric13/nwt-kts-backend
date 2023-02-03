@@ -195,7 +195,7 @@ public class DriverService {
     }
 
     private Driver findFromAvailableDrivers(TempDrive tempDrive) {
-        List<Driver> availableDrivers = driverRepository.findDriversByIsAvailable(true);
+        List<Driver> availableDrivers = driverRepository.findDriversByIsAvailableAndIsBlocked(true, false);
         if (availableDrivers.size() == 0) return null;
         else {
             Driver closestDriver = null;
@@ -216,7 +216,7 @@ public class DriverService {
     }
 
     private Driver findFromDriversWithDrive(TempDrive tempDrive) {
-        List<Driver> nonAvailableDrivers = driverRepository.findDriversByIsAvailable(false);
+        List<Driver> nonAvailableDrivers = driverRepository.findDriversByIsAvailableAndIsBlocked(false, false);
         Driver closestDriver = null;
         double minDistance = Double.POSITIVE_INFINITY;
         for (Driver driver: nonAvailableDrivers) {

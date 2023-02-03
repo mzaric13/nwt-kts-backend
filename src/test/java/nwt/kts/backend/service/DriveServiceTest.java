@@ -144,7 +144,7 @@ public class DriveServiceTest {
         tempDriveDTO.setTags(new HashSet<>());
         tempDriveDTO.getEmails().add("darko.darkovic@gmail.com");
         tempDriveDTO.setStartDate(createTimeJustBeforeReservationTime());
-        tempDriveDTO.setTypeDTO(new TypeDTO(1, "SUV"));
+        tempDriveDTO.setTypeDTO(new TypeDTO(1, "SUV", 1.5));
         RouteDTO routeDTO = new RouteDTO();
         tempDriveDTO.setRouteDTO(routeDTO);
         tempDriveDTO.getRouteDTO().setWaypoints(new ArrayList<>());
@@ -152,7 +152,7 @@ public class DriveServiceTest {
 
         when(passengerService.allPassengersExist(tempDriveDTO.getEmails())).thenReturn(true);
         when(passengerService.findPassengerByEmail("darko.darkovic@gmail.com")).thenReturn(passenger = new Passenger());
-        when(typeService.findTypeByName(tempDriveDTO.getTypeDTO().getName())).thenReturn(new Type(1, "SUV"));
+        when(typeService.findTypeByName(tempDriveDTO.getTypeDTO().getName())).thenReturn(new Type(1, "SUV", 1.5));
         passenger.setHasDrive(false);
 
         when(routeService.saveRoute(Mockito.any(Route.class))).thenAnswer(i -> i.getArguments()[0]);
@@ -175,7 +175,7 @@ public class DriveServiceTest {
         tempDriveDTO.setTags(new HashSet<>());
         tempDriveDTO.getEmails().add("darko.darkovic@gmail.com");
         tempDriveDTO.setStartDate(createTimeJustInTimeForReservationTime());
-        tempDriveDTO.setTypeDTO(new TypeDTO(1, "SUV"));
+        tempDriveDTO.setTypeDTO(new TypeDTO(1, "SUV", 1.5));
         RouteDTO routeDTO = new RouteDTO();
         tempDriveDTO.setRouteDTO(routeDTO);
         tempDriveDTO.getRouteDTO().setWaypoints(new ArrayList<>());
@@ -183,7 +183,7 @@ public class DriveServiceTest {
 
         when(passengerService.allPassengersExist(tempDriveDTO.getEmails())).thenReturn(true);
         when(passengerService.findPassengerByEmail("darko.darkovic@gmail.com")).thenReturn(passenger = new Passenger());
-        when(typeService.findTypeByName(tempDriveDTO.getTypeDTO().getName())).thenReturn(new Type(1, "SUV"));
+        when(typeService.findTypeByName(tempDriveDTO.getTypeDTO().getName())).thenReturn(new Type(1, "SUV", 1.5));
         passenger.setHasDrive(false);
 
         when(routeService.saveRoute(Mockito.any(Route.class))).thenAnswer(i -> i.getArguments()[0]);
@@ -206,7 +206,7 @@ public class DriveServiceTest {
         tempDriveDTO.setTags(new HashSet<>());
         tempDriveDTO.getEmails().add("darko.darkovic@gmail.com");
         tempDriveDTO.setStartDate(createCurrentTime());
-        tempDriveDTO.setTypeDTO(new TypeDTO(1, "SUV"));
+        tempDriveDTO.setTypeDTO(new TypeDTO(1, "SUV", 1.5));
         RouteDTO routeDTO = new RouteDTO();
         tempDriveDTO.setRouteDTO(routeDTO);
         tempDriveDTO.getRouteDTO().setWaypoints(new ArrayList<>());
@@ -214,7 +214,7 @@ public class DriveServiceTest {
 
         when(passengerService.allPassengersExist(tempDriveDTO.getEmails())).thenReturn(true);
         when(passengerService.findPassengerByEmail("darko.darkovic@gmail.com")).thenReturn(passenger = new Passenger());
-        when(typeService.findTypeByName(tempDriveDTO.getTypeDTO().getName())).thenReturn(new Type(1, "SUV"));
+        when(typeService.findTypeByName(tempDriveDTO.getTypeDTO().getName())).thenReturn(new Type(1, "SUV", 1.5));
         passenger.setHasDrive(false);
 
         when(routeService.saveRoute(Mockito.any(Route.class))).thenAnswer(i -> i.getArguments()[0]);
@@ -237,7 +237,7 @@ public class DriveServiceTest {
         tempDriveDTO.setTags(new HashSet<>());
         tempDriveDTO.getEmails().add("darko.darkovic@gmail.com");
         tempDriveDTO.setStartDate(createTimeFiveHoursAhead());
-        tempDriveDTO.setTypeDTO(new TypeDTO(1, "SUV"));
+        tempDriveDTO.setTypeDTO(new TypeDTO(1, "SUV", 1.5));
         RouteDTO routeDTO = new RouteDTO();
         tempDriveDTO.setRouteDTO(routeDTO);
         tempDriveDTO.getRouteDTO().setWaypoints(new ArrayList<>());
@@ -245,7 +245,7 @@ public class DriveServiceTest {
 
         when(passengerService.allPassengersExist(tempDriveDTO.getEmails())).thenReturn(true);
         when(passengerService.findPassengerByEmail("darko.darkovic@gmail.com")).thenReturn(passenger = new Passenger());
-        when(typeService.findTypeByName(tempDriveDTO.getTypeDTO().getName())).thenReturn(new Type(1, "SUV"));
+        when(typeService.findTypeByName(tempDriveDTO.getTypeDTO().getName())).thenReturn(new Type(1, "SUV", 1.5));
         passenger.setHasDrive(false);
 
         when(routeService.saveRoute(Mockito.any(Route.class))).thenAnswer(i -> i.getArguments()[0]);

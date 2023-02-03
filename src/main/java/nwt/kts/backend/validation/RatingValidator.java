@@ -2,6 +2,7 @@ package nwt.kts.backend.validation;
 
 import nwt.kts.backend.exceptions.InvalidRatingCreationException;
 
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Calendar;
 
@@ -12,7 +13,8 @@ public class RatingValidator {
     public void validateRatingCreation(Timestamp driveEndTime) {
 
         Timestamp today = new Timestamp(System.currentTimeMillis());
-        Timestamp afterThreeDaysEndTime = addThreeDays(driveEndTime);
+        Timestamp endTime = new Timestamp(driveEndTime.getTime());
+        Timestamp afterThreeDaysEndTime = addThreeDays(endTime);
         if (today.compareTo(afterThreeDaysEndTime) > 0) {
             throw new InvalidRatingCreationException(EXCEPTION_MESSAGE);
         }

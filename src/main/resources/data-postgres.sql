@@ -1,5 +1,5 @@
-insert into vehicle_types (name) values ('SUV'), ('Crossover'), ('Sedan'), ('Truck'), ('Hatchback'), ('Minivan'),
-                                        ('Hybrid');
+insert into vehicle_types (name, multiplier) values ('SUV', 1.5), ('Crossover', 1.4), ('Sedan', 1.15), ('Truck', 3), ('Hatchback', 1), ('Minivan', 2.3),
+                                        ('Hybrid', 1.7);
 
 insert into roles (name) values ('ROLE_ADMIN'), ('ROLE_PASSENGER'), ('ROLE_DRIVER');
 
@@ -35,14 +35,14 @@ values (1, 'Pet friendly'),
        (2, 'Baby friendly');
 
 insert into routes (route_name, route_idx, length, expected_time)
-values ('PUSKINOVA 27 - KISACKA 15', 0, 300.00, 1000.00);
+values ('PUSKINOVA 27 - KISACKA 15', 0, 6.00, 12.00);
 
 insert into route_waypoints (route_id, point_id)
 values (1, 1), (1, 2), (1, 3), (1, 4), (1, 5);
 
 insert into drives (start_date, end_date, price, length, status, driver, route_id)
 values ('2023-01-23 14:00:00', '2023-01-23 14:30:00', 4, 25, 3, 1, 1),
-       ('2023-01-24 15:00:00', '2023-01-24 15:30:00', 3, 20, 3, 1, 1);
+       ('2023-02-03 15:00:00', '2023-02-3 15:12:00', 3, 20, 3, 1, 1);
 
 insert into drive_passengers (drive_id, passenger_id)
 values (1, 6), (1, 8), (1, 9), (2, 6), (2, 8);

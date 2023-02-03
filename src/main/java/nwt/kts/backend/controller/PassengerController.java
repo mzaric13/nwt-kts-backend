@@ -17,6 +17,7 @@ import nwt.kts.backend.util.ImageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,6 +38,9 @@ public class PassengerController {
 
     @Autowired
     private RouteService routeService;
+
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     @PostMapping(value = "/register", consumes = "application/json", produces = "application/json")
     public ResponseEntity<PassengerDTO> registerPassenger(@RequestBody PassengerCreationDTO passengerCreationDTO) throws MessagingException {
@@ -133,6 +137,7 @@ public class PassengerController {
     public ResponseEntity<PassengerDTO> addTokens(Principal principal, @PathVariable int tokensToAdd) {
         Passenger passenger = passengerService.findPassengerByEmail(principal.getName());
         passenger = passengerService.addTokens(passenger, tokensToAdd);
+        simpMessagingTemplate.convertAndSend("/secured/update/tokens", new PassengerDTO(passenger));
         return new ResponseEntity<>(new PassengerDTO(passenger), HttpStatus.OK);
     }
 
