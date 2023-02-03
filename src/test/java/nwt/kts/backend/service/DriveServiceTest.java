@@ -273,7 +273,7 @@ public class DriveServiceTest {
         when(tempDriveRepository.findTempDriveById(1)).thenReturn(tempDrive);
 
         NotEnoughTokensException exception = assertThrows(NotEnoughTokensException.class,
-                () -> driveService.acceptDriveConsent(1, 0));
+                () -> driveService.acceptDriveConsent(1, 1));
 
         assertEquals("You don't have enough tokens to pay for the ride!", exception.getMessage());
         verify(tempDriveRepository, times(1)).findTempDriveById(1);
@@ -299,9 +299,37 @@ public class DriveServiceTest {
         when(tempDriveRepository.findTempDriveById(1)).thenReturn(tempDrive);
 
         NotEnoughTokensException exception = assertThrows(NotEnoughTokensException.class,
-                () -> driveService.acceptDriveConsent(1, 0));
+                () -> driveService.acceptDriveConsent(1, 1));
 
         assertEquals("You don't have enough tokens to pay for the ride!", exception.getMessage());
+        verify(tempDriveRepository, times(1)).findTempDriveById(1);
+    }
+
+    @Test
+    @DisplayName("Should return PassengerAlreadyAnsweredException if the passenger already gave/didn't give consent for drive accept")
+    public void testShouldReturnPassengerAlreadyAnsweredExceptionAcceptDrive() {
+        Timestamp startDate = new Timestamp(new Date().getTime());
+        Passenger passenger1 = new Passenger();
+        passenger1.setTokens(200);
+        Passenger passenger2 = new Passenger();
+        passenger2.setTokens(300);
+        Passenger passenger3 = new Passenger();
+        passenger3.setTokens(120);
+        Set<Passenger> passengers = new HashSet<>();
+        passengers.add(passenger1);
+        passengers.add(passenger2);
+        passengers.add(passenger3);
+        TempDrive tempDrive = new TempDrive(startDate, 600, 3, new HashSet<>(), passengers, new Route(), new Type());
+        tempDrive.addAcceptedPassenger();
+        tempDrive.addAcceptedPassenger();
+        tempDrive.getAnsweredPassengers().add(1);
+        tempDrive.getAnsweredPassengers().add(2);
+        when(tempDriveRepository.findTempDriveById(1)).thenReturn(tempDrive);
+
+        PassengerAlreadyAnsweredException exception = assertThrows(PassengerAlreadyAnsweredException.class,
+                () -> driveService.acceptDriveConsent(1, 1));
+
+        assertEquals("You have already given/not given your consent for this drive!", exception.getMessage());
         verify(tempDriveRepository, times(1)).findTempDriveById(1);
     }
 
@@ -319,7 +347,7 @@ public class DriveServiceTest {
         when(driverService.selectDriverForDrive(tempDrive)).thenReturn(null);
 
         DriverNotFoundException exception = assertThrows(DriverNotFoundException.class,
-                () -> driveService.acceptDriveConsent(1, 0));
+                () -> driveService.acceptDriveConsent(1, 1));
 
         assertEquals("There are no available drivers right now!", exception.getMessage());
         verify(tempDriveRepository, times(1)).findTempDriveById(1);
@@ -345,7 +373,7 @@ public class DriveServiceTest {
         when(tempDriveRepository.findTempDriveById(1)).thenReturn(tempDrive);
         when(tempDriveRepository.save(Mockito.any(TempDrive.class))).thenAnswer(i -> i.getArguments()[0]);
 
-        TempDrive actual = driveService.acceptDriveConsent(1, 0);
+        TempDrive actual = driveService.acceptDriveConsent(1, 1);
 
         int expected = tempDrive.getPassengers().size() - (tempDrive.getPassengers().size() - 1);
 
@@ -371,18 +399,57 @@ public class DriveServiceTest {
         TempDrive tempDrive = new TempDrive(startDate, 600, 3, new HashSet<>(), passengers, new Route(), new Type());
         tempDrive.addAcceptedPassenger();
         tempDrive.addAcceptedPassenger();
+        tempDrive.getAnsweredPassengers().add(1);
+        tempDrive.getAnsweredPassengers().add(2);
 
         when(tempDriveRepository.findTempDriveById(1)).thenReturn(tempDrive);
         when(driverService.selectDriverForDrive(tempDrive)).thenReturn(new Driver());
         when(driveRepository.save(Mockito.any(Drive.class))).thenAnswer(i -> i.getArguments()[0]);
         when(tempDriveRepository.save(Mockito.any(TempDrive.class))).thenAnswer(i -> i.getArguments()[0]);
 
-        TempDrive actual = driveService.acceptDriveConsent(1, 0);
+        TempDrive actual = driveService.acceptDriveConsent(1, 3);
 
         assertEquals(tempDrive.getPassengers().size(), actual.getNumAcceptedPassengers());
         verify(tempDriveRepository, times(1)).findTempDriveById(1);
         verify(tempDriveRepository, times(1)).save(Mockito.any(TempDrive.class));
         verify(driverService, times(1)).selectDriverForDrive(tempDrive);
+    }
+
+    @Test
+    @DisplayName("Should return PassengerAlreadyAnsweredException if the passenger already gave/didn't give consent for drive rejection")
+    public void testShouldReturnPassengerAlreadyAnsweredExceptionRejectDrive() {
+        Timestamp startDate = new Timestamp(new Date().getTime());
+        Route route = new Route();
+        route.setRouteName("KISACKA 44, NOVI SAD, NOVI SAD-PUSKINOVA 27, NOVI SAD, NOVI SAD");
+        Passenger rejectPassenger = new Passenger();
+        rejectPassenger.setId(1);
+        rejectPassenger.setName("Mika");
+        rejectPassenger.setSurname("Mikic");
+        Passenger passenger1 = new Passenger();
+        passenger1.setId(2);
+        passenger1.setName("Nika");
+        passenger1.setSurname("Nikic");
+        Passenger passenger2 = new Passenger();
+        passenger2.setId(3);
+        passenger2.setName("Kika");
+        passenger2.setSurname("Kikic");
+        Set<Passenger> passengers = new HashSet<>();
+        passengers.add(rejectPassenger);
+        passengers.add(passenger1);
+        passengers.add(passenger2);
+
+        TempDrive tempDrive = new TempDrive();
+        tempDrive.setStartDate(startDate);
+        tempDrive.setRoute(route);
+        tempDrive.setPassengers(passengers);
+
+        tempDrive.getAnsweredPassengers().add(1);
+        tempDrive.getAnsweredPassengers().add(2);
+
+        PassengerAlreadyAnsweredException exception = assertThrows(PassengerAlreadyAnsweredException.class,
+                () -> driveService.rejectDrive(tempDrive, 1, rejectPassenger));
+
+        assertEquals("You have already given/not given your consent for this drive!", exception.getMessage());
     }
 
     @Test
