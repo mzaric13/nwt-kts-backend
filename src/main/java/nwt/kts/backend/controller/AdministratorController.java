@@ -5,13 +5,16 @@ import nwt.kts.backend.dto.returnDTO.*;
 import nwt.kts.backend.entity.*;
 import nwt.kts.backend.service.AdministratorService;
 import nwt.kts.backend.service.UserService;
+import nwt.kts.backend.util.ImageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -45,18 +48,30 @@ public class AdministratorController {
     @PutMapping(value = "/change-password")
     public ResponseEntity<AdminDTO> changePassword(@RequestBody PasswordChangeCreationDTO passwordChangeCreationDTO) {
         User administrator = administratorService.changePassword(passwordChangeCreationDTO);
+        if (administrator.getProfilePictureData() != null) {
+            ImageDataDTO imageDataDTO = administratorService.createImageDataForAdmin(administrator);
+            return new ResponseEntity<>(new AdminDTO(administrator, imageDataDTO), HttpStatus.OK);
+        }
         return new ResponseEntity<>(new AdminDTO(administrator), HttpStatus.OK);
     }
 
     @PutMapping(value = "/change-profile-picture")
-    public ResponseEntity<AdminDTO> changeProfilePicture(@RequestBody ProfilePictureCreationDTO profilePictureCreationDTO) {
-        User user = administratorService.changeProfilePicture(profilePictureCreationDTO);
+    public ResponseEntity<AdminDTO> changeProfilePicture(@RequestParam("image") MultipartFile file, Principal principal) throws IOException {
+        User user = administratorService.changeProfilePicture(principal.getName(), file);
+        if (user.getProfilePictureData() != null) {
+            ImageDataDTO imageDataDTO = administratorService.createImageDataForAdmin(user);
+            return new ResponseEntity<>(new AdminDTO(user, imageDataDTO), HttpStatus.OK);
+        }
         return new ResponseEntity<>(new AdminDTO(user), HttpStatus.OK);
     }
 
     @PutMapping(value = "/update-personal-info")
     public ResponseEntity<AdminDTO> changePersonalInfo(@RequestBody AdminDTO userReturnDTO) {
         User user = administratorService.changePersonalInfo(userReturnDTO);
+        if (user.getProfilePictureData() != null) {
+            ImageDataDTO imageDataDTO = administratorService.createImageDataForAdmin(user);
+            return new ResponseEntity<>(new AdminDTO(user, imageDataDTO), HttpStatus.OK);
+        }
         return new ResponseEntity<>(new AdminDTO(user), HttpStatus.OK);
     }
 
@@ -93,6 +108,10 @@ public class AdministratorController {
     @GetMapping(value = "/get-logged")
     public ResponseEntity<AdminDTO> getLoggedAdmin(Principal principal) {
         User administrator = userService.findUserByEmail(principal.getName());
+        if (administrator.getProfilePictureData() != null) {
+            ImageDataDTO imageDataDTO = administratorService.createImageDataForAdmin(administrator);
+            return new ResponseEntity<>(new AdminDTO(administrator, imageDataDTO), HttpStatus.OK);
+        }
         return new ResponseEntity<>(new AdminDTO(administrator), HttpStatus.OK);
     }
 

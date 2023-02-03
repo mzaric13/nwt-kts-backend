@@ -16,6 +16,7 @@ public class DriverDTO {
     private boolean available;
 
     private PointDTO location;
+    private ImageDataDTO imageData;
 
     public DriverDTO() {
 
@@ -50,6 +51,22 @@ public class DriverDTO {
         this.available = driver.isAvailable();
         this.vehicle = new VehicleReturnDTO(driver.getVehicle());
         this.location = new PointDTO(driver.getLocation());
+    }
+
+    public DriverDTO(Driver driver, ImageDataDTO imageDataDTO) {
+        this.id = driver.getId();
+        this.email = driver.getEmail();
+        this.phoneNumber = driver.getPhoneNumber();
+        this.password = driver.getPassword();
+        this.name = driver.getName();
+        this.surname = driver.getSurname();
+        this.city = driver.getCity();
+        this.profilePicture = driver.getPicture();
+        this.blocked = driver.isBlocked();
+        this.available = driver.isAvailable();
+        this.vehicle = new VehicleReturnDTO(driver.getVehicle());
+        this.location = new PointDTO(driver.getLocation());
+        this.imageData = imageDataDTO;
     }
 
     public Integer getId() {
@@ -154,5 +171,9 @@ public class DriverDTO {
 
     public void setLocation(PointDTO location) {
         this.location = location;
+    }
+
+    public ImageDataDTO getImageData() {
+        return imageData;
     }
 }

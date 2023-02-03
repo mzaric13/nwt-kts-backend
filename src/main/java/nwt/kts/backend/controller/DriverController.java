@@ -2,19 +2,19 @@ package nwt.kts.backend.controller;
 
 import nwt.kts.backend.dto.creation.*;
 import nwt.kts.backend.dto.returnDTO.*;
-import nwt.kts.backend.entity.Driver;
-import nwt.kts.backend.entity.DriverData;
-import nwt.kts.backend.entity.Passenger;
-import nwt.kts.backend.entity.Point;
+import nwt.kts.backend.entity.*;
 import nwt.kts.backend.service.DriverService;
 import nwt.kts.backend.service.UserService;
+import nwt.kts.backend.util.ImageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.sql.Timestamp;
 import java.util.List;
@@ -59,13 +59,21 @@ public class DriverController {
     @PreAuthorize("hasRole('DRIVER')")
     public ResponseEntity<DriverDTO> changePassword(@RequestBody PasswordChangeCreationDTO passwordChangeCreationDTO){
         Driver driver = driverService.changePassword(passwordChangeCreationDTO);
+        if (driver.getProfilePictureData() != null) {
+            ImageDataDTO imageDataDTO = driverService.getImageDataForDriver(driver);
+            return new ResponseEntity<>(new DriverDTO(driver, imageDataDTO), HttpStatus.OK);
+        }
         return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.OK);
     }
 
     @PutMapping(value="/change-profile-picture")
     @PreAuthorize("hasRole('DRIVER')")
-    public ResponseEntity<DriverDTO> changeProfilePicture(@RequestBody ProfilePictureCreationDTO profilePictureCreationDTO){
-        Driver driver = driverService.changeProfilePicture(profilePictureCreationDTO);
+    public ResponseEntity<DriverDTO> changeProfilePicture(@RequestParam("image") MultipartFile file, Principal principal) throws IOException {
+        Driver driver = driverService.changeProfilePicture(principal.getName(), file);
+        if (driver.getProfilePictureData() != null) {
+            ImageDataDTO imageDataDTO = driverService.getImageDataForDriver(driver);
+            return new ResponseEntity<>(new DriverDTO(driver, imageDataDTO), HttpStatus.OK);
+        }
         return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.OK);
     }
 
@@ -73,6 +81,10 @@ public class DriverController {
     @PreAuthorize("hasRole('DRIVER')")
     public ResponseEntity<DriverDTO> getLoggedDriver(Principal principal) {
         Driver driver = driverService.findDriverByEmail(principal.getName());
+        if (driver.getProfilePictureData() != null) {
+            ImageDataDTO imageDataDTO = driverService.getImageDataForDriver(driver);
+            return new ResponseEntity<>(new DriverDTO(driver, imageDataDTO), HttpStatus.OK);
+        }
         return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.OK);
     }
 
