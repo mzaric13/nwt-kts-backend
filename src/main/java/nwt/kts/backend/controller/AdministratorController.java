@@ -4,8 +4,9 @@ import nwt.kts.backend.dto.creation.*;
 import nwt.kts.backend.dto.returnDTO.*;
 import nwt.kts.backend.entity.*;
 import nwt.kts.backend.service.AdministratorService;
+import nwt.kts.backend.service.DriverService;
+import nwt.kts.backend.service.PassengerService;
 import nwt.kts.backend.service.UserService;
-import nwt.kts.backend.util.ImageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -16,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +29,12 @@ public class AdministratorController {
 
     @Autowired
     private AdministratorService administratorService;
+
+    @Autowired
+    private PassengerService passengerService;
+
+    @Autowired
+    private DriverService driverService;
 
     @Autowired
     private UserService userService;
@@ -137,7 +143,9 @@ public class AdministratorController {
         Map<String, Object> returnValue = new HashMap<>();
         List<PassengerDTO> passengerDTOS = new ArrayList<>();
         for (Passenger passenger : passengersPage.getContent()) {
-            passengerDTOS.add(new PassengerDTO(passenger));
+            ImageDataDTO imageDataDTO = passengerService.createImageDataForPassenger(passenger);
+            if (imageDataDTO != null) passengerDTOS.add(new PassengerDTO(passenger, imageDataDTO));
+            else passengerDTOS.add(new PassengerDTO(passenger));
         }
         returnValue.put("passengers", passengerDTOS);
         returnValue.put("totalItems", passengersPage.getTotalElements());
@@ -149,7 +157,9 @@ public class AdministratorController {
         Map<String, Object> returnValue = new HashMap<>();
         List<DriverDTO> driverDTOS = new ArrayList<>();
         for (Driver driver : driversPage.getContent()) {
-            driverDTOS.add(new DriverDTO(driver));
+            ImageDataDTO imageDataDTO = driverService.getImageDataForDriver(driver);
+            if (imageDataDTO != null) driverDTOS.add(new DriverDTO(driver, imageDataDTO));
+            else driverDTOS.add(new DriverDTO(driver));
         }
         returnValue.put("drivers", driverDTOS);
         returnValue.put("totalItems", driversPage.getTotalElements());
