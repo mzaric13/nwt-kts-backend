@@ -122,8 +122,8 @@ public class CreateTempDriveTests extends TestBase {
         customizeDrivePage.clickStartTimeCheckBox();
         customizeDrivePage.clickStartTimeInput();
         Calendar calendar = Calendar.getInstance();
-        customizeDrivePage.chooseHour(calendar.get(Calendar.HOUR_OF_DAY));
-        customizeDrivePage.chooseMinute(calendar.get(Calendar.MINUTE) - 10);
+        customizeDrivePage.chooseHour(calendar.get(Calendar.HOUR_OF_DAY) - 1);
+        customizeDrivePage.chooseMinute(calendar.get(Calendar.MINUTE));
         customizeDrivePage.clickTimePickerButton();
         customizeDrivePage.clickCreateRideBtn();
         assertTrue(customizeDrivePage.verifyModalIsLoaded("Error!"));

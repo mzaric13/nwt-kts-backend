@@ -172,7 +172,7 @@ public class DriveControllerTest {
     @DisplayName("Should return status code OK")
     public void testAcceptDriveConsent() {
         ResponseEntity<Void> responseEntity = restTemplate.exchange(
-                "/drives/accept-drive-consent?tempDriveId={tempDriveId}", HttpMethod.PUT, null, Void.class, 1);
+                "/drives/accept-drive-consent?tempDriveId={tempDriveId}&passengerId={passengerId}", HttpMethod.PUT, null, Void.class, 1, 1);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
 
