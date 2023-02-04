@@ -1,5 +1,7 @@
 package nwt.kts.backend.entity;
 
+import nwt.kts.backend.dto.returnDTO.TagDTO;
+
 import javax.persistence.*;
 
 @Entity
@@ -21,5 +23,18 @@ public class Tag {
     public Tag(Integer id, String name) {
         this.id = id;
         this.name = name;
+    }
+
+    public Tag(TagDTO tagDTO) {
+        this.id = tagDTO.getId();
+        this.name = tagDTO.getName();
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
     }
 }
